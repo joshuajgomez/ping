@@ -1,18 +1,45 @@
 package com.joshgm3z.ping.utils
 
 import com.joshgm3z.ping.data.Chat
+import com.joshgm3z.ping.data.HomeChat
 import com.joshgm3z.ping.data.User
 import kotlin.random.Random
 
 fun getChatList() = listOf(
-    Chat("${Random.nextInt()}", "Hweey guys", randomTime(), randomUser(), null),
-    Chat("${Random.nextInt()}", "Hey guddys", randomTime(), null, randomUser()),
-    Chat("${Random.nextInt()}", "Hey gudys", randomTime(), null, randomUser()),
-    Chat("${Random.nextInt()}", "Hwdey guys", randomTime(), randomUser(), null),
-    Chat("${Random.nextInt()}", "Hey gfuys", randomTime(), null, randomUser()),
-    Chat("${Random.nextInt()}", "Hewdy guys", randomTime(), randomUser(), null),
+    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), randomUser(), null),
+    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), randomUser(), null),
+    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), null, randomUser()),
+    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), randomUser(), null),
+    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), null, randomUser()),
 )
 
-fun randomUser() = User("${Random.nextInt()}", "User #${Random.nextInt()}", 11)
+fun getHomeChatList() = listOf(
+    HomeChat.random(),
+    HomeChat.random(),
+    HomeChat.random(),
+    HomeChat.random(),
+    HomeChat.random(),
+)
+
+fun randomChat() = getChatList().random()
+
+fun randomUser() = User.random()
 
 fun randomTime() = System.currentTimeMillis() + Random.nextLong()
+
+fun randomName() =
+    listOf("Gandalf", "Samwise", "Frodo", "Bilbo", "Araghon", "Sauron", "Sarumon").random()
+
+fun randomMessage() =
+    listOf(
+        "Hey you guys",
+        "Wassup maan",
+        "Da",
+        "yyooo",
+        "I just wanted to confirm one thing with you real something something",
+        "I just wanted to confirm one thing with you real something something",
+        "I just wanted to confirm one thing with you real something something",
+        "I just wanted to confirm one thing with you real something something",
+        "Ok ok",
+        "."
+    ).random()

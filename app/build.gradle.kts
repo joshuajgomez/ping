@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.joshgm3z.ping"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.joshgm3z.ping"
@@ -66,4 +66,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation ("androidx.compose.material:material-icons-extended:1.5.3")
 }
