@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -26,6 +27,8 @@ import androidx.compose.ui.unit.sp
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.data.User
 import com.joshgm3z.ping.ui.theme.Green40
+import com.joshgm3z.ping.ui.theme.Purple40
+import com.joshgm3z.ping.ui.theme.Purple60
 import com.joshgm3z.ping.utils.randomUser
 
 @Preview
@@ -36,14 +39,17 @@ fun Title(user: User = randomUser()) {
         modifier = Modifier
             .height(70.dp)
             .fillMaxWidth()
-            .background(Green40)
+            .background(Purple60)
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,
             contentDescription = "go to home",
+            tint = Color.White,
             modifier = Modifier
-                .size(70.dp)
-                .padding(20.dp)
+                .size(60.dp)
+                .padding(10.dp)
+                .clip(CircleShape)
+                .padding(5.dp)
                 .clickable {}
         )
         Image(
@@ -51,14 +57,20 @@ fun Title(user: User = randomUser()) {
             contentDescription = "default user",
             modifier = Modifier
                 .clip(shape = CircleShape)
-                .size(55.dp)
+                .size(40.dp)
         )
         Spacer(modifier = Modifier.width(15.dp))
-        Text(text = user.name, fontSize = 20.sp)
+        Text(
+            text = user.name,
+            fontSize = 22.sp,
+            color = Color.White,
+            modifier = Modifier.widthIn(80.dp)
+        )
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             imageVector = Icons.Default.MoreVert,
             contentDescription = "more options",
+            tint = Color.White,
             modifier = Modifier
                 .size(60.dp)
                 .padding(15.dp)
