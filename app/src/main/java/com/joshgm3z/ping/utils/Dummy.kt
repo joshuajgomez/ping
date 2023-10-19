@@ -6,11 +6,11 @@ import com.joshgm3z.ping.data.User
 import kotlin.random.Random
 
 fun getChatList() = listOf(
-    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), randomUser(), null),
-    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), randomUser(), null),
-    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), null, randomUser()),
-    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), randomUser(), null),
-    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), null, randomUser()),
+    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), randomUser().id, null),
+    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), randomUser().id, null),
+    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), null, randomUser().id),
+    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), randomUser().id, null),
+    Chat(Random.nextInt().toString(), randomMessage(), randomTime(), null, randomUser().id),
 )
 
 fun getHomeChatList() = listOf(

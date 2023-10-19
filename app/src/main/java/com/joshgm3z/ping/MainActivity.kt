@@ -10,37 +10,28 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.joshgm3z.ping.chat.ChatViewModel
+import com.joshgm3z.ping.chat.ui.ChatScreen
 import com.joshgm3z.ping.ui.theme.PingTheme
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PingTheme {
-                // A surface container using the 'background' color from the theme
+                val chatViewModel by viewModel<ChatViewModel>()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    ChatScreen(
+                        chatListLive = chatViewModel.chatList,
+                        onSendClick = {chatViewModel.onSendButtonClick(it)},
+                        user = chatViewModel.user
+                        )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PingTheme {
-        Greeting("Android")
     }
 }

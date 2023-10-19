@@ -1,20 +1,26 @@
 package com.joshgm3z.ping.data
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.utils.randomChat
 import com.joshgm3z.ping.utils.randomName
 import com.joshgm3z.ping.utils.randomUser
 import kotlin.random.Random
 
+@Entity
 data class Chat(
+    @PrimaryKey
     val id: String,
     val message: String,
     val sentTime: Long,
-    val fromUser: User?,
-    val toUser: User?,
+    val fromUserId: String?,
+    val toUserId: String?,
 )
 
+@Entity
 data class User(
+    @PrimaryKey
     val id: String,
     val name: String,
     val picture: Int,
