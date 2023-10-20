@@ -1,8 +1,11 @@
 package com.joshgm3z.ping.data
 
+import androidx.core.graphics.component1
+import androidx.core.graphics.component2
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.joshgm3z.ping.R
+import com.joshgm3z.ping.utils.getRandomFromTo
 import com.joshgm3z.ping.utils.randomChat
 import com.joshgm3z.ping.utils.randomName
 import com.joshgm3z.ping.utils.randomUser
@@ -10,27 +13,41 @@ import kotlin.random.Random
 
 @Entity
 data class Chat(
-    @PrimaryKey
-    val id: String,
     val message: String,
-    val sentTime: Long,
-    val fromUserId: String?,
-    val toUserId: String?,
-)
+) {
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
+    var docId: String = ""
+    var sentTime: Long = 0
+    var fromUserId: String? = null
+    var toUserId: String? = null
+
+    companion object {
+        fun random(): Chat {
+            val chat = Chat(randomName())
+            chat.sentTime = System.currentTimeMillis()
+            val pair = getRandomFromTo()
+            chat.fromUserId = pair.first
+            chat.toUserId = pair.second
+            return chat
+        }
+    }
+}
 
 @Entity
-data class User(
-    @PrimaryKey
-    val id: String,
-    val name: String,
-    val picture: Int,
-) {
+data class User(val name: String = "") {
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
+    var docId: String = ""
+    var picture: Int = 0
+
     companion object {
-        fun random(): User = User(
-            Random.nextInt().toString(),
-            randomName(),
-            R.drawable.default_user
-        )
+        fun random(): User {
+            val user = User(randomName())
+            user.docId = System.currentTimeMillis().toString()
+            user.picture = R.drawable.default_user
+            return user
+        }
     }
 }
 

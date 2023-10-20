@@ -82,7 +82,10 @@ fun InputBox(onSendClick: (text: String) -> Unit = {}, defaultText: String = "")
                 .size(40.dp)
                 .background(color = Purple60)
                 .padding(all = 8.dp)
-                .clickable { onSendClick(text) }
+                .clickable(enabled = text.isNotEmpty()) {
+                    onSendClick(text)
+                    text = ""
+                }
         )
     }
 }

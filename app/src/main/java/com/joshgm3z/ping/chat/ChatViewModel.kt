@@ -9,15 +9,17 @@ import com.joshgm3z.ping.model.PingRepository
 import com.joshgm3z.ping.utils.randomUser
 import kotlinx.coroutines.launch
 
-class ChatViewModel(private val repository: PingRepository): ViewModel() {
+class ChatViewModel(private val repository: PingRepository) : ViewModel() {
 
     val user: User = randomUser()
-    val chatList: LiveData<List<Chat>> = repository.getChatForUser(user.id)
+    val chatList: LiveData<List<Chat>> = repository.getChatForUser(user.docId)
 
-    fun onSendButtonClick(message:String){
-        val chat = Chat("", message = message, System.currentTimeMillis(), null, user.id)
+    fun onSendButtonClick(message: String) {
+        val chat = Chat(message = message)
+        chat.toUserId = user.docId
+        chat.sentTime = System.currentTimeMillis()
         viewModelScope.launch {
-        repository.addChat(chat)
+            repository.addChat(chat)
         }
     }
 }
