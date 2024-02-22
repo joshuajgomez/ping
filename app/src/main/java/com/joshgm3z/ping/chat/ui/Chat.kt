@@ -26,7 +26,6 @@ import com.joshgm3z.ping.ui.theme.Purple60
 import com.joshgm3z.ping.utils.getChatList
 import com.joshgm3z.ping.utils.getPrettyTime
 
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ChatList(chatListLive: LiveData<List<Chat>> = MutableLiveData()) {
     val chatList = chatListLive.observeAsState(listOf()).value
@@ -62,5 +61,15 @@ fun ChatItem(chat: Chat) {
             text = getPrettyTime(chat.sentTime),
             color = Color.DarkGray,
             modifier = Modifier.padding(start = 8.dp, end = 8.dp))
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PreviewChatList(){
+    LazyColumn(reverseLayout = true) {
+        items(items = getChatList()) {
+            ChatItem(chat = it)
+        }
     }
 }

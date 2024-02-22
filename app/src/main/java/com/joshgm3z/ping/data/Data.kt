@@ -1,7 +1,5 @@
 package com.joshgm3z.ping.data
 
-import androidx.core.graphics.component1
-import androidx.core.graphics.component2
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.joshgm3z.ping.R
