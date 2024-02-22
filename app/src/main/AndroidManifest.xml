@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".PingApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,8 +12,12 @@
         android:roundIcon="@mipmap/ic_ping_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Ping"
-        tools:targetApi="31"
-        android:name=".PingApp">
+        tools:targetApi="31">
+        <activity
+            android:name=".ui.frx.SignInActivity"
+            android:exported="false"
+            android:label="@string/title_activity_sign_in"
+            android:theme="@style/Theme.Ping" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
