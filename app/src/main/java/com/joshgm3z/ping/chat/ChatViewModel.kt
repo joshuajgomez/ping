@@ -7,6 +7,7 @@ import com.joshgm3z.ping.data.Chat
 import com.joshgm3z.ping.data.User
 import com.joshgm3z.ping.model.PingRepository
 import com.joshgm3z.ping.utils.randomUser
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ChatViewModel(private val repository: PingRepository) : ViewModel() {
@@ -18,7 +19,7 @@ class ChatViewModel(private val repository: PingRepository) : ViewModel() {
         val chat = Chat(message = message)
         chat.toUserId = user.docId
         chat.sentTime = System.currentTimeMillis()
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.addChat(chat)
         }
     }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "152608453034",
+    "project_id": "ping-ce02a",
+    "storage_bucket": "ping-ce02a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152608453034:android:1af83a41dbfc6e57ca7bd3",
+        "android_client_info": {
+          "package_name": "com.joshgm3z.ping"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqC30PKCqN61OCXKVJwhXsyO28rGvAVpA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

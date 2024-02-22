@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshgm3z.ping.chat.ChatViewModel
 import com.joshgm3z.ping.chat.ui.ChatScreen
 import com.joshgm3z.ping.ui.theme.PingTheme
@@ -18,6 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseAnalytics.getInstance(this).logEvent("MainActivity_onCreate", Bundle())
         setContent {
             PingTheme {
                 val chatViewModel by viewModel<ChatViewModel>()
