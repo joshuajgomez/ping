@@ -14,7 +14,7 @@ data class Chat(
     val message: String,
 ) {
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+    var localId: Long = 0
     var docId: String = ""
     var sentTime: Long = 0
     var fromUserId: String? = null
@@ -29,6 +29,11 @@ data class Chat(
             chat.toUserId = pair.second
             return chat
         }
+    }
+
+    override fun toString(): String {
+        return "Chat(message='$message', localId=$localId, docId='$docId'," +
+                " sentTime=$sentTime, fromUserId=$fromUserId, toUserId=$toUserId)"
     }
 }
 
@@ -47,6 +52,10 @@ data class User(val name: String = "") {
             return user
         }
     }
+
+    override fun toString(): String {
+        return "User(name='$name', id=$id, docId='$docId', picture=$picture)"
+    }
 }
 
 data class HomeChat(
@@ -63,4 +72,9 @@ data class HomeChat(
             Random.nextInt(from = 0, until = 100)
         )
     }
+
+    override fun toString(): String {
+        return "HomeChat(id='$id', sender=$sender, chat=$chat, count=$count)"
+    }
+
 }
