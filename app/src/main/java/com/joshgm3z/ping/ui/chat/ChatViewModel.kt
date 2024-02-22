@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.chat
+package com.joshgm3z.ping.ui.chat
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

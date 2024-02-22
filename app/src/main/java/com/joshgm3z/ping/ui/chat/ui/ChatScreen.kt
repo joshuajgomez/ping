@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.chat.ui
+package com.joshgm3z.ping.ui.chat.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

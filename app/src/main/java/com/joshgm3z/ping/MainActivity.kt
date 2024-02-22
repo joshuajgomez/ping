@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.joshgm3z.ping.chat.ChatViewModel
-import com.joshgm3z.ping.chat.ui.ChatScreen
+import com.joshgm3z.ping.ui.chat.ChatViewModel
+import com.joshgm3z.ping.ui.chat.ui.ChatScreen
 import com.joshgm3z.ping.ui.theme.PingTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

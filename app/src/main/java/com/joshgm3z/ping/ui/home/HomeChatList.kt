@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.home
+package com.joshgm3z.ping.ui.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
