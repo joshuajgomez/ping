@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.ui.frx
+package com.joshgm3z.ping.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -35,7 +35,7 @@ import com.joshgm3z.ping.utils.randomUser
 
 @Preview
 @Composable
-fun Title(user: User = randomUser()) {
+fun Title(user: User? = randomUser(), onBackClick: () -> Unit = {}) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -52,7 +52,7 @@ fun Title(user: User = randomUser()) {
                 .padding(10.dp)
                 .clip(CircleShape)
                 .padding(5.dp)
-                .clickable {}
+                .clickable { onBackClick() }
         )
         Image(
             painter = painterResource(id = R.drawable.default_user),
@@ -62,12 +62,14 @@ fun Title(user: User = randomUser()) {
                 .size(40.dp)
         )
         Spacer(modifier = Modifier.width(15.dp))
-        Text(
-            text = user.name,
-            fontSize = 22.sp,
-            color = Color.White,
-            modifier = Modifier.widthIn(80.dp)
-        )
+        user?.let {
+            Text(
+                text = it.name,
+                fontSize = 22.sp,
+                color = Color.White,
+                modifier = Modifier.widthIn(80.dp)
+            )
+        }
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             imageVector = Icons.Default.MoreVert,

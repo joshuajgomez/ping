@@ -6,6 +6,7 @@ import com.joshgm3z.ping.data.Chat
 import com.joshgm3z.ping.data.User
 import com.joshgm3z.ping.model.firestore.FirestoreDb
 import com.joshgm3z.ping.model.room.PingDb
+import com.joshgm3z.ping.utils.Logger
 import com.joshgm3z.ping.utils.SharedPrefUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -20,7 +21,18 @@ class PingRepository(
 
     fun getChatForUser(userId: String): LiveData<List<Chat>> = db.chatDao().getChatForUser(userId)
 
-    fun getAllUsers(): LiveData<List<User>> = db.userDao().getAll()
+    fun getAllUsers(): List<User> = db.userDao().getAll()
+
+    fun refreshUserList() {
+        firestoreDb.getUserList {
+            Logger.debug("it = [$it]")
+            if (it.isNotEmpty()) {
+                GlobalScope.launch {
+                    db.userDao().insertAll(it)
+                }
+            }
+        }
+    }
 
     suspend fun addChat(chat: Chat) {
         db.chatDao().insert(chat)
@@ -42,7 +54,10 @@ class PingRepository(
         firestoreDb.checkUser(name) { onCheckComplete(it) }
     }
 
-    fun registerUser(name: String, registerComplete: (isSuccess: Boolean, message: String) -> Unit) {
+    fun registerUser(
+        name: String,
+        registerComplete: (isSuccess: Boolean, message: String) -> Unit,
+    ) {
         val newUser = User(name)
         newUser.imagePath = ""
         firestoreDb.createUser(newUser) { user, message ->
@@ -53,5 +68,11 @@ class PingRepository(
                 registerComplete(false, message)
             }
         }
+    }
+
+    suspend fun getUser(userId: String): User {
+        val user = db.userDao().getUser(userId)
+        Logger.debug("userId = [${userId}], user = [$user]")
+        return user
     }
 }

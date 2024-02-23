@@ -22,6 +22,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.joshgm3z.ping.ui.theme.Comfortaa
 import com.joshgm3z.ping.ui.theme.Gray40
 import com.joshgm3z.ping.ui.theme.Purple60
+import com.joshgm3z.ping.viewmodels.HomeViewModel
 
 @Composable
 fun HomeScreenContainer(homeViewModel: HomeViewModel, onSearchClick: () -> Unit = {}) {

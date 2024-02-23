@@ -7,7 +7,6 @@ import com.joshgm3z.ping.data.User
 class FirestoreConverter {
     companion object {
         private val keyLocalId = "localId"
-        private val keyDocId = "docId"
         private val keySentTime = "sentTime"
         private val keyFromUserId = "fromUserId"
         private val keyToUserId = "toUserId"
@@ -20,7 +19,6 @@ class FirestoreConverter {
         fun getDocumentFromChat(chat: Chat): HashMap<String, Any> {
             return hashMapOf(
                 keyLocalId to chat.localId,
-                keyDocId to defaultDocId,
                 keySentTime to chat.sentTime,
                 keyFromUserId to "${chat.fromUserId}",
                 keyToUserId to "${chat.toUserId}",
@@ -33,7 +31,7 @@ class FirestoreConverter {
             for (document in result) {
                 val chat = Chat(message = document[keyMessage].toString())
                 chat.localId = document[keyLocalId] as Long
-                chat.docId = document[keyDocId].toString()
+                chat.docId = document.id
                 chat.sentTime = document[keySentTime] as Long
                 chat.fromUserId = document[keyFromUserId].toString()
                 chat.toUserId = document[keyToUserId].toString()
@@ -58,10 +56,20 @@ class FirestoreConverter {
 
         fun getDocumentFromUser(user: User): HashMap<String, Any> {
             return hashMapOf(
-                keyDocId to defaultDocId,
                 keyName to user.name,
                 keyImagePath to user.imagePath,
             )
+        }
+
+        fun getUserListFromDocument(result: QuerySnapshot): ArrayList<User> {
+            val userList = ArrayList<User>()
+            for (document in result) {
+                val user = User(name = document[keyName].toString())
+                user.docId = document.id
+                user.imagePath = document[keyImagePath].toString()
+                userList.add(user)
+            }
+            return userList
         }
     }
 }

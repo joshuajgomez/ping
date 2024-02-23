@@ -73,4 +73,17 @@ class FirestoreDb {
                 onUserCreated(null, it.message.toString())
             }
     }
+
+    fun getUserList(onUserListFetched: (userList: List<User>) -> Unit) {
+        db.collection(keyCollectionUserList)
+            .get()
+            .addOnSuccessListener {
+                Logger.debug("user list fetched: ${it.size()}")
+                val users = FirestoreConverter.getUserListFromDocument(it)
+                onUserListFetched(users)
+            }
+            .addOnFailureListener {
+                Logger.warn("error fetching user list: ${it.message}")
+            }
+    }
 }

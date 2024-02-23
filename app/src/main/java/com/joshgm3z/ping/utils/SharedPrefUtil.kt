@@ -23,5 +23,9 @@ class SharedPrefUtil {
             edit.putString(keyUserImagePath, user.imagePath)
             edit.apply()
         }
+
+        fun isUserSignedIn(): Boolean {
+            return sharedPrefs.getString(keyUserName, "")?.isNotEmpty() ?: false
+        }
     }
 }

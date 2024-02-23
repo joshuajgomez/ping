@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.ui.frx
 
-import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,16 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,19 +26,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.joshgm3z.ping.R
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.theme.Purple60
 import com.joshgm3z.ping.ui.theme.Yellow40
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import com.joshgm3z.ping.viewmodels.SignInUiState
+import com.joshgm3z.ping.viewmodels.SignInViewModel
 
 @Composable
 fun SignInContainer(signInViewModel: SignInViewModel, goToHome: () -> Unit) {

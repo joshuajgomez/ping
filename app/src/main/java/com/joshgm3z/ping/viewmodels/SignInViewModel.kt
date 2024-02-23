@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.ui.frx
+package com.joshgm3z.ping.viewmodels
 
 import androidx.lifecycle.ViewModel
 import com.joshgm3z.ping.model.PingRepository

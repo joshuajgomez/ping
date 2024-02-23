@@ -1,24 +1,17 @@
 package com.joshgm3z.ping.ui.chat
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,9 +23,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.theme.Purple60
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputBox(onSendClick: (text: String) -> Unit = {}, defaultText: String = "") {
     Row(
@@ -43,34 +36,9 @@ fun InputBox(onSendClick: (text: String) -> Unit = {}, defaultText: String = "")
             .background(Color.LightGray)
     ) {
         var text by remember { mutableStateOf(defaultText) }
-
-        TextField(
-            placeholder = {
-                Text(text = "Type a message...")
-            },
-            value = text,
-            onValueChange = { text = it },
-            trailingIcon = {
-                AnimatedVisibility(visible = text.isNotEmpty()) {
-                    Icon(
-                        imageVector = Icons.Filled.Clear,
-                        contentDescription = "clear message",
-                        tint = Purple60,
-                        modifier = Modifier.clickable { text = "" }
-                    )
-                }
-            },
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxSize()
-                .padding(all = 10.dp)
-                .clip(RoundedCornerShape(20.dp)),
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.White,
-                focusedIndicatorColor = Color.Transparent, //hide the indicator
-                unfocusedIndicatorColor = Color.LightGray
-            )
-        )
+        CustomTextField(modifier = Modifier.weight(1f)) {
+            text = it
+        }
 
         Icon(
             imageVector = Icons.Default.Send,
