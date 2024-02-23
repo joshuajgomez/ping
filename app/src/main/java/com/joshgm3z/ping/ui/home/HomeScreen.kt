@@ -1,6 +1,7 @@
 package com.joshgm3z.ping.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,16 +24,21 @@ import com.joshgm3z.ping.ui.theme.Gray40
 import com.joshgm3z.ping.ui.theme.Purple60
 
 @Composable
+fun HomeScreenContainer(homeViewModel: HomeViewModel, onSearchClick: () -> Unit = {}) {
+    HomeScreen { onSearchClick() }
+}
+
+@Composable
 @Preview(showBackground = true, showSystemUi = true)
-fun HomeScreen() {
+fun HomeScreen(onSearchClick: () -> Unit = {}) {
     Column {
-        HomeTitle()
+        HomeTitle { onSearchClick() }
         HomeChatList()
     }
 }
 
 @Composable
-fun HomeTitle() {
+fun HomeTitle(onSearchClick: () -> Unit) {
     ConstraintLayout(
         modifier = Modifier
             .height(70.dp)
@@ -62,6 +68,7 @@ fun HomeTitle() {
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 }
-                .clip(CircleShape))
+                .clip(CircleShape)
+                .clickable { onSearchClick() })
     }
 }

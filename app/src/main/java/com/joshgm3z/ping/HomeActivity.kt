@@ -15,7 +15,9 @@ import com.joshgm3z.ping.ui.chat.ChatViewModel
 import com.joshgm3z.ping.ui.chat.ChatScreen
 import com.joshgm3z.ping.ui.frx.SignInContainer
 import com.joshgm3z.ping.ui.frx.SignInViewModel
-import com.joshgm3z.ping.ui.home.HomeScreen
+import com.joshgm3z.ping.ui.home.HomeScreenContainer
+import com.joshgm3z.ping.ui.home.HomeViewModel
+import com.joshgm3z.ping.ui.search.SearchContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -25,7 +27,6 @@ class HomeActivity : ComponentActivity() {
         FirebaseAnalytics.getInstance(this).logEvent("MainActivity_onCreate", Bundle())
         setContent {
             PingTheme {
-                val chatViewModel by viewModel<ChatViewModel>()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -33,21 +34,31 @@ class HomeActivity : ComponentActivity() {
                     val navController = rememberNavController()
 
                     val signInViewModel by viewModel<SignInViewModel>()
-
+                    val homeViewModel by viewModel<HomeViewModel>()
+                    val chatViewModel by viewModel<ChatViewModel>()
 
                     NavHost(navController = navController, startDestination = "frx") {
                         composable("frx") {
                             SignInContainer(signInViewModel) {
+                                // on sign in complete
                                 navController.navigate("home")
                             }
                         }
-                        composable("home") { HomeScreen() }
+                        composable("home") {
+                            HomeScreenContainer(homeViewModel) {
+                                // on search icon click
+                                navController.navigate("search")
+                            }
+                        }
                         composable("chat_screen") {
                             ChatScreen(
                                 chatListLive = chatViewModel.chatList,
                                 onSendClick = { chatViewModel.onSendButtonClick(it) },
                                 user = chatViewModel.user
                             )
+                        }
+                        composable("search") {
+                            SearchContainer(homeViewModel)
                         }
                         // Add more destinations similarly.
                     }

@@ -35,6 +35,14 @@ fun randomChat() = getChatList().random()
 
 fun randomUser() = User.random()
 
+fun randomUserList() = listOf(
+    User.random(),
+    User.random(),
+    User.random(),
+    User.random(),
+    User.random(),
+)
+
 fun randomTime() = System.currentTimeMillis() + Random.nextLong()
 
 fun randomName() =
