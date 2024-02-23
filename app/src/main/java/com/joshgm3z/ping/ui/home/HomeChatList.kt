@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -19,12 +18,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.joshgm3z.ping.R
 import com.joshgm3z.ping.data.HomeChat
 import com.joshgm3z.ping.ui.theme.Gray40
 import com.joshgm3z.ping.ui.theme.Green40
@@ -51,7 +50,7 @@ fun HomeChatItem(
     ConstraintLayout(modifier = Modifier.clickable { onChatClick(homeChat) }) {
         val (message, user, count, image, line) = createRefs()
         Image(
-            painter = painterResource(id = homeChat.sender.picture),
+            painter = painterResource(id = R.drawable.default_user),
             contentDescription = "default user",
             modifier = Modifier
                 .clip(shape = CircleShape)

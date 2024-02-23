@@ -2,6 +2,7 @@ package com.joshgm3z.ping.utils
 
 import com.google.firebase.firestore.QuerySnapshot
 import com.joshgm3z.ping.data.Chat
+import com.joshgm3z.ping.data.User
 
 class FirestoreConverter {
     companion object {
@@ -11,6 +12,8 @@ class FirestoreConverter {
         private val keyFromUserId = "fromUserId"
         private val keyToUserId = "toUserId"
         private val keyMessage = "message"
+        private val keyName = "name"
+        private val keyImagePath = "imagePath"
 
         private val defaultDocId = "pending"
 
@@ -37,6 +40,28 @@ class FirestoreConverter {
                 chatList.add(chat)
             }
             return chatList
+        }
+
+        fun findUserFromDocument(name: String, result: QuerySnapshot): User? {
+            Logger.info("result = [${result}]")
+            for (document in result) {
+                if (document[keyName] == name) {
+                    val user = User()
+                    user.docId = document.id
+                    user.name = document[keyName].toString()
+                    user.imagePath = document[keyImagePath].toString()
+                    return user
+                }
+            }
+            return null
+        }
+
+        fun getDocumentFromUser(user: User): HashMap<String, Any> {
+            return hashMapOf(
+                keyDocId to defaultDocId,
+                keyName to user.name,
+                keyImagePath to user.imagePath,
+            )
         }
     }
 }

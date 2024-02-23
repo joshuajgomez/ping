@@ -1,13 +1,21 @@
 package com.joshgm3z.ping.ui.frx
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -22,12 +30,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.theme.Purple60
+import com.joshgm3z.ping.ui.theme.Yellow40
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun SignInContainer() {
+fun SignInContainer(onSignInClick: (name: String) -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -53,12 +63,44 @@ fun SignInContainer() {
         Spacer(modifier = Modifier.height(30.dp))
 
         var name by remember { mutableStateOf("") }
-        TextField(value = name, onValueChange = { name = it })
+        var error by remember { mutableStateOf("") }
+
+        TextField(value = name, onValueChange = {
+            name = it
+            error = ""
+        })
+
+        AnimatedVisibility(visible = error.isNotEmpty()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 5.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ErrorOutline,
+                    contentDescription = "error icon",
+                    modifier = Modifier.size(22.dp),
+                    tint = Yellow40
+                )
+                Text(
+                    text = error,
+                    fontSize = 17.sp,
+                    color = Yellow40,
+                    modifier = Modifier.padding(start = 5.dp)
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(30.dp))
 
         Button(
-            onClick = { },
+            onClick = {
+                if (name.isNotEmpty())
+                    onSignInClick(name)
+                else if (name.length <= 3)
+                    error = "Should be more that 3 letters"
+                else
+                    error = "Name cannot be empty"
+            },
         ) {
             Text(text = "sign in to ping", fontSize = 20.sp)
         }

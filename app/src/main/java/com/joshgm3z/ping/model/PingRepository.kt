@@ -6,6 +6,7 @@ import com.joshgm3z.ping.data.Chat
 import com.joshgm3z.ping.data.User
 import com.joshgm3z.ping.model.firestore.FirestoreDb
 import com.joshgm3z.ping.model.room.PingDb
+import com.joshgm3z.ping.utils.SharedPrefUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -35,5 +36,22 @@ class PingRepository(
             {
                 Log.w(TAG, "error adding chat")
             })
+    }
+
+    fun checkUser(name: String, onCheckComplete: (user: User?) -> Unit) {
+        firestoreDb.checkUser(name) { onCheckComplete(it) }
+    }
+
+    fun registerUser(name: String, registerComplete: (isSuccess: Boolean, message: String) -> Unit) {
+        val newUser = User(name)
+        newUser.imagePath = ""
+        firestoreDb.createUser(newUser) { user, message ->
+            if (user != null) {
+                SharedPrefUtil.setUser(user)
+                registerComplete(true, message)
+            } else {
+                registerComplete(false, message)
+            }
+        }
     }
 }

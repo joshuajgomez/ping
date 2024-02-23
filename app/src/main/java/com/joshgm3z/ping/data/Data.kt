@@ -38,23 +38,22 @@ data class Chat(
 }
 
 @Entity
-data class User(val name: String = "") {
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+data class User(var name: String = "") {
+    @PrimaryKey
     var docId: String = ""
-    var picture: Int = 0
+    var imagePath: String = ""
 
     companion object {
         fun random(): User {
             val user = User(randomName())
             user.docId = System.currentTimeMillis().toString()
-            user.picture = R.drawable.default_user
+            user.imagePath = ""
             return user
         }
     }
 
     override fun toString(): String {
-        return "User(name='$name', id=$id, docId='$docId', picture=$picture)"
+        return "User(name='$name', docId='$docId', picture=$imagePath)"
     }
 }
 

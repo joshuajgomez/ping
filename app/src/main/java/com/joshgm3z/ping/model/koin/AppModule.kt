@@ -5,6 +5,7 @@ import com.joshgm3z.ping.model.PingRepository
 import com.joshgm3z.ping.ui.chat.ChatViewModel
 import com.joshgm3z.ping.model.firestore.FirestoreDb
 import com.joshgm3z.ping.model.room.PingDb
+import com.joshgm3z.ping.ui.frx.SignInViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -12,7 +13,8 @@ val appModule = module {
     single {
         Room.databaseBuilder(
             get(),
-            PingDb::class.java, "ping-db")
+            PingDb::class.java, "ping-db"
+        )
             .fallbackToDestructiveMigration()
             .build()
     }
@@ -24,5 +26,8 @@ val appModule = module {
     }
     viewModel {
         ChatViewModel(get())
+    }
+    viewModel {
+        SignInViewModel(get())
     }
 }
