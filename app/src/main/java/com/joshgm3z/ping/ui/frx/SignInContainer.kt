@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.ui.frx
 
+import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,9 +17,13 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,13 +36,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.joshgm3z.ping.R
+import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.theme.Purple60
 import com.joshgm3z.ping.ui.theme.Yellow40
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun SignInContainer(onSignInClick: (name: String) -> Unit = {}) {
+fun SignInContainer(signInViewModel: SignInViewModel, goToHome: () -> Unit) {
+    val uiState = signInViewModel.uiState.collectAsState()
+    when (uiState.value) {
+        is SignInUiState.SignIn -> SignInScreen {
+            signInViewModel.onSignInClick(it)
+        }
+        is SignInUiState.SignUp -> {}
+        is SignInUiState.Loading -> LoadingContainer((uiState.value as SignInUiState.Loading).message)
+        is SignInUiState.GoToHome -> goToHome()
+    }
+}
+
+@Composable
+fun SignInScreen(onSignInClick: (name: String) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
