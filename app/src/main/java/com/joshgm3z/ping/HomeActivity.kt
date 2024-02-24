@@ -70,7 +70,8 @@ class HomeActivity : ComponentActivity() {
                             Logger.warn("navHome")
                             HomeScreenContainer(
                                 homeViewModel = get(),
-                                onSearchClick = { navController.navigate(navSearch) }
+                                onSearchClick = { navController.navigate(navSearch) },
+                                onChatClick = { navController.navigate("$navChat/${it.otherGuy.docId}") },
                             )
                         }
 
@@ -91,7 +92,7 @@ class HomeActivity : ComponentActivity() {
                         composable(navSearch) {
                             Logger.warn("navSearch")
                             SearchContainer(
-                                homeViewModel = get(),
+                                searchViewModel = get(),
                                 onSearchItemClick = { navController.navigate("$navChat/${it.docId}") },
                                 onCancelClick = { navController.navigate(navHome) }
                             )

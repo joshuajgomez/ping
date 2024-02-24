@@ -3,7 +3,6 @@ package com.joshgm3z.ping.data
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.joshgm3z.ping.R
 import com.joshgm3z.ping.utils.getRandomFromTo
 import com.joshgm3z.ping.utils.randomChat
 import com.joshgm3z.ping.utils.randomName
@@ -18,8 +17,9 @@ data class Chat(
     var localId: Long = 0
     var docId: String = ""
     var sentTime: Long = 0
-    var fromUserId: String? = null
-    var toUserId: String? = null
+    var fromUserId: String = ""
+    var toUserId: String = ""
+
     @Ignore
     var isOutwards: Boolean = true
 
@@ -63,23 +63,17 @@ data class User(var name: String = "") {
     }
 }
 
-data class HomeChat(
-    val id: String,
-    val sender: User,
-    val chat: Chat,
-    val count: Int,
-) {
+class HomeChat {
+    var otherGuy: User = User()
+    var lastChat: Chat = Chat("hey")
+    var count: Int = 1
+
     companion object {
-        fun random(): HomeChat = HomeChat(
-            Random.nextInt().toString(),
-            randomUser(),
-            randomChat(),
-            Random.nextInt(from = 0, until = 100)
-        )
+        fun random() = HomeChat()
     }
 
     override fun toString(): String {
-        return "HomeChat(id='$id', sender=$sender, chat=$chat, count=$count)"
+        return "HomeChat(otherGuy=$otherGuy, lastChat=$lastChat, count=$count)"
     }
 
 }

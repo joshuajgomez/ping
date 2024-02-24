@@ -7,6 +7,7 @@ import com.joshgm3z.ping.model.firestore.FirestoreDb
 import com.joshgm3z.ping.model.room.PingDb
 import com.joshgm3z.ping.utils.DataStoreUtil
 import com.joshgm3z.ping.viewmodels.HomeViewModel
+import com.joshgm3z.ping.viewmodels.SearchViewModel
 import com.joshgm3z.ping.viewmodels.SignInViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -36,6 +37,9 @@ val appModule = module {
         SignInViewModel(get())
     }
     viewModel {
-        HomeViewModel(get())
+        HomeViewModel(get(), get())
+    }
+    viewModel {
+        SearchViewModel(get())
     }
 }

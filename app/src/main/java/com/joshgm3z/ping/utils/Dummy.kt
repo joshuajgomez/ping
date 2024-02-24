@@ -13,13 +13,13 @@ fun getChatList() = listOf(
     Chat.random(),
 )
 
-fun getRandomFromTo(): Pair<String?, String?> {
+fun getRandomFromTo(): Pair<String, String> {
     return listOf(
-        Pair<String?, String?>(null, "some"),
-        Pair<String?, String?>(null, "user"),
-        Pair<String?, String?>("is", null),
-        Pair<String?, String?>(null, "in the"),
-        Pair<String?, String?>("run", null),
+        Pair("", "some"),
+        Pair("", "user"),
+        Pair("is", ""),
+        Pair("", "in the"),
+        Pair("run", ""),
     ).random()
 }
 

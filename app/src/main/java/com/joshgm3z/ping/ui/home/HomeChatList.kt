@@ -36,8 +36,10 @@ fun HomeChatList(
     onChatClick: (homeChat: HomeChat) -> Unit = {},
 ) {
     LazyColumn(modifier = Modifier.padding(top = 5.dp)) {
-        items(items = homeChatList) {
-            HomeChatItem(it)
+        items(items = homeChatList) { it ->
+            HomeChatItem(it) {
+                onChatClick(it)
+            }
         }
     }
 }
@@ -62,7 +64,7 @@ fun HomeChatItem(
                 }
         )
         Text(
-            text = homeChat.sender.name,
+            text = homeChat.otherGuy.name,
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier
@@ -75,7 +77,7 @@ fun HomeChatItem(
             overflow = TextOverflow.Ellipsis
         )
         Text(
-            text = homeChat.chat.message,
+            text = homeChat.lastChat.message,
             fontSize = 15.sp,
             modifier = Modifier
                 .constrainAs(message) {

@@ -3,7 +3,6 @@ package com.joshgm3z.ping.ui.search
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,11 +37,11 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.data.User
 import com.joshgm3z.ping.ui.common.CustomTextField
-import com.joshgm3z.ping.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.theme.Purple60
 import com.joshgm3z.ping.utils.randomUser
 import com.joshgm3z.ping.utils.randomUsers
 import com.joshgm3z.ping.viewmodels.SearchUiState
+import com.joshgm3z.ping.viewmodels.SearchViewModel
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -77,13 +76,13 @@ fun EmptyScreen(message: String = "No users found") {
 
 @Composable
 fun SearchContainer(
-    homeViewModel: HomeViewModel,
+    searchViewModel: SearchViewModel,
     onSearchItemClick: (user: User) -> Unit,
     onCancelClick: () -> Unit,
 ) {
     Column {
         SearchBar { onCancelClick() }
-        val uiState = homeViewModel.uiState.collectAsState()
+        val uiState = searchViewModel.uiState.collectAsState()
         when (uiState.value) {
             is SearchUiState.Empty -> EmptyScreen()
             is SearchUiState.SearchResult -> TODO()
