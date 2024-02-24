@@ -1,8 +1,10 @@
 package com.joshgm3z.ping
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -12,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.joshgm3z.ping.service.PingService
 import com.joshgm3z.ping.viewmodels.ChatViewModel
 import com.joshgm3z.ping.ui.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.frx.SignInContainer
@@ -34,6 +37,11 @@ class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FirebaseAnalytics.getInstance(this).logEvent("MainActivity_onCreate", Bundle())
+        if (!PingService.isRunning) {
+            Logger.debug("PingService.isRunning = [${PingService.isRunning}]")
+            val intent = Intent(this, PingService.javaClass)
+            startService(intent)
+        }
         setContent {
             PingTheme {
                 Surface(
@@ -50,25 +58,23 @@ class HomeActivity : ComponentActivity() {
                         startDestination = if (isUserSignedIn) navHome else navSignIn
                     ) {
 
-                        val signInViewModel = SignInViewModel(get())
                         composable(navSignIn) {
                             Logger.warn("signIn")
                             SignInContainer(
-                                signInViewModel = signInViewModel,
+                                signInViewModel = get(),
                                 goToHome = { navController.navigate(navHome) }
                             )
                         }
 
-                        val homeViewModel = HomeViewModel(get())
                         composable(navHome) {
                             Logger.warn("navHome")
                             HomeScreenContainer(
-                                homeViewModel = homeViewModel,
+                                homeViewModel = get(),
                                 onSearchClick = { navController.navigate(navSearch) }
                             )
                         }
 
-                        val chatViewModel = ChatViewModel(get())
+                        val chatViewModel: ChatViewModel = get()
                         composable("$navChat/{userId}") {
                             val userId = it.arguments?.getString("userId")
                             LaunchedEffect(key1 = userId) {
@@ -85,7 +91,7 @@ class HomeActivity : ComponentActivity() {
                         composable(navSearch) {
                             Logger.warn("navSearch")
                             SearchContainer(
-                                homeViewModel = homeViewModel,
+                                homeViewModel = get(),
                                 onSearchItemClick = { navController.navigate("$navChat/${it.docId}") },
                                 onCancelClick = { navController.navigate(navHome) }
                             )

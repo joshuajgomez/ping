@@ -142,6 +142,7 @@ fun SearchBar(onCancelClick: () -> Unit = {}) {
     ) {
         var text by remember { mutableStateOf("") }
         CustomTextField(
+            text = text,
             hintText = "Search for user",
             modifier = Modifier.background(Color.LightGray)
         ) {

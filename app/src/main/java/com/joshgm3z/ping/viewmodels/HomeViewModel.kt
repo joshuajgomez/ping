@@ -15,7 +15,7 @@ sealed class SearchUiState {
     data class Empty(val message: String) : SearchUiState()
 }
 
-class HomeViewModel(pingRepository: PingRepository) : ViewModel() {
+class HomeViewModel(private val pingRepository: PingRepository) : ViewModel() {
 
     private val _uiState: MutableStateFlow<SearchUiState> =
         MutableStateFlow(SearchUiState.Empty("No users yet"))

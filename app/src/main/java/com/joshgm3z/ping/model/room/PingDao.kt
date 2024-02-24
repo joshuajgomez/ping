@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.model.room
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -9,18 +8,25 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.joshgm3z.ping.data.Chat
 import com.joshgm3z.ping.data.User
-import com.joshgm3z.ping.utils.Logger
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ChatDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(chat: Chat)
 
     @Query("select * from Chat where fromUserId = :userId or toUserId = :userId")
-    fun getChatForUser(userId: String): LiveData<List<Chat>>
+    fun getChatsOfUser(userId: String): Flow<List<Chat>>
 
     @Update
     suspend fun update(chat: Chat)
+
+    @Transaction
+    suspend fun insertAll(chats: List<Chat>) {
+        for (chat in chats) {
+            insert(chat)
+        }
+    }
 }
 
 @Dao

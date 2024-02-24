@@ -23,14 +23,14 @@ import androidx.lifecycle.MutableLiveData
 import com.joshgm3z.ping.data.Chat
 import com.joshgm3z.ping.ui.theme.Gray40
 import com.joshgm3z.ping.ui.theme.Purple60
+import com.joshgm3z.ping.utils.DataStoreUtil
 import com.joshgm3z.ping.utils.getChatList
 import com.joshgm3z.ping.utils.getPrettyTime
 
 @Composable
-fun ChatList(chatListLive: LiveData<List<Chat>> = MutableLiveData()) {
-    val chatList = chatListLive.observeAsState(listOf()).value
+fun ChatList(chats: List<Chat> = emptyList()) {
     LazyColumn(reverseLayout = true) {
-        items(items = chatList) {
+        items(items = chats) {
             ChatItem(chat = it)
         }
     }
@@ -60,13 +60,14 @@ fun ChatItem(chat: Chat) {
         Text(
             text = getPrettyTime(chat.sentTime),
             color = Color.DarkGray,
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp))
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+        )
     }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewChatList(){
+fun PreviewChatList() {
     LazyColumn(reverseLayout = true) {
         items(items = getChatList()) {
             ChatItem(chat = it)

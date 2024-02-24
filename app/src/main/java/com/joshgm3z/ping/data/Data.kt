@@ -1,6 +1,7 @@
 package com.joshgm3z.ping.data
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.utils.getRandomFromTo
@@ -19,6 +20,7 @@ data class Chat(
     var sentTime: Long = 0
     var fromUserId: String? = null
     var toUserId: String? = null
+    @Ignore var isOutwards: Boolean = true
 
     companion object {
         fun random(): Chat {

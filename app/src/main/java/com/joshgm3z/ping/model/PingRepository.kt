@@ -1,13 +1,15 @@
 package com.joshgm3z.ping.model
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import com.joshgm3z.ping.data.Chat
 import com.joshgm3z.ping.data.User
 import com.joshgm3z.ping.model.firestore.FirestoreDb
 import com.joshgm3z.ping.model.room.PingDb
 import com.joshgm3z.ping.utils.Logger
 import com.joshgm3z.ping.utils.DataStoreUtil
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class PingRepository(
@@ -16,9 +18,11 @@ class PingRepository(
     private val dataStore: DataStoreUtil,
 ) {
 
-    private val TAG = "PingRepository"
-
-    fun getChatForUser(userId: String): LiveData<List<Chat>> = db.chatDao().getChatForUser(userId)
+    init {
+        GlobalScope.launch {
+            startFetchingChats()
+        }
+    }
 
     suspend fun getUsers(): List<User> = db.userDao().getAll()
 
@@ -45,8 +49,31 @@ class PingRepository(
             },
             // error adding chat
             {
-                Log.w(TAG, "error adding chat")
-            })
+                Logger.warn("error adding chat")
+            }
+        )
+
+        runBlocking {
+            Thread.sleep(2000)
+            addDummyChat(chat)
+        }
+    }
+
+    private fun addDummyChat(chat: Chat) {
+        Logger.debug("chat = [${chat}]")
+        // dummy
+        val dummy = Chat(chat.message + " returned")
+        dummy.toUserId = chat.fromUserId
+        dummy.fromUserId = chat.toUserId
+        chat.sentTime = System.currentTimeMillis()
+        firestoreDb.registerChat(dummy,
+            // chat added to firestore
+            {
+            },
+            // error adding chat
+            {
+            }
+        )
     }
 
     fun checkUser(name: String, onCheckComplete: (user: User?) -> Unit) {
@@ -75,5 +102,19 @@ class PingRepository(
         val user = db.userDao().getUser(userId)
         Logger.debug("userId = [${userId}], user = [$user]")
         return user
+    }
+
+    fun getChatsOfUser(userId: String): Flow<List<Chat>> {
+        return db.chatDao().getChatsOfUser(userId)
+    }
+
+    suspend fun startFetchingChats() {
+        Logger.entry()
+        val user: User = dataStore.getCurrentUser()
+        firestoreDb.listenForChatToUser(user.docId) {
+            runBlocking {
+                db.chatDao().insertAll(it)
+            }
+        }
     }
 }

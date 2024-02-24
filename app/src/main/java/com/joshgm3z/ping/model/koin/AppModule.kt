@@ -30,7 +30,7 @@ val appModule = module {
         PingRepository(get(), get(), get())
     }
     viewModel {
-        ChatViewModel(get())
+        ChatViewModel(get(), get())
     }
     viewModel {
         SignInViewModel(get())

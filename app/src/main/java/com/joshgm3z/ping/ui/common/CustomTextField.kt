@@ -32,10 +32,10 @@ import com.joshgm3z.ping.ui.theme.Purple60
 @Composable
 fun CustomTextField(
     modifier: Modifier = Modifier,
+    text: String = "",
     hintText: String = "Type something",
     onValueChange: (text: String) -> Unit = {},
 ) {
-    var text by remember { mutableStateOf("") }
     OutlinedTextField(
         modifier = modifier
             .height(70.dp)
@@ -51,7 +51,6 @@ fun CustomTextField(
         },
         value = text,
         onValueChange = {
-            text = it
             onValueChange(it)
         },
         trailingIcon = {
@@ -60,7 +59,7 @@ fun CustomTextField(
                     imageVector = Icons.Filled.Clear,
                     contentDescription = "clear message",
                     tint = Purple60,
-                    modifier = Modifier.clickable { text = "" }
+                    modifier = Modifier.clickable { onValueChange("") }
                 )
             }
         },

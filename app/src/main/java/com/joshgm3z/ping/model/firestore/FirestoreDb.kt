@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.model.firestore
 
-import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.joshgm3z.ping.data.Chat
@@ -25,21 +24,12 @@ class FirestoreDb {
         db.collection(keyCollectionChatList)
             .add(chatDoc)
             .addOnSuccessListener {
-                Log.d(TAG, "chat added with id: ${it.id}")
+                Logger.debug("chat <${chat}> added with id: ${it.id}")
                 onIdSet(it.id)
             }
             .addOnFailureListener {
-                Log.w(TAG, "error adding chat: ${it.message}")
+                Logger.warn("error adding chat: ${it.message}")
                 onError()
-            }
-    }
-
-    fun observeChatList() {
-        db.collection(keyCollectionChatList)
-            .get()
-            .addOnSuccessListener { result ->
-                val chatList = FirestoreConverter.getChatListFromDocument(result)
-                Log.i("FireStoreConverter", chatList.toString())
             }
     }
 
@@ -86,4 +76,21 @@ class FirestoreDb {
                 Logger.warn("error fetching user list: ${it.message}")
             }
     }
+
+    fun listenForChatToUser(
+        userId: String,
+        onChatReceived: (chats: List<Chat>) -> Unit,
+    ) {
+        Logger.debug("userId = [${userId}]")
+        db.collection(keyCollectionChatList)
+            .whereEqualTo(FirestoreConverter.keyToUserId, userId)
+            .addSnapshotListener { value, error ->
+                Logger.warn("addSnapshotListener value = " + (value?.size() ?: 0))
+                if (value != null) {
+                    val chats = FirestoreConverter.getChatListFromDocument(value)
+                    onChatReceived(chats)
+                }
+            }
+    }
+
 }

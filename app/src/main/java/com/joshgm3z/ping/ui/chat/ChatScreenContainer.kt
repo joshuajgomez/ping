@@ -7,12 +7,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.joshgm3z.ping.data.Chat
 import com.joshgm3z.ping.data.User
 import com.joshgm3z.ping.ui.common.LoadingContainer
+import com.joshgm3z.ping.utils.Logger
 import com.joshgm3z.ping.utils.randomUser
+import com.joshgm3z.ping.utils.randomUsers
 import com.joshgm3z.ping.viewmodels.ChatUiState
 import com.joshgm3z.ping.viewmodels.ChatViewModel
 
@@ -20,13 +20,18 @@ import com.joshgm3z.ping.viewmodels.ChatViewModel
 fun ChatScreenContainer(chatViewModel: ChatViewModel, onBackClick: () -> Unit) {
     val uiState = chatViewModel.uiState.collectAsState()
     when (uiState.value) {
-        is ChatUiState.Loading -> LoadingContainer(message = (uiState.value as ChatUiState.Loading).message)
+        is ChatUiState.Loading -> {
+            Logger.warn("ChatUiState.Loading")
+            LoadingContainer(message = (uiState.value as ChatUiState.Loading).message)
+        }
         is ChatUiState.Ready -> {
-            val user: User = (uiState.value as ChatUiState.Ready).user
+            val user: User = (uiState.value as ChatUiState.Ready).you
+            val chats: List<Chat> = (uiState.value as ChatUiState.Ready).chats
+            Logger.warn("ChatUiState.Ready: ${chats.size}")
             ChatScreen(
-                chatListLive = chatViewModel.chatList,
+                chats = chats,
                 user = user,
-                onSendClick = { chatViewModel.onSendButtonClick(user.docId, it) },
+                onSendClick = { chatViewModel.onSendButtonClick(it) },
                 onBackClick = { onBackClick() }
             )
         }
@@ -36,7 +41,7 @@ fun ChatScreenContainer(chatViewModel: ChatViewModel, onBackClick: () -> Unit) {
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun ChatScreen(
-    chatListLive: LiveData<List<Chat>> = MutableLiveData(),
+    chats: List<Chat> = emptyList(),
     user: User? = randomUser(),
     onSendClick: (message: String) -> Unit = {},
     onBackClick: () -> Unit = {},
@@ -44,7 +49,7 @@ fun ChatScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         Title(user) { onBackClick() }
         Surface(modifier = Modifier.weight(1f)) {
-            ChatList(chatListLive)
+            ChatList(chats)
         }
         InputBox(onSendClick = { onSendClick(it) })
     }

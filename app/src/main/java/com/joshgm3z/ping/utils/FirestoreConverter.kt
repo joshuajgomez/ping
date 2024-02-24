@@ -6,13 +6,13 @@ import com.joshgm3z.ping.data.User
 
 class FirestoreConverter {
     companion object {
-        private val keyLocalId = "localId"
-        private val keySentTime = "sentTime"
-        private val keyFromUserId = "fromUserId"
-        private val keyToUserId = "toUserId"
-        private val keyMessage = "message"
-        private val keyName = "name"
-        private val keyImagePath = "imagePath"
+        val keyLocalId = "localId"
+        val keySentTime = "sentTime"
+        val keyFromUserId = "fromUserId"
+        val keyToUserId = "toUserId"
+        val keyMessage = "message"
+        val keyName = "name"
+        val keyImagePath = "imagePath"
 
         private val defaultDocId = "pending"
 

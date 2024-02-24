@@ -12,6 +12,12 @@
         android:roundIcon="@mipmap/ic_ping_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Ping">
+
+        <service
+            android:name=".service.PingService"
+            android:enabled="true"
+            android:exported="true" />
+
         <activity
             android:name=".HomeActivity"
             android:exported="true"
@@ -19,6 +25,7 @@
             android:theme="@style/Theme.Ping">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

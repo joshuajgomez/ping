@@ -36,7 +36,7 @@ fun InputBox(onSendClick: (text: String) -> Unit = {}, defaultText: String = "")
             .background(Color.LightGray)
     ) {
         var text by remember { mutableStateOf(defaultText) }
-        CustomTextField(modifier = Modifier.weight(1f)) {
+        CustomTextField(text = text, modifier = Modifier.weight(1f)) {
             text = it
         }
 
