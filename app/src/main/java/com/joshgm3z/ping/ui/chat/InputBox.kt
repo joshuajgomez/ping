@@ -42,6 +42,7 @@ fun InputBox(onSendClick: (text: String) -> Unit = {}, defaultText: String = "")
             text = text,
             modifier = Modifier.weight(1f),
             isSingleLine = false,
+            isFocusNeeded = false
         ) {
             text = it
         }

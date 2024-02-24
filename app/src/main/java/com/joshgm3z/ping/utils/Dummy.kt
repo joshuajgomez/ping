@@ -57,7 +57,7 @@ fun randomMessage() =
         "I just wanted to confirm one thing with you real something something",
         "I just wanted to confirm one thing with you real something something",
         "I just wanted to confirm one thing with you real something something",
-        "I just wanted to confirm one thing with you real something something",
+        "I just wanted to confirm one thing with you real something something, I just wanted to confirm one thing with you real something something, I just wanted to confirm one thing with you real something something, I just wanted to confirm one thing with you real something something, ",
         "Ok ok",
         "."
     ).random()

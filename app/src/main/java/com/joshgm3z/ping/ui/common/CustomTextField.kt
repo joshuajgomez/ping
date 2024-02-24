@@ -32,6 +32,7 @@ fun CustomTextField(
     text: String = "",
     hintText: String = "Type something",
     isSingleLine: Boolean = true,
+    isFocusNeeded: Boolean = true,
     onTextChanged: (text: String) -> Unit = {},
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -73,6 +74,8 @@ fun CustomTextField(
         singleLine = isSingleLine
     )
     LaunchedEffect(key1 = Unit) {
-        focusRequester.requestFocus()
+        if (isFocusNeeded) {
+            focusRequester.requestFocus()
+        }
     }
 }

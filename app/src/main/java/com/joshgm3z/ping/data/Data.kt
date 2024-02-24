@@ -5,6 +5,7 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.joshgm3z.ping.utils.getRandomFromTo
 import com.joshgm3z.ping.utils.randomChat
+import com.joshgm3z.ping.utils.randomMessage
 import com.joshgm3z.ping.utils.randomName
 import com.joshgm3z.ping.utils.randomUser
 import kotlin.random.Random
@@ -25,11 +26,11 @@ data class Chat(
 
     companion object {
         fun random(): Chat {
-            val chat = Chat(randomName())
+            val chat = Chat(randomMessage())
             chat.sentTime = System.currentTimeMillis()
-            val pair = getRandomFromTo()
-            chat.fromUserId = pair.first
-            chat.toUserId = pair.second
+            chat.fromUserId = ""
+            chat.toUserId = ""
+            chat.isOutwards = Random.nextBoolean()
             return chat
         }
     }
