@@ -5,6 +5,7 @@ import com.joshgm3z.ping.model.PingRepository
 import com.joshgm3z.ping.viewmodels.ChatViewModel
 import com.joshgm3z.ping.model.firestore.FirestoreDb
 import com.joshgm3z.ping.model.room.PingDb
+import com.joshgm3z.ping.utils.DataStoreUtil
 import com.joshgm3z.ping.viewmodels.HomeViewModel
 import com.joshgm3z.ping.viewmodels.SignInViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -23,7 +24,10 @@ val appModule = module {
         FirestoreDb()
     }
     single {
-        PingRepository(get(), get())
+        DataStoreUtil(get())
+    }
+    single {
+        PingRepository(get(), get(), get())
     }
     viewModel {
         ChatViewModel(get())

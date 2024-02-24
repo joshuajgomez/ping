@@ -6,13 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshgm3z.ping.viewmodels.ChatViewModel
-import com.joshgm3z.ping.ui.chat.ChatScreen
 import com.joshgm3z.ping.ui.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.frx.SignInContainer
 import com.joshgm3z.ping.viewmodels.SignInViewModel
@@ -21,9 +21,8 @@ import com.joshgm3z.ping.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.search.SearchContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.utils.Logger
-import com.joshgm3z.ping.utils.SharedPrefUtil
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.joshgm3z.ping.utils.DataStoreUtil
+import org.koin.android.ext.android.get
 
 class HomeActivity : ComponentActivity() {
 
@@ -43,33 +42,40 @@ class HomeActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
 
-                    val chatViewModel by inject<ChatViewModel>()
+                    val dataStore: DataStoreUtil = get()
+                    val isUserSignedIn = dataStore.isUserSignedIn()
 
                     NavHost(
                         navController = navController,
-                        startDestination = if (SharedPrefUtil.isUserSignedIn()) navHome else navSignIn
+                        startDestination = if (isUserSignedIn) navHome else navSignIn
                     ) {
 
+                        val signInViewModel = SignInViewModel(get())
                         composable(navSignIn) {
-                            val signInViewModel by viewModel<SignInViewModel>()
-                            SignInContainer(signInViewModel) {
-                                // on sign in complete
-                                navController.navigate(navHome)
-                            }
+                            Logger.warn("signIn")
+                            SignInContainer(
+                                signInViewModel = signInViewModel,
+                                goToHome = { navController.navigate(navHome) }
+                            )
                         }
 
+                        val homeViewModel = HomeViewModel(get())
                         composable(navHome) {
-                            val homeViewModel by viewModel<HomeViewModel>()
-                            HomeScreenContainer(homeViewModel) {
-                                // on search icon click
-                                navController.navigate(navSearch)
-                            }
+                            Logger.warn("navHome")
+                            HomeScreenContainer(
+                                homeViewModel = homeViewModel,
+                                onSearchClick = { navController.navigate(navSearch) }
+                            )
                         }
 
+                        val chatViewModel = ChatViewModel(get())
                         composable("$navChat/{userId}") {
                             val userId = it.arguments?.getString("userId")
+                            LaunchedEffect(key1 = userId) {
+                                Logger.warn("navChat setUser = [$userId]")
+                                chatViewModel.setUser(userId!!)
+                            }
                             Logger.warn("navChat userId = [$userId]")
-                            chatViewModel.fetchUser(userId!!)
                             ChatScreenContainer(
                                 chatViewModel = chatViewModel,
                                 onBackClick = { navController.navigate(navHome) }
@@ -77,17 +83,11 @@ class HomeActivity : ComponentActivity() {
                         }
 
                         composable(navSearch) {
-                            val homeViewModel by viewModel<HomeViewModel>()
+                            Logger.warn("navSearch")
                             SearchContainer(
                                 homeViewModel = homeViewModel,
-                                onSearchItemClick = {
-                                    // launch chat screen for selected user
-                                    navController.navigate("$navChat/${it.docId}")
-                                },
-                                onCancelClick = {
-                                    // launch chat screen for selected user
-                                    navController.navigate(navHome)
-                                }
+                                onSearchItemClick = { navController.navigate("$navChat/${it.docId}") },
+                                onCancelClick = { navController.navigate(navHome) }
                             )
                         }
 

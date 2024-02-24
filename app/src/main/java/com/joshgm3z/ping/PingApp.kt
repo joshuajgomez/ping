@@ -13,13 +13,5 @@ class PingApp : Application() {
             androidContext(this@PingApp)
             modules(appModule)
         }
-        context = applicationContext
-    }
-
-    companion object {
-        private lateinit var context: Context
-        fun getContext(): Context {
-            return context
-        }
     }
 }

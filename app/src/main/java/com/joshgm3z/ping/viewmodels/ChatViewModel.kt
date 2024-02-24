@@ -36,12 +36,10 @@ class ChatViewModel(private val repository: PingRepository) : ViewModel() {
         }
     }
 
-    fun fetchUser(userId: String) {
+    fun setUser(userId: String) {
         Logger.debug("userId = [${userId}]")
         viewModelScope.launch {
-            Logger.debug("user before = [$user]")
             user = repository.getUser(userId)
-            Logger.debug("user after = [$user]")
             chatList = repository.getChatForUser(userId)
         }.invokeOnCompletion {
             Logger.debug("chat screen ready calling")

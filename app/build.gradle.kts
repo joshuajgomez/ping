@@ -97,4 +97,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore")
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

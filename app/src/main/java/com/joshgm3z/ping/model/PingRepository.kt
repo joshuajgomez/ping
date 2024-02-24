@@ -7,14 +7,16 @@ import com.joshgm3z.ping.data.User
 import com.joshgm3z.ping.model.firestore.FirestoreDb
 import com.joshgm3z.ping.model.room.PingDb
 import com.joshgm3z.ping.utils.Logger
-import com.joshgm3z.ping.utils.SharedPrefUtil
+import com.joshgm3z.ping.utils.DataStoreUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class PingRepository(
     private val db: PingDb,
     private val firestoreDb: FirestoreDb,
+    private val dataStore: DataStoreUtil,
 ) {
 
     private val TAG = "PingRepository"
@@ -27,7 +29,7 @@ class PingRepository(
         firestoreDb.getUserList {
             Logger.debug("it = [$it]")
             if (it.isNotEmpty()) {
-                GlobalScope.launch {
+                runBlocking {
                     db.userDao().insertAll(it)
                 }
             }
@@ -40,7 +42,7 @@ class PingRepository(
             // chat added to firestore
             {
                 chat.docId = it
-                GlobalScope.launch(Dispatchers.IO) {
+                runBlocking {
                     db.chatDao().update(chat)
                 }
             },
@@ -62,8 +64,10 @@ class PingRepository(
         newUser.imagePath = ""
         firestoreDb.createUser(newUser) { user, message ->
             if (user != null) {
-                SharedPrefUtil.setUser(user)
-                registerComplete(true, message)
+                runBlocking {
+                    dataStore.setUser(user)
+                    registerComplete(true, message)
+                }
             } else {
                 registerComplete(false, message)
             }
