@@ -2,16 +2,18 @@ package com.joshgm3z.ping.ui.chat
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joshgm3z.ping.ui.common.CustomTextField
+import com.joshgm3z.ping.ui.theme.Purple10
 import com.joshgm3z.ping.ui.theme.Purple60
 
 @Composable
@@ -31,30 +34,39 @@ fun InputBox(onSendClick: (text: String) -> Unit = {}, defaultText: String = "")
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .height(70.dp)
             .fillMaxWidth()
-            .background(Color.LightGray)
+            .background(Color.Transparent)
     ) {
         var text by remember { mutableStateOf(defaultText) }
-        CustomTextField(text = text, modifier = Modifier.weight(1f)) {
+        CustomTextField(
+            text = text,
+            modifier = Modifier.weight(1f),
+            isSingleLine = false,
+        ) {
             text = it
         }
-
-        Icon(
-            imageVector = Icons.Default.Send,
-            contentDescription = "send message",
-            tint = Color.White,
-            modifier = Modifier
-                .padding(end = 10.dp)
-                .clip(CircleShape)
-                .size(40.dp)
-                .background(color = Purple60)
-                .padding(all = 8.dp)
-                .clickable(enabled = text.isNotEmpty()) {
-                    onSendClick(text)
-                    text = ""
-                }
-        )
+        IconButton(
+            enabled = text.isNotEmpty(),
+            onClick = {
+                onSendClick(text)
+                text = ""
+            }) {
+            Icon(
+                imageVector = Icons.Default.Send,
+                contentDescription = "send message",
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(40.dp)
+                    .background(color = Purple60)
+                    .padding(all = 9.dp)
+                    .clickable(enabled = text.isNotEmpty()) {
+                        onSendClick(text)
+                        text = ""
+                    },
+                tint = Purple10
+            )
+        }
+        Spacer(modifier = Modifier.width(15.dp))
     }
 }
 

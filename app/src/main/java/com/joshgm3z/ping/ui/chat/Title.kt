@@ -41,12 +41,11 @@ fun Title(user: User? = randomUser(), onBackClick: () -> Unit = {}) {
         modifier = Modifier
             .height(70.dp)
             .fillMaxWidth()
-            .background(Purple60)
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,
             contentDescription = "go to home",
-            tint = Color.White,
+            tint = Purple60,
             modifier = Modifier
                 .size(60.dp)
                 .padding(10.dp)
@@ -66,7 +65,7 @@ fun Title(user: User? = randomUser(), onBackClick: () -> Unit = {}) {
             Text(
                 text = it.name,
                 fontSize = 22.sp,
-                color = Color.White,
+                color = Purple60,
                 modifier = Modifier.widthIn(80.dp)
             )
         }
@@ -74,7 +73,7 @@ fun Title(user: User? = randomUser(), onBackClick: () -> Unit = {}) {
         Icon(
             imageVector = Icons.Default.MoreVert,
             contentDescription = "more options",
-            tint = Color.White,
+            tint = Purple60,
             modifier = Modifier
                 .size(60.dp)
                 .padding(15.dp)

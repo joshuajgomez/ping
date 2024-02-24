@@ -1,7 +1,6 @@
 package com.joshgm3z.ping.ui.search
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.NoAccounts
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,7 +36,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.data.User
 import com.joshgm3z.ping.ui.common.CustomTextField
-import com.joshgm3z.ping.ui.theme.Purple60
 import com.joshgm3z.ping.utils.randomUser
 import com.joshgm3z.ping.utils.randomUsers
 import com.joshgm3z.ping.viewmodels.SearchUiState
@@ -139,22 +137,19 @@ fun SearchBar(onCancelClick: () -> Unit = {}) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Icon(
+            imageVector = Icons.Default.ArrowBack,
+            contentDescription = "go back",
+            modifier = Modifier
+                .padding(start = 15.dp)
+                .size(30.dp)
+        )
         var text by remember { mutableStateOf("") }
         CustomTextField(
             text = text,
             hintText = "Search for user",
-            modifier = Modifier.background(Color.LightGray)
         ) {
             text = it
         }
-        Text(
-            text = "cancel",
-            fontSize = 20.sp,
-            color = Purple60,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .clickable { onCancelClick() }
-                .fillMaxWidth()
-        )
     }
 }
