@@ -8,9 +8,6 @@ import com.joshgm3z.ping.model.firestore.FirestoreDb
 import com.joshgm3z.ping.model.room.PingDb
 import com.joshgm3z.ping.utils.Logger
 import com.joshgm3z.ping.utils.DataStoreUtil
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class PingRepository(
@@ -23,7 +20,7 @@ class PingRepository(
 
     fun getChatForUser(userId: String): LiveData<List<Chat>> = db.chatDao().getChatForUser(userId)
 
-    fun getAllUsers(): List<User> = db.userDao().getAll()
+    suspend fun getUsers(): List<User> = db.userDao().getAll()
 
     fun refreshUserList() {
         firestoreDb.getUserList {

@@ -35,7 +35,7 @@ fun randomChat() = getChatList().random()
 
 fun randomUser() = User.random()
 
-fun randomUserList() = listOf(
+fun randomUsers() = listOf(
     User.random(),
     User.random(),
     User.random(),

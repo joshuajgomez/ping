@@ -32,7 +32,7 @@ interface UserDao {
     suspend fun getUser(userId: String): User
 
     @Query("select * from User")
-    fun getAll(): List<User>
+    suspend fun getAll(): List<User>
 
     @Transaction
     suspend fun insertAll(userList: List<User>) {
