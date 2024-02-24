@@ -14,22 +14,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 sealed class ChatUiState {
-    data class Ready(val message: String) : ChatUiState()
+    data class Ready(val user: User) : ChatUiState()
     data class Loading(val message: String) : ChatUiState()
 }
 
 class ChatViewModel(private val repository: PingRepository) : ViewModel() {
 
     private val _uiState: MutableStateFlow<ChatUiState> =
-        MutableStateFlow(ChatUiState.Loading("Fetching messages..."))
+        MutableStateFlow(ChatUiState.Loading("Fetching messages"))
     val uiState: StateFlow<ChatUiState> = _uiState
 
-    var user: User? = null
     var chatList: LiveData<List<Chat>> = MutableLiveData()
 
-    fun onSendButtonClick(message: String) {
+    fun onSendButtonClick(userId: String, message: String) {
         val chat = Chat(message = message)
-        chat.toUserId = user!!.docId
+        chat.toUserId = userId
         chat.sentTime = System.currentTimeMillis()
         viewModelScope.launch(Dispatchers.IO) {
             repository.addChat(chat)
@@ -38,12 +37,13 @@ class ChatViewModel(private val repository: PingRepository) : ViewModel() {
 
     fun setUser(userId: String) {
         Logger.debug("userId = [${userId}]")
+        lateinit var user: User
         viewModelScope.launch {
             user = repository.getUser(userId)
             chatList = repository.getChatForUser(userId)
         }.invokeOnCompletion {
             Logger.debug("chat screen ready calling")
-            _uiState.value = ChatUiState.Ready("chat screen ready")
+            _uiState.value = ChatUiState.Ready(user)
         }
     }
 }

@@ -21,12 +21,15 @@ fun ChatScreenContainer(chatViewModel: ChatViewModel, onBackClick: () -> Unit) {
     val uiState = chatViewModel.uiState.collectAsState()
     when (uiState.value) {
         is ChatUiState.Loading -> LoadingContainer(message = (uiState.value as ChatUiState.Loading).message)
-        is ChatUiState.Ready -> ChatScreen(
-            chatListLive = chatViewModel.chatList,
-            user = chatViewModel.user,
-            onSendClick = { chatViewModel.onSendButtonClick(it) },
-            onBackClick = { onBackClick() }
-        )
+        is ChatUiState.Ready -> {
+            val user: User = (uiState.value as ChatUiState.Ready).user
+            ChatScreen(
+                chatListLive = chatViewModel.chatList,
+                user = user,
+                onSendClick = { chatViewModel.onSendButtonClick(user.docId, it) },
+                onBackClick = { onBackClick() }
+            )
+        }
     }
 }
 
