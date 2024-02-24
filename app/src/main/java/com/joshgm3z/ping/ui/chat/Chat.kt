@@ -38,23 +38,22 @@ fun ChatList(chats: List<Chat> = emptyList()) {
 
 @Composable
 fun ChatItem(chat: Chat) {
-    val isOutwards = chat.fromUserId.isNullOrEmpty()
     Column(
         modifier = Modifier
             .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
             .fillMaxSize(),
-        horizontalAlignment = if (isOutwards) Alignment.End else Alignment.Start
+        horizontalAlignment = if (chat.isOutwards) Alignment.End else Alignment.Start
     ) {
         Box(
             Modifier
                 .clip(RoundedCornerShape(10.dp))
-                .background(if (isOutwards) Purple60 else Gray40)
+                .background(if (chat.isOutwards) Purple60 else Gray40)
                 .padding(start = 15.dp, end = 15.dp, top = 10.dp, bottom = 10.dp)
         ) {
             Text(
                 text = chat.message,
                 fontSize = 20.sp,
-                color = if (isOutwards) Color.White else Color.Black
+                color = if (chat.isOutwards) Color.White else Color.Black
             )
         }
         Text(

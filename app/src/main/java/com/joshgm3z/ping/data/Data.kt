@@ -20,7 +20,8 @@ data class Chat(
     var sentTime: Long = 0
     var fromUserId: String? = null
     var toUserId: String? = null
-    @Ignore var isOutwards: Boolean = true
+    @Ignore
+    var isOutwards: Boolean = true
 
     companion object {
         fun random(): Chat {
@@ -35,8 +36,11 @@ data class Chat(
 
     override fun toString(): String {
         return "Chat(message='$message', localId=$localId, docId='$docId'," +
-                " sentTime=$sentTime, fromUserId=$fromUserId, toUserId=$toUserId)"
+                " sentTime=$sentTime, fromUserId=$fromUserId, toUserId=$toUserId," +
+                " isOutwards=$isOutwards)"
     }
+
+
 }
 
 @Entity

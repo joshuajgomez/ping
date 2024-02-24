@@ -15,7 +15,7 @@ interface ChatDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(chat: Chat)
 
-    @Query("select * from Chat where fromUserId = :userId or toUserId = :userId")
+    @Query("select * from Chat where fromUserId = :userId or toUserId = :userId order by sentTime desc")
     fun getChatsOfUser(userId: String): Flow<List<Chat>>
 
     @Update

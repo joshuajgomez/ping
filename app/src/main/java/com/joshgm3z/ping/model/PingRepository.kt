@@ -65,7 +65,7 @@ class PingRepository(
         val dummy = Chat(chat.message + " returned")
         dummy.toUserId = chat.fromUserId
         dummy.fromUserId = chat.toUserId
-        chat.sentTime = System.currentTimeMillis()
+        dummy.sentTime = System.currentTimeMillis()
         firestoreDb.registerChat(dummy,
             // chat added to firestore
             {
