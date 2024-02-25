@@ -37,24 +37,24 @@ class PingRepository(
     }
 
     suspend fun addChat(chat: Chat) {
+        Logger.debug("chat = [${chat}]")
+        chat.status = Chat.SENT
         firestoreDb.registerChat(chat,
             // chat added to firestore
             {
-                chat.docId = it
-                chat.status = Chat.SENT
-                firestoreDb.updateChatStatus(chat)
             },
             // error adding chat
             {
                 Logger.warn("error adding chat")
                 runBlocking {
+                    chat.status = Chat.SAVED
                     db.chatDao().insert(chat)
                 }
             }
         )
 
         runBlocking {
-            Thread.sleep(2000)
+            Thread.sleep(5000)
             addDummyChat(chat)
         }
     }
@@ -65,6 +65,7 @@ class PingRepository(
         dummy.toUserId = chat.fromUserId
         dummy.fromUserId = chat.toUserId
         dummy.sentTime = System.currentTimeMillis()
+        dummy.status = Chat.SENT
         firestoreDb.registerChat(dummy, {}, {})
     }
 

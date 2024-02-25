@@ -42,10 +42,8 @@ class ChatViewModel(
     }
 
     fun setUser(userId: String) {
-        Logger.debug("userId = [${userId}]")
         viewModelScope.launch {
             otherGuy = repository.getUser(userId)
-            Logger.debug("1 userId = [${userId}]")
             me = dataStoreUtil.getCurrentUser()
             repository.getChatsOfUser(userId = otherGuy.docId).collect {
                 val chats = DataUtil.markOutwardChats(me.docId, ArrayList(it))
@@ -53,7 +51,6 @@ class ChatViewModel(
                 repository.updateChatStatus(Chat.READ, chats)
             }
         }.invokeOnCompletion {
-            Logger.debug("chat screen ready calling - empty")
             _uiState.value = ChatUiState.Ready(otherGuy, emptyList())
         }
     }

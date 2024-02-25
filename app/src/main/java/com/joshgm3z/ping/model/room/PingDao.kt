@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ChatDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(chat: Chat)
 
     @Query("select * from Chat where fromUserId = :userId or toUserId = :userId order by sentTime desc")
@@ -31,6 +32,7 @@ interface ChatDao {
 
 @Dao
 interface UserDao {
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(user: User)
 

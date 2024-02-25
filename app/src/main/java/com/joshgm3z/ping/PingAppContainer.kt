@@ -35,7 +35,6 @@ fun PingAppContainer(
     ) {
 
         composable(navSignIn) {
-            Logger.debug("signIn")
             SignInContainer(
                 signInViewModel = signInViewModel,
                 goToHome = { navController.navigate(navHome) }
@@ -43,7 +42,6 @@ fun PingAppContainer(
         }
 
         composable(navHome) {
-            Logger.debug("navHome")
             HomeScreenContainer(
                 homeViewModel = homeViewModel,
                 onSearchClick = { navController.navigate(navSearch) },
@@ -52,7 +50,6 @@ fun PingAppContainer(
         }
 
         composable("$navChat/{userId}") {
-            Logger.debug("navChat")
             val userId = it.arguments?.getString("userId")
             LaunchedEffect(key1 = userId) {
                 chatViewModel.setUser(userId!!)
@@ -64,7 +61,6 @@ fun PingAppContainer(
         }
 
         composable(navSearch) {
-            Logger.debug("navSearch")
             SearchContainer(
                 searchViewModel = searchViewModel,
                 onSearchItemClick = { navController.navigate("$navChat/${it.docId}") },

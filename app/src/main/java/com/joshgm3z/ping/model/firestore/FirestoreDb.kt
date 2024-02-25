@@ -21,6 +21,7 @@ class FirestoreDb {
         onIdSet: (id: String) -> Unit,
         onError: () -> Unit,
     ) {
+        Logger.debug("chat = [${chat}]")
         val chatDoc = FirestoreConverter.getDocumentFromChat(chat)
         firestore.collection(keyCollectionChatList)
             .add(chatDoc)
@@ -82,15 +83,12 @@ class FirestoreDb {
         userId: String,
         onChatReceived: (chats: List<Chat>) -> Unit,
     ) {
-        Logger.debug("userId = [${userId}]")
-
         firestore.collection(keyCollectionChatList).where(
             Filter.or(
                 Filter.equalTo(FirestoreConverter.keyToUserId, userId),
                 Filter.equalTo(FirestoreConverter.keyFromUserId, userId),
             )
         ).addSnapshotListener { value, error ->
-            Logger.warn("addSnapshotListener value = " + (value?.size() ?: 0))
             if (value != null) {
                 val chats = FirestoreConverter.getChatListFromDocument(value)
                 onChatReceived(chats)

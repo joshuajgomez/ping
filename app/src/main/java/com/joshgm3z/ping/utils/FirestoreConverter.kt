@@ -20,7 +20,6 @@ class FirestoreConverter {
 
         fun getDocumentFromChat(chat: Chat): HashMap<String, Any> {
             return hashMapOf(
-                keyLocalId to chat.localId,
                 keySentTime to chat.sentTime,
                 keyFromUserId to chat.fromUserId,
                 keyToUserId to chat.toUserId,
@@ -33,7 +32,6 @@ class FirestoreConverter {
             val chatList = ArrayList<Chat>()
             for (document in result) {
                 val chat = Chat(message = document[keyMessage].toString())
-                chat.localId = document[keyLocalId] as Long
                 chat.docId = document.id
                 chat.sentTime = document[keySentTime] as Long
                 chat.fromUserId = document[keyFromUserId].toString()

@@ -20,14 +20,12 @@ fun ChatScreenContainer(chatViewModel: ChatViewModel, onBackClick: () -> Unit) {
     val uiState = chatViewModel.uiState.collectAsState()
     when (uiState.value) {
         is ChatUiState.Loading -> {
-            Logger.warn("ChatUiState.Loading")
             LoadingContainer(message = (uiState.value as ChatUiState.Loading).message)
         }
 
         is ChatUiState.Ready -> {
             val user: User = (uiState.value as ChatUiState.Ready).you
             val chats: List<Chat> = (uiState.value as ChatUiState.Ready).chats
-            Logger.warn("ChatUiState.Ready: ${chats.size}")
             ChatScreen(
                 chats = chats,
                 user = user,

@@ -16,7 +16,6 @@ class DataUtil {
         }
 
         fun buildHomeChats(chats: List<Chat>, users: List<User>): List<HomeChat> {
-            Logger.debug("chats = [$chats]")
             val homeChats: HashMap<String, HomeChat> = HashMap()
             for (chat in chats) {
                 val user = getUser(chat.fromUserId, users)
@@ -31,12 +30,10 @@ class DataUtil {
                 homeChat.lastChat = chat
                 homeChats[user.docId] = homeChat
             }
-            Logger.debug("homeChats = [$homeChats]")
             return ArrayList(homeChats.values)
         }
 
         private fun getUser(fromUserId: String, users: List<User>): User {
-            Logger.debug("fromUserId = [${fromUserId}], users = [${users}]")
             for (user in users) {
                 if (user.docId == fromUserId) {
                     return user

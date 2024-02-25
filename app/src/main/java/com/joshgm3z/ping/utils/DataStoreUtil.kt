@@ -19,12 +19,10 @@ class DataStoreUtil(private val context: Context) {
     private val Context.dataStore by preferencesDataStore(name = dataStoreName)
 
     suspend fun setUser(user: User) {
-        Logger.debug("user = [${user}]")
         context.dataStore.edit { mutablePreferences ->
             mutablePreferences[keyUserName] = user.name
             mutablePreferences[keyUserDocId] = user.docId
             mutablePreferences[keyUserImagePath] = user.imagePath
-            Logger.debug("user set: mutablePreferences = [${mutablePreferences}]")
         }
     }
 
@@ -33,12 +31,10 @@ class DataStoreUtil(private val context: Context) {
     }
 
     suspend fun getCurrentUser(): User {
-        Logger.debug("0")
         val preferences = context.dataStore.data.first()
         val user = User(preferences[keyUserName].toString())
         user.docId = preferences[keyUserDocId].toString()
         user.imagePath = preferences[keyUserImagePath].toString()
-        Logger.debug("1 preferences = [${preferences}]")
         return user
     }
 }

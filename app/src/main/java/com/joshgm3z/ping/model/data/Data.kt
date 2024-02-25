@@ -14,8 +14,7 @@ import kotlin.random.Random
 data class Chat(
     val message: String,
 ) {
-    @PrimaryKey(autoGenerate = true)
-    var localId: Long = 0
+    @PrimaryKey
     var docId: String = ""
     var sentTime: Long = 0
     var fromUserId: String = ""
@@ -42,7 +41,7 @@ data class Chat(
     }
 
     override fun toString(): String {
-        return "Chat(message='$message', localId=$localId, docId='$docId'," +
+        return "Chat(message='$message', docId='$docId'," +
                 " sentTime=$sentTime, fromUserId=$fromUserId, toUserId=$toUserId," +
                 " isOutwards=$isOutwards, status=${textStatus(status)})"
     }
