@@ -1,20 +1,17 @@
 package com.joshgm3z.ping.ui.chat
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.joshgm3z.ping.data.Chat
 import com.joshgm3z.ping.data.User
 import com.joshgm3z.ping.ui.common.LoadingContainer
+import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.utils.Logger
+import com.joshgm3z.ping.utils.getChatList
 import com.joshgm3z.ping.utils.randomUser
-import com.joshgm3z.ping.utils.randomUsers
 import com.joshgm3z.ping.viewmodels.ChatUiState
 import com.joshgm3z.ping.viewmodels.ChatViewModel
 
@@ -41,25 +38,22 @@ fun ChatScreenContainer(chatViewModel: ChatViewModel, onBackClick: () -> Unit) {
     }
 }
 
-@Preview()
+@Preview
 @Composable
 fun ChatScreen(
-    chats: List<Chat> = emptyList(),
+    chats: List<Chat> = getChatList(),
     user: User? = randomUser(),
     onSendClick: (message: String) -> Unit = {},
     onBackClick: () -> Unit = {},
 ) {
-    Column(
-        modifier = Modifier
-            .background(Color.Transparent)
-            .fillMaxSize()
-    ) {
-        Title(user) { onBackClick() }
-        Surface(modifier = Modifier
-            .weight(1f)
-            .background(Color.Transparent)) {
-            ChatList(chats)
+    PingTheme {
+        Column {
+            Title(user) { onBackClick() }
+            ChatList(
+                chats = chats,
+                modifier = Modifier.weight(1f)
+            )
+            InputBox(onSendClick = { onSendClick(it) })
         }
-        InputBox(onSendClick = { onSendClick(it) })
     }
 }

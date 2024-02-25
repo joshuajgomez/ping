@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,9 +28,26 @@ import com.joshgm3z.ping.R
 import com.joshgm3z.ping.data.HomeChat
 import com.joshgm3z.ping.ui.theme.Gray40
 import com.joshgm3z.ping.ui.theme.Green40
+import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.utils.getHomeChatList
 
-@Preview(showSystemUi = true, showBackground = true)
+
+@Preview
+@Composable
+fun PreviewHomeChat() {
+    PingTheme {
+        HomeChatItem()
+    }
+}
+
+@Preview
+@Composable
+fun PreviewHomeChatList() {
+    PingTheme {
+        HomeChatList()
+    }
+}
+
 @Composable
 fun HomeChatList(
     homeChatList: List<HomeChat> = getHomeChatList(),
@@ -66,6 +84,7 @@ fun HomeChatItem(
         Text(
             text = homeChat.otherGuy.name,
             fontSize = 20.sp,
+            color = colorScheme.onSurface,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier
                 .constrainAs(user) {
@@ -78,6 +97,7 @@ fun HomeChatItem(
         )
         Text(
             text = homeChat.lastChat.message,
+            color = colorScheme.onSurfaceVariant,
             fontSize = 15.sp,
             modifier = Modifier
                 .constrainAs(message) {
@@ -100,15 +120,15 @@ fun HomeChatItem(
                 text = "${homeChat.count}",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.White,
+                color = colorScheme.primary,
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(Green40)
+                    .background(colorScheme.primaryContainer)
                     .padding(horizontal = 8.dp, vertical = 1.dp)
             )
         }
         Divider(
-            color = Gray40,
+            color = colorScheme.outlineVariant,
             modifier = Modifier.constrainAs(line) {
                 top.linkTo(image.bottom, margin = 10.dp)
             })

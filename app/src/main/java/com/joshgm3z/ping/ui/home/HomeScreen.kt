@@ -3,16 +3,22 @@ package com.joshgm3z.ping.ui.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -24,6 +30,7 @@ import com.joshgm3z.ping.data.HomeChat
 import com.joshgm3z.ping.ui.search.EmptyScreen
 import com.joshgm3z.ping.ui.theme.Comfortaa
 import com.joshgm3z.ping.ui.theme.Gray40
+import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.theme.Purple60
 import com.joshgm3z.ping.utils.getHomeChatList
 import com.joshgm3z.ping.viewmodels.HomeUiState
@@ -46,33 +53,48 @@ fun HomeScreenContainer(
     }
 }
 
+@Preview
 @Composable
-@Preview(showBackground = true, showSystemUi = true)
-fun HomeScreen(
-    homeChats: List<HomeChat> = getHomeChatList(),
-    onSearchClick: () -> Unit = {},
-    onChatClick: (homeChat: HomeChat) -> Unit = {},
-) {
-    Column {
-        HomeTitle { onSearchClick() }
-        HomeChatList(homeChats) {
-            onChatClick(it)
-        }
+fun PreviewHomeTitle() {
+    PingTheme {
+        HomeTitle()
     }
 }
 
 @Composable
-fun HomeTitle(onSearchClick: () -> Unit) {
+@Preview
+fun PreviewEmptyScreen() {
+    PingTheme {
+        EmptyScreenHome()
+    }
+}
+
+@Composable
+fun EmptyScreenHome() {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(
+            imageVector = Icons.Outlined.Chat,
+            contentDescription = "no chats",
+            modifier = Modifier.size(50.dp),
+            tint = colorScheme.primary
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(text = "No chats yet", fontSize = 16.sp, color = colorScheme.primary)
+    }
+}
+
+@Composable
+fun HomeTitle(onSearchClick: () -> Unit = {}) {
     ConstraintLayout(
         modifier = Modifier
             .height(70.dp)
             .fillMaxWidth()
-            .background(Purple60)
+            .background(color = colorScheme.surface)
     ) {
         val (title, search) = createRefs()
         Text(
             text = "ping",
-            color = Color.White,
+            color = colorScheme.onSurface,
             fontSize = 30.sp,
             fontFamily = Comfortaa,
             modifier = Modifier
@@ -85,7 +107,7 @@ fun HomeTitle(onSearchClick: () -> Unit) {
         Icon(
             imageVector = Icons.Filled.Search,
             contentDescription = "search",
-            tint = Gray40,
+            tint = colorScheme.onSurface,
             modifier = Modifier
                 .constrainAs(search) {
                     end.linkTo(parent.end, margin = 15.dp)
@@ -93,6 +115,24 @@ fun HomeTitle(onSearchClick: () -> Unit) {
                     bottom.linkTo(parent.bottom)
                 }
                 .clip(CircleShape)
+                .size(30.dp)
                 .clickable { onSearchClick() })
+    }
+}
+
+@Composable
+@Preview
+fun HomeScreen(
+    homeChats: List<HomeChat> = getHomeChatList(),
+    onSearchClick: () -> Unit = {},
+    onChatClick: (homeChat: HomeChat) -> Unit = {},
+) {
+    PingTheme {
+        Column {
+            HomeTitle { onSearchClick() }
+            HomeChatList(homeChats) {
+                onChatClick(it)
+            }
+        }
     }
 }

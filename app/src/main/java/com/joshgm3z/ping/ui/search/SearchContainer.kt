@@ -17,6 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.NoAccounts
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,28 +38,30 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.data.User
 import com.joshgm3z.ping.ui.common.CustomTextField
+import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.utils.randomUser
 import com.joshgm3z.ping.utils.randomUsers
 import com.joshgm3z.ping.viewmodels.SearchUiState
 import com.joshgm3z.ping.viewmodels.SearchViewModel
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview
 @Composable
 fun PreviewSearchContainer() {
-    Column {
-        SearchBar()
-        SearchList()
-//        EmptyScreen()
+    PingTheme {
+        Column {
+            SearchBar()
+            SearchList()
+        }
     }
 }
 
+@Preview
 @Composable
 fun EmptyScreen(message: String = "No users found") {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 40.dp)
+            .padding(top = 130.dp)
     ) {
         Icon(
             imageVector = Icons.Default.NoAccounts,
@@ -65,7 +69,7 @@ fun EmptyScreen(message: String = "No users found") {
             modifier = Modifier.size(50.dp),
             tint = Color.Gray
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(30.dp))
         Text(
             text = message, fontSize = 18.sp, color = Color.Gray
         )
@@ -107,6 +111,7 @@ fun SearchItem(user: User = randomUser(), onSearchItemClick: (user: User) -> Uni
             .height(70.dp)
             .fillMaxWidth()
             .clickable { onSearchItemClick(user) }
+            .padding(start = 20.dp)
     ) {
         val (image, name) = createRefs()
         Image(
@@ -124,6 +129,7 @@ fun SearchItem(user: User = randomUser(), onSearchItemClick: (user: User) -> Uni
         Text(
             text = user.name,
             fontSize = 18.sp,
+            color = colorScheme.onSurface,
             modifier = Modifier.constrainAs(name) {
                 start.linkTo(image.end, margin = 20.dp)
                 top.linkTo(image.top)
@@ -137,17 +143,21 @@ fun SearchBar(onCancelClick: () -> Unit = {}) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = "go back",
-            modifier = Modifier
-                .padding(start = 15.dp)
-                .size(30.dp)
-        )
+        IconButton(onClick = { onCancelClick() }) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "go back",
+                modifier = Modifier
+                    .padding(start = 15.dp)
+                    .size(30.dp),
+                tint = colorScheme.onSurface
+            )
+        }
         var text by remember { mutableStateOf("") }
         CustomTextField(
             text = text,
             hintText = "Search for user",
+            modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)
         ) {
             text = it
         }

@@ -2,6 +2,7 @@ package com.joshgm3z.ping.ui.common
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -21,15 +22,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.joshgm3z.ping.ui.theme.Gray40
+import com.joshgm3z.ping.ui.theme.Gray50
+import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.theme.Purple60
 
 @Preview
 @Composable
+fun PreviewTextField() {
+    PingTheme {
+        CustomTextField()
+    }
+}
+
+@Composable
 fun CustomTextField(
     modifier: Modifier = Modifier,
-    text: String = "",
+    text: String = "Hey",
     hintText: String = "Type something",
     isSingleLine: Boolean = true,
     isFocusNeeded: Boolean = true,
@@ -37,9 +50,10 @@ fun CustomTextField(
 ) {
     val focusRequester = remember { FocusRequester() }
     TextField(
+        textStyle = TextStyle.Default.copy(fontSize = 20.sp),
         modifier = modifier
             .fillMaxWidth()
-            .padding(all = 16.dp)
+            .height(57.dp)
             .focusRequester(focusRequester)
             .clip(RoundedCornerShape(20.dp)),
         colors = TextFieldDefaults.colors(
@@ -49,7 +63,7 @@ fun CustomTextField(
         ),
         shape = RoundedCornerShape(32.dp),
         placeholder = {
-            Text(text = hintText)
+            Text(text = hintText, fontSize = 20.sp)
         },
         value = text,
         onValueChange = {

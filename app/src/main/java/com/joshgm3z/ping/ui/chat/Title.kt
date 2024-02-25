@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,54 +30,59 @@ import androidx.compose.ui.unit.sp
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.data.User
 import com.joshgm3z.ping.ui.theme.Green40
+import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.theme.Purple40
 import com.joshgm3z.ping.ui.theme.Purple60
 import com.joshgm3z.ping.utils.randomUser
 
 @Preview
 @Composable
-fun Title(user: User? = randomUser(), onBackClick: () -> Unit = {}) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .height(70.dp)
-            .fillMaxWidth()
-    ) {
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = "go to home",
-            tint = Purple60,
-            modifier = Modifier
-                .size(60.dp)
-                .padding(10.dp)
-                .clip(CircleShape)
-                .padding(5.dp)
-                .clickable { onBackClick() }
-        )
-        Image(
-            painter = painterResource(id = R.drawable.default_user),
-            contentDescription = "default user",
-            modifier = Modifier
-                .clip(shape = CircleShape)
-                .size(40.dp)
-        )
-        Spacer(modifier = Modifier.width(15.dp))
-        user?.let {
-            Text(
-                text = it.name,
-                fontSize = 22.sp,
-                color = Purple60,
-                modifier = Modifier.widthIn(80.dp)
+fun Title(
+    user: User? = randomUser(),
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit = {},
+) {
+    PingTheme {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier.fillMaxWidth()
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "go to home",
+                tint = colorScheme.onSurface,
+                modifier = Modifier
+                    .size(60.dp)
+                    .padding(10.dp)
+                    .clip(CircleShape)
+                    .padding(5.dp)
+                    .clickable { onBackClick() }
             )
+            Image(
+                painter = painterResource(id = R.drawable.default_user),
+                contentDescription = "default user",
+                modifier = Modifier
+                    .clip(shape = CircleShape)
+                    .size(40.dp)
+            )
+            Spacer(modifier = Modifier.width(15.dp))
+            user?.let {
+                Text(
+                    text = it.name,
+                    fontSize = 22.sp,
+                    color = colorScheme.onSurface,
+                    modifier = Modifier.widthIn(80.dp)
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = "more options",
+                tint = colorScheme.onSurface,
+                modifier = Modifier
+                    .size(60.dp)
+                    .padding(15.dp)
+                    .clickable {})
         }
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            imageVector = Icons.Default.MoreVert,
-            contentDescription = "more options",
-            tint = Purple60,
-            modifier = Modifier
-                .size(60.dp)
-                .padding(15.dp)
-                .clickable {})
     }
 }

@@ -65,7 +65,7 @@ data class User(var name: String = "") {
 }
 
 class HomeChat {
-    var otherGuy: User = User()
+    var otherGuy: User = User("Someone")
     var lastChat: Chat = Chat("hey")
     var count: Int = 1
 

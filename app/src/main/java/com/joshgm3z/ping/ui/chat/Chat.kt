@@ -34,8 +34,11 @@ import com.joshgm3z.ping.utils.getChatList
 import com.joshgm3z.ping.utils.getPrettyTime
 
 @Composable
-fun ChatList(chats: List<Chat> = emptyList()) {
-    LazyColumn(reverseLayout = true) {
+fun ChatList(
+    chats: List<Chat> = emptyList(),
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(reverseLayout = true, modifier = modifier) {
         items(items = chats) {
             ChatItem(chat = it)
         }

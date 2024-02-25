@@ -11,6 +11,9 @@ fun getChatList() = listOf(
     Chat.random(),
     Chat.random(),
     Chat.random(),
+    Chat.random(),
+    Chat.random(),
+    Chat.random(),
 )
 
 fun getRandomFromTo(): Pair<String, String> {
