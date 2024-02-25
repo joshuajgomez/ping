@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.joshgm3z.ping.model.data.Chat
 import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.model.PingRepository
+import com.joshgm3z.ping.ui.PingNavState
+import com.joshgm3z.ping.ui.navChat
 import com.joshgm3z.ping.utils.DataStoreUtil
 import com.joshgm3z.ping.utils.DataUtil
 import com.joshgm3z.ping.utils.Logger
@@ -46,9 +48,11 @@ class ChatViewModel(
             otherGuy = repository.getUser(userId)
             me = dataStoreUtil.getCurrentUser()
             repository.getChatsOfUser(userId = otherGuy.docId).collect {
-                val chats = DataUtil.markOutwardChats(me.docId, ArrayList(it))
-                _uiState.value = ChatUiState.Ready(otherGuy, chats)
-                repository.updateChatStatus(Chat.READ, chats)
+                if (PingNavState.currentRoute == navChat) {
+                    val chats = DataUtil.markOutwardChats(me.docId, ArrayList(it))
+                    _uiState.value = ChatUiState.Ready(otherGuy, chats)
+                    repository.updateChatStatus(Chat.READ, chats)
+                }
             }
         }.invokeOnCompletion {
             _uiState.value = ChatUiState.Ready(otherGuy, emptyList())

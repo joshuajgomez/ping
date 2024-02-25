@@ -30,6 +30,7 @@ import com.joshgm3z.ping.ui.theme.Gray40
 import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.utils.getHomeChatList
+import com.joshgm3z.ping.utils.getPrettyTime
 
 
 @Preview
@@ -68,7 +69,7 @@ fun HomeChatItem(
     onChatClick: (homeChat: HomeChat) -> Unit = {},
 ) {
     ConstraintLayout(modifier = Modifier.clickable { onChatClick(homeChat) }) {
-        val (message, user, count, image, line) = createRefs()
+        val (message, user, count, image, line, time) = createRefs()
         Image(
             painter = painterResource(id = R.drawable.default_user),
             contentDescription = "default user",
@@ -108,12 +109,21 @@ fun HomeChatItem(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
+        Text(
+            text = getPrettyTime(homeChat.lastChat.sentTime),
+            color = colorScheme.outline,
+            fontSize = 13.sp,
+            modifier = Modifier
+                .constrainAs(time) {
+                    top.linkTo(parent.top, margin = 10.dp)
+                    end.linkTo(parent.end, margin = 10.dp)
+                },
+        )
         AnimatedVisibility(
             visible = homeChat.count > 0,
             modifier = Modifier.constrainAs(count) {
-                top.linkTo(parent.top)
-                end.linkTo(parent.end, margin = 10.dp)
-                bottom.linkTo(parent.bottom)
+                top.linkTo(time.bottom, margin = 5.dp)
+                end.linkTo(time.end)
             }
         ) {
             Text(

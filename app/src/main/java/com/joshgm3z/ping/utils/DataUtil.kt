@@ -25,9 +25,11 @@ class DataUtil {
                 } else {
                     homeChat = HomeChat()
                     homeChat.otherGuy = user
+                    homeChat.count = 0
                 }
                 if (chat.status == Chat.DELIVERED) homeChat.count++
                 homeChat.lastChat = chat
+
                 homeChats[user.docId] = homeChat
             }
             return ArrayList(homeChats.values)

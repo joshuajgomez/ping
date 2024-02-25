@@ -5,6 +5,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.joshgm3z.ping.ui.PingNavState.Companion.navChat
+import com.joshgm3z.ping.ui.PingNavState.Companion.navHome
+import com.joshgm3z.ping.ui.PingNavState.Companion.navSearch
+import com.joshgm3z.ping.ui.PingNavState.Companion.navSignIn
 import com.joshgm3z.ping.ui.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.frx.SignInContainer
 import com.joshgm3z.ping.ui.home.HomeScreenContainer
@@ -18,6 +22,16 @@ const val navSignIn = "signin_screen"
 const val navHome = "home_screen"
 const val navSearch = "search_screen"
 const val navChat = "chat_screen"
+
+class PingNavState {
+    companion object {
+        const val navSignIn = "signin_screen"
+        const val navHome = "home_screen"
+        const val navSearch = "search_screen"
+        const val navChat = "chat_screen"
+        var currentRoute: String = ""
+    }
+}
 
 @Composable
 fun PingAppContainer(
@@ -34,6 +48,7 @@ fun PingAppContainer(
     ) {
 
         composable(navSignIn) {
+            PingNavState.currentRoute = navSignIn
             SignInContainer(
                 signInViewModel = signInViewModel,
                 goToHome = { navController.navigate(navHome) }
@@ -41,6 +56,7 @@ fun PingAppContainer(
         }
 
         composable(navHome) {
+            PingNavState.currentRoute = navHome
             HomeScreenContainer(
                 homeViewModel = homeViewModel,
                 onSearchClick = { navController.navigate(navSearch) },
@@ -49,6 +65,7 @@ fun PingAppContainer(
         }
 
         composable("$navChat/{userId}") {
+            PingNavState.currentRoute = navChat
             val userId = it.arguments?.getString("userId")
             LaunchedEffect(key1 = userId) {
                 chatViewModel.setUser(userId!!)
@@ -60,6 +77,7 @@ fun PingAppContainer(
         }
 
         composable(navSearch) {
+            PingNavState.currentRoute = navSearch
             SearchContainer(
                 searchViewModel = searchViewModel,
                 onSearchItemClick = { navController.navigate("$navChat/${it.docId}") },
