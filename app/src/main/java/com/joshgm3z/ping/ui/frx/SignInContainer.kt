@@ -41,15 +41,16 @@ fun SignInContainer(signInViewModel: SignInViewModel, goToHome: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
+        PingLogo()
+
         val uiState = signInViewModel.uiState.collectAsState()
         when (uiState.value) {
             is SignInUiState.SignIn -> SignInInput {
                 signInViewModel.onSignInClick(it)
             }
 
-            is SignInUiState.SignUp -> {}
+            is SignInUiState.SignUp -> NewUserInput()
             is SignInUiState.Loading -> LoadingContainer((uiState.value as SignInUiState.Loading).message)
             is SignInUiState.GoToHome -> goToHome()
         }
@@ -66,9 +67,25 @@ fun PreviewSignInInput() {
 
 @Preview
 @Composable
+fun PreviewNewUser() {
+    PingTheme {
+        NewUserInput()
+    }
+}
+
+@Preview
+@Composable
 fun PreviewLoadingContainer() {
     PingTheme {
         LoadingContainer()
+    }
+}
+
+@Preview
+@Composable
+fun PreviewErrorText() {
+    PingTheme {
+        ErrorText()
     }
 }
 
@@ -79,8 +96,8 @@ fun PreviewSignInScreen() {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
+            PingLogo()
             SignInInput()
         }
     }
@@ -93,82 +110,54 @@ fun PreviewLoadingFull() {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
+            PingLogo()
             LoadingContainer()
         }
     }
 }
 
+@Preview
 @Composable
-fun SignInInput(onSignInClick: (name: String) -> Unit = {}) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        Image(
-            painter = painterResource(id = R.drawable.ic_ping_foreground),
-            contentDescription = "logo",
-            modifier = Modifier
-                .size(150.dp)
-        )
-
-        Spacer(modifier = Modifier.height(50.dp))
-
-        Text(
-            text = "Welcome to ping!",
-            color = colorScheme.onSurface,
-            fontSize = 20.sp,
-        )
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        var name by remember { mutableStateOf("") }
-        var error by remember { mutableStateOf("") }
-
-        CustomTextField(
-            text = name,
-            hintText = "Enter your name",
-            onTextChanged = {
-                name = it
-                error = ""
-            },
-            modifier = Modifier.padding(horizontal = 50.dp)
-        )
-
-        AnimatedVisibility(visible = error.isNotEmpty()) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(top = 5.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ErrorOutline,
-                    contentDescription = "error icon",
-                    modifier = Modifier.size(22.dp),
-                    tint = Yellow40
-                )
-                Text(
-                    text = error,
-                    fontSize = 17.sp,
-                    color = Yellow40,
-                    modifier = Modifier.padding(start = 5.dp)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        Button(
-            onClick = {
-                if (name.isNotEmpty())
-                    onSignInClick(name)
-                else if (name.length <= 3)
-                    error = "Should be more that 3 letters"
-                else
-                    error = "Name cannot be empty"
-            },
+fun PreviewNewUserFull() {
+    PingTheme {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = "sign in", fontSize = 20.sp)
+            PingLogo()
+            NewUserInput()
         }
+    }
+}
+
+@Composable
+fun PingLogo() {
+    Image(
+        painter = painterResource(id = R.drawable.ping_logo),
+        contentDescription = "logo",
+        modifier = Modifier
+    )
+    Spacer(modifier = Modifier.height(80.dp))
+}
+
+@Composable
+fun ErrorText(error: String = "Name cannot be empty") {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(top = 5.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.ErrorOutline,
+            contentDescription = "error icon",
+            modifier = Modifier.size(20.dp),
+            tint = colorScheme.error
+        )
+        Text(
+            text = error,
+            fontSize = 17.sp,
+            color = colorScheme.error,
+            modifier = Modifier.padding(start = 5.dp)
+        )
     }
 }
