@@ -1,6 +1,7 @@
 package com.joshgm3z.ping.ui.frx
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,15 +39,14 @@ fun PreviewFullSignInInput() {
 @Composable
 fun SignInInput(onSignInClick: (name: String) -> Unit = {}) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(50.dp)
     ) {
         Text(
             text = "Welcome to ping!",
             color = MaterialTheme.colorScheme.onSurface,
             fontSize = 20.sp,
         )
-
-        Spacer(modifier = Modifier.height(30.dp))
 
         var name by remember { mutableStateOf("") }
         var error by remember { mutableStateOf("") }
@@ -62,26 +62,8 @@ fun SignInInput(onSignInClick: (name: String) -> Unit = {}) {
         )
 
         AnimatedVisibility(visible = error.isNotEmpty()) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(top = 5.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ErrorOutline,
-                    contentDescription = "error icon",
-                    modifier = Modifier.size(22.dp),
-                    tint = Yellow40
-                )
-                Text(
-                    text = error,
-                    fontSize = 17.sp,
-                    color = Yellow40,
-                    modifier = Modifier.padding(start = 5.dp)
-                )
-            }
+            ErrorText()
         }
-
-        Spacer(modifier = Modifier.height(30.dp))
 
         Button(
             onClick = {

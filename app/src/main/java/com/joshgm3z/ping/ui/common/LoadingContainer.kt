@@ -32,13 +32,13 @@ fun PreviewLoadingContainer() {
 fun LoadingContainer(message: String = "Loading") {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(50.dp)
     ) {
         CircularProgressIndicator(
             modifier = Modifier.size(50.dp),
             color = colorScheme.outline,
             progress = 8f
         )
-        Spacer(modifier = Modifier.height(30.dp))
         Text(
             text = message,
             fontSize = 18.sp,

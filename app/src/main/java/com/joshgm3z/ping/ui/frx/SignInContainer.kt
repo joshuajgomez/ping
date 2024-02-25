@@ -145,7 +145,7 @@ fun PingLogo() {
             )
         }
     }
-    Spacer(modifier = Modifier.height(80.dp))
+    Spacer(modifier = Modifier.height(50.dp))
 }
 
 @Composable

@@ -2,6 +2,7 @@ package com.joshgm3z.ping.ui.frx
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -57,6 +58,7 @@ fun NewUserInput(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(50.dp)
     ) {
         Text(
             text = "Sign up to ping!",
@@ -64,11 +66,8 @@ fun NewUserInput(
             fontSize = 20.sp,
         )
 
-        Spacer(modifier = Modifier.height(30.dp))
 
         ImageInput()
-
-        Spacer(modifier = Modifier.height(30.dp))
 
         var name by remember { mutableStateOf(inputName) }
         var error by remember { mutableStateOf("") }
@@ -87,8 +86,6 @@ fun NewUserInput(
             ErrorText()
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
-
         Button(
             onClick = {
                 if (name.isNotEmpty())
@@ -101,8 +98,6 @@ fun NewUserInput(
         ) {
             Text(text = "sign up", fontSize = 20.sp)
         }
-
-        Spacer(modifier = Modifier.height(30.dp))
 
         TextButton(onClick = { onGoBackClick() }) {
             Text(
