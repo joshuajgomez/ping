@@ -9,8 +9,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshgm3z.ping.service.PingService
+import com.joshgm3z.ping.ui.PingAppContainer
+import com.joshgm3z.ping.ui.navHome
+import com.joshgm3z.ping.ui.navSignIn
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.utils.Logger
 import com.joshgm3z.ping.utils.DataStoreUtil

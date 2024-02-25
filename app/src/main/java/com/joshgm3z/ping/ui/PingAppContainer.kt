@@ -1,4 +1,4 @@
-package com.joshgm3z.ping
+package com.joshgm3z.ping.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,7 +9,6 @@ import com.joshgm3z.ping.ui.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.frx.SignInContainer
 import com.joshgm3z.ping.ui.home.HomeScreenContainer
 import com.joshgm3z.ping.ui.search.SearchContainer
-import com.joshgm3z.ping.utils.Logger
 import com.joshgm3z.ping.viewmodels.ChatViewModel
 import com.joshgm3z.ping.viewmodels.HomeViewModel
 import com.joshgm3z.ping.viewmodels.SearchViewModel

@@ -2,7 +2,7 @@ package com.joshgm3z.ping.ui.frx
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,8 +14,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,36 +24,85 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joshgm3z.ping.R
+import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.common.LoadingContainer
-import com.joshgm3z.ping.ui.theme.Purple60
+import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.theme.Yellow40
 import com.joshgm3z.ping.viewmodels.SignInUiState
 import com.joshgm3z.ping.viewmodels.SignInViewModel
 
 @Composable
 fun SignInContainer(signInViewModel: SignInViewModel, goToHome: () -> Unit) {
-    val uiState = signInViewModel.uiState.collectAsState()
-    when (uiState.value) {
-        is SignInUiState.SignIn -> SignInScreen {
-            signInViewModel.onSignInClick(it)
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        val uiState = signInViewModel.uiState.collectAsState()
+        when (uiState.value) {
+            is SignInUiState.SignIn -> SignInInput {
+                signInViewModel.onSignInClick(it)
+            }
+
+            is SignInUiState.SignUp -> {}
+            is SignInUiState.Loading -> LoadingContainer((uiState.value as SignInUiState.Loading).message)
+            is SignInUiState.GoToHome -> goToHome()
         }
-        is SignInUiState.SignUp -> {}
-        is SignInUiState.Loading -> LoadingContainer((uiState.value as SignInUiState.Loading).message)
-        is SignInUiState.GoToHome -> goToHome()
+    }
+}
+
+@Preview
+@Composable
+fun PreviewSignInInput() {
+    PingTheme {
+        SignInInput()
+    }
+}
+
+@Preview
+@Composable
+fun PreviewLoadingContainer() {
+    PingTheme {
+        LoadingContainer()
+    }
+}
+
+@Preview
+@Composable
+fun PreviewSignInScreen() {
+    PingTheme {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            SignInInput()
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewLoadingFull() {
+    PingTheme {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            LoadingContainer()
+        }
     }
 }
 
 @Composable
-fun SignInScreen(onSignInClick: (name: String) -> Unit) {
+fun SignInInput(onSignInClick: (name: String) -> Unit = {}) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Purple60),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -61,14 +110,14 @@ fun SignInScreen(onSignInClick: (name: String) -> Unit) {
             painter = painterResource(id = R.drawable.ic_ping_foreground),
             contentDescription = "logo",
             modifier = Modifier
-                .size(300.dp)
+                .size(150.dp)
         )
 
-        Spacer(modifier = Modifier.height(80.dp))
+        Spacer(modifier = Modifier.height(50.dp))
 
         Text(
-            text = "Enter your name",
-            color = Color.White,
+            text = "Welcome to ping!",
+            color = colorScheme.onSurface,
             fontSize = 20.sp,
         )
 
@@ -77,10 +126,15 @@ fun SignInScreen(onSignInClick: (name: String) -> Unit) {
         var name by remember { mutableStateOf("") }
         var error by remember { mutableStateOf("") }
 
-        TextField(value = name, onValueChange = {
-            name = it
-            error = ""
-        })
+        CustomTextField(
+            text = name,
+            hintText = "Enter your name",
+            onTextChanged = {
+                name = it
+                error = ""
+            },
+            modifier = Modifier.padding(horizontal = 50.dp)
+        )
 
         AnimatedVisibility(visible = error.isNotEmpty()) {
             Row(
@@ -114,7 +168,7 @@ fun SignInScreen(onSignInClick: (name: String) -> Unit) {
                     error = "Name cannot be empty"
             },
         ) {
-            Text(text = "sign in to ping", fontSize = 20.sp)
+            Text(text = "sign in", fontSize = 20.sp)
         }
     }
 }
