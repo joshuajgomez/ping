@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Button
@@ -133,11 +136,15 @@ fun PreviewNewUserFull() {
 
 @Composable
 fun PingLogo() {
-    Image(
-        painter = painterResource(id = R.drawable.ping_logo),
-        contentDescription = "logo",
-        modifier = Modifier
-    )
+    LazyVerticalGrid(columns = GridCells.Adaptive(80.dp)) {
+        items(count = 12) {
+            Image(
+                painter = painterResource(id = R.drawable.ping_logo),
+                contentDescription = "logo",
+                modifier = Modifier
+            )
+        }
+    }
     Spacer(modifier = Modifier.height(80.dp))
 }
 
