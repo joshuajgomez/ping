@@ -22,6 +22,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,11 +45,12 @@ fun PreviewTextField() {
 @Composable
 fun CustomTextField(
     modifier: Modifier = Modifier,
-    text: String = "Hey",
+    text: String = "",
     hintText: String = "Type something",
     isSingleLine: Boolean = true,
     isFocusNeeded: Boolean = true,
     onTextChanged: (text: String) -> Unit = {},
+    onEnterPressed: () -> Unit = {},
 ) {
     val focusRequester = remember { FocusRequester() }
     TextField(
@@ -55,7 +59,13 @@ fun CustomTextField(
             .fillMaxWidth()
             .height(57.dp)
             .focusRequester(focusRequester)
-            .clip(RoundedCornerShape(20.dp)),
+            .clip(RoundedCornerShape(20.dp))
+            .onKeyEvent {
+                if (it.key == Key.Enter) {
+                    onEnterPressed()
+                    true
+                } else false
+            },
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
@@ -67,7 +77,7 @@ fun CustomTextField(
         },
         value = text,
         onValueChange = {
-            onTextChanged(it)
+            if ("\n" !in it) onTextChanged(it)
         },
         trailingIcon = {
             if (text.isNotEmpty()) {

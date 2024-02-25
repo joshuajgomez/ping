@@ -40,7 +40,7 @@ import com.joshgm3z.ping.ui.theme.Purple60
 @Composable
 fun InputBox(
     onSendClick: (text: String) -> Unit = {},
-    defaultText: String = "Yoyo",
+    defaultText: String = "",
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -58,10 +58,13 @@ fun InputBox(
                 .weight(1f)
                 .padding(vertical = 5.dp, horizontal = 5.dp),
             isSingleLine = false,
-            isFocusNeeded = false
-        ) {
-            text = it
-        }
+            isFocusNeeded = false,
+            onTextChanged = { text = it },
+            onEnterPressed = {
+                onSendClick(text)
+                text = ""
+            },
+        )
         IconButton(
             enabled = text.isNotEmpty(),
             onClick = {

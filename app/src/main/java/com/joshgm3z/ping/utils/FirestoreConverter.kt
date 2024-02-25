@@ -1,8 +1,8 @@
 package com.joshgm3z.ping.utils
 
 import com.google.firebase.firestore.QuerySnapshot
-import com.joshgm3z.ping.data.Chat
-import com.joshgm3z.ping.data.User
+import com.joshgm3z.ping.model.data.Chat
+import com.joshgm3z.ping.model.data.User
 
 class FirestoreConverter {
     companion object {
@@ -11,6 +11,8 @@ class FirestoreConverter {
         val keyFromUserId = "fromUserId"
         val keyToUserId = "toUserId"
         val keyMessage = "message"
+        val keyStatus = "status"
+
         val keyName = "name"
         val keyImagePath = "imagePath"
 
@@ -20,9 +22,10 @@ class FirestoreConverter {
             return hashMapOf(
                 keyLocalId to chat.localId,
                 keySentTime to chat.sentTime,
-                keyFromUserId to "${chat.fromUserId}",
-                keyToUserId to "${chat.toUserId}",
+                keyFromUserId to chat.fromUserId,
+                keyToUserId to chat.toUserId,
                 keyMessage to chat.message,
+                keyStatus to chat.status,
             )
         }
 
@@ -35,6 +38,7 @@ class FirestoreConverter {
                 chat.sentTime = document[keySentTime] as Long
                 chat.fromUserId = document[keyFromUserId].toString()
                 chat.toUserId = document[keyToUserId].toString()
+                chat.status = document[keyStatus] as Long
                 chatList.add(chat)
             }
             return chatList

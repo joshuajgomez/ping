@@ -1,8 +1,8 @@
 package com.joshgm3z.ping.utils
 
-import com.joshgm3z.ping.data.Chat
-import com.joshgm3z.ping.data.HomeChat
-import com.joshgm3z.ping.data.User
+import com.joshgm3z.ping.model.data.Chat
+import com.joshgm3z.ping.model.data.HomeChat
+import com.joshgm3z.ping.model.data.User
 import kotlin.random.Random
 
 fun getChatList() = listOf(

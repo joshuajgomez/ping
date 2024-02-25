@@ -2,7 +2,7 @@ package com.joshgm3z.ping.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshgm3z.ping.data.User
+import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.model.PingRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

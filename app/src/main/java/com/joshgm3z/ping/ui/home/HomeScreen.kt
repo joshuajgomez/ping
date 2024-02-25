@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.joshgm3z.ping.data.HomeChat
+import com.joshgm3z.ping.model.data.HomeChat
 import com.joshgm3z.ping.ui.search.EmptyScreen
 import com.joshgm3z.ping.ui.theme.Comfortaa
 import com.joshgm3z.ping.ui.theme.Gray40

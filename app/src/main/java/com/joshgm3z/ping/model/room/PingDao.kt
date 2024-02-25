@@ -6,8 +6,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.joshgm3z.ping.data.Chat
-import com.joshgm3z.ping.data.User
+import com.joshgm3z.ping.model.data.Chat
+import com.joshgm3z.ping.model.data.User
 import kotlinx.coroutines.flow.Flow
 
 @Dao

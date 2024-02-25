@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.joshgm3z.ping.data.User
+import com.joshgm3z.ping.model.data.User
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 

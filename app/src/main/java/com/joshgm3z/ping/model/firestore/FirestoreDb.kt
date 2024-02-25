@@ -1,16 +1,17 @@
 package com.joshgm3z.ping.model.firestore
 
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.firestore
-import com.joshgm3z.ping.data.Chat
-import com.joshgm3z.ping.data.User
+import com.joshgm3z.ping.model.data.Chat
+import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.utils.FirestoreConverter
 import com.joshgm3z.ping.utils.Logger
 
 class FirestoreDb {
 
     private val TAG = "FirestoreDb"
-    private val db = Firebase.firestore
+    private val firestore = Firebase.firestore
 
     private val keyCollectionChatList = "chatList"
     private val keyCollectionUserList = "userList"
@@ -21,7 +22,7 @@ class FirestoreDb {
         onError: () -> Unit,
     ) {
         val chatDoc = FirestoreConverter.getDocumentFromChat(chat)
-        db.collection(keyCollectionChatList)
+        firestore.collection(keyCollectionChatList)
             .add(chatDoc)
             .addOnSuccessListener {
                 Logger.debug("chat <${chat}> added with id: ${it.id}")
@@ -34,7 +35,7 @@ class FirestoreDb {
     }
 
     fun checkUser(name: String, onCheckComplete: (user: User?) -> Unit) {
-        db.collection(keyCollectionUserList)
+        firestore.collection(keyCollectionUserList)
             .get()
             .addOnSuccessListener { result ->
                 Logger.debug("user list received: ${result.size()}")
@@ -51,7 +52,7 @@ class FirestoreDb {
 
     fun createUser(user: User, onUserCreated: (user: User?, message: String) -> Unit) {
         val userDoc = FirestoreConverter.getDocumentFromUser(user)
-        db.collection(keyCollectionUserList)
+        firestore.collection(keyCollectionUserList)
             .add(userDoc)
             .addOnSuccessListener {
                 Logger.debug("user created: ${user.name} with id: ${it.id}")
@@ -65,7 +66,7 @@ class FirestoreDb {
     }
 
     fun getUserList(onUserListFetched: (userList: List<User>) -> Unit) {
-        db.collection(keyCollectionUserList)
+        firestore.collection(keyCollectionUserList)
             .get()
             .addOnSuccessListener {
                 Logger.debug("user list fetched: ${it.size()}")
@@ -77,19 +78,36 @@ class FirestoreDb {
             }
     }
 
-    fun listenForChatToUser(
+    fun listenForChatToOrFromUser(
         userId: String,
         onChatReceived: (chats: List<Chat>) -> Unit,
     ) {
         Logger.debug("userId = [${userId}]")
-        db.collection(keyCollectionChatList)
-            .whereEqualTo(FirestoreConverter.keyToUserId, userId)
-            .addSnapshotListener { value, error ->
-                Logger.warn("addSnapshotListener value = " + (value?.size() ?: 0))
-                if (value != null) {
-                    val chats = FirestoreConverter.getChatListFromDocument(value)
-                    onChatReceived(chats)
-                }
+
+        firestore.collection(keyCollectionChatList).where(
+            Filter.or(
+                Filter.equalTo(FirestoreConverter.keyToUserId, userId),
+                Filter.equalTo(FirestoreConverter.keyFromUserId, userId),
+            )
+        ).addSnapshotListener { value, error ->
+            Logger.warn("addSnapshotListener value = " + (value?.size() ?: 0))
+            if (value != null) {
+                val chats = FirestoreConverter.getChatListFromDocument(value)
+                onChatReceived(chats)
+            }
+        }
+    }
+
+    fun updateChatStatus(chat: Chat) {
+        Logger.debug("chat = [$chat]")
+        firestore.collection(keyCollectionChatList)
+            .document(chat.docId)
+            .update(FirestoreConverter.keyStatus, chat.status)
+            .addOnSuccessListener {
+                Logger.debug("chat status updated: $chat")
+            }
+            .addOnFailureListener {
+                Logger.warn("error updating chat status: $chat")
             }
     }
 

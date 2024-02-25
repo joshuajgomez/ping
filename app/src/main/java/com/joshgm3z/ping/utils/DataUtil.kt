@@ -1,8 +1,8 @@
 package com.joshgm3z.ping.utils
 
-import com.joshgm3z.ping.data.Chat
-import com.joshgm3z.ping.data.HomeChat
-import com.joshgm3z.ping.data.User
+import com.joshgm3z.ping.model.data.Chat
+import com.joshgm3z.ping.model.data.HomeChat
+import com.joshgm3z.ping.model.data.User
 
 class DataUtil {
     companion object {
@@ -23,12 +23,11 @@ class DataUtil {
                 var homeChat: HomeChat
                 if (homeChats.containsKey(user.docId)) {
                     homeChat = homeChats[user.docId]!!
-                    homeChat.count++
                 } else {
                     homeChat = HomeChat()
                     homeChat.otherGuy = user
-                    homeChat.count = 1
                 }
+                if (chat.status == Chat.DELIVERED) homeChat.count++
                 homeChat.lastChat = chat
                 homeChats[user.docId] = homeChat
             }

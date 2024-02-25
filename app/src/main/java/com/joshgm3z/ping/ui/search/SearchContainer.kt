@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.joshgm3z.ping.R
-import com.joshgm3z.ping.data.User
+import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.utils.randomUser
@@ -157,9 +157,9 @@ fun SearchBar(onCancelClick: () -> Unit = {}) {
         CustomTextField(
             text = text,
             hintText = "Search for user",
-            modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)
-        ) {
-            text = it
-        }
+            modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp),
+            onTextChanged = { text = it },
+            onEnterPressed = {},
+        )
     }
 }

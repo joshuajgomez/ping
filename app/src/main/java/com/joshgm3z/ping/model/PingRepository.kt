@@ -1,8 +1,7 @@
 package com.joshgm3z.ping.model
 
-import android.util.Log
-import com.joshgm3z.ping.data.Chat
-import com.joshgm3z.ping.data.User
+import com.joshgm3z.ping.model.data.Chat
+import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.model.firestore.FirestoreDb
 import com.joshgm3z.ping.model.room.PingDb
 import com.joshgm3z.ping.utils.Logger
@@ -38,18 +37,19 @@ class PingRepository(
     }
 
     suspend fun addChat(chat: Chat) {
-        db.chatDao().insert(chat)
         firestoreDb.registerChat(chat,
             // chat added to firestore
             {
                 chat.docId = it
-                runBlocking {
-                    db.chatDao().update(chat)
-                }
+                chat.status = Chat.SENT
+                firestoreDb.updateChatStatus(chat)
             },
             // error adding chat
             {
                 Logger.warn("error adding chat")
+                runBlocking {
+                    db.chatDao().insert(chat)
+                }
             }
         )
 
@@ -61,19 +61,11 @@ class PingRepository(
 
     private fun addDummyChat(chat: Chat) {
         Logger.debug("chat = [${chat}]")
-        // dummy
         val dummy = Chat(chat.message + " returned")
         dummy.toUserId = chat.fromUserId
         dummy.fromUserId = chat.toUserId
         dummy.sentTime = System.currentTimeMillis()
-        firestoreDb.registerChat(dummy,
-            // chat added to firestore
-            {
-            },
-            // error adding chat
-            {
-            }
-        )
+        firestoreDb.registerChat(dummy, {}, {})
     }
 
     fun checkUser(name: String, onCheckComplete: (user: User?) -> Unit) {
@@ -110,11 +102,32 @@ class PingRepository(
 
     suspend fun startFetchingChats() {
         Logger.entry()
-        val user: User = dataStore.getCurrentUser()
-        firestoreDb.listenForChatToUser(user.docId) {
+        val me: User = dataStore.getCurrentUser()
+        firestoreDb.listenForChatToOrFromUser(me.docId) {
             runBlocking {
-                db.chatDao().insertAll(it)
+                it.forEach(action = {
+                    Logger.debug("it = [$it]")
+                    if (it.toUserId == me.docId && it.status == Chat.SENT) {
+                        it.status = Chat.DELIVERED
+                        firestoreDb.updateChatStatus(it)
+                    }
+                    db.chatDao().insert(it)
+                })
             }
         }
+    }
+
+    fun updateChatStatus(status: Long, chats: List<Chat>) {
+        chats.forEach(
+            action = {
+                if (status == Chat.READ && it.status == Chat.DELIVERED) {
+                    it.status = Chat.READ
+                    firestoreDb.updateChatStatus(it)
+                } else if (status == Chat.DELIVERED && it.status == Chat.SENT) {
+                    it.status = Chat.DELIVERED
+                    firestoreDb.updateChatStatus(it)
+                }
+            }
+        )
     }
 }

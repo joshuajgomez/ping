@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.data
+package com.joshgm3z.ping.model.data
 
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -20,6 +20,7 @@ data class Chat(
     var sentTime: Long = 0
     var fromUserId: String = ""
     var toUserId: String = ""
+    var status: Long = SAVED
 
     @Ignore
     var isOutwards: Boolean = true
@@ -33,12 +34,26 @@ data class Chat(
             chat.isOutwards = Random.nextBoolean()
             return chat
         }
+
+        const val SAVED: Long = 0
+        const val SENT: Long = 1
+        const val DELIVERED: Long = 2
+        const val READ: Long = 3
     }
 
     override fun toString(): String {
         return "Chat(message='$message', localId=$localId, docId='$docId'," +
                 " sentTime=$sentTime, fromUserId=$fromUserId, toUserId=$toUserId," +
-                " isOutwards=$isOutwards)"
+                " isOutwards=$isOutwards, status=${textStatus(status)})"
+    }
+
+    private fun textStatus(status: Long): String {
+        return when (status) {
+            SENT -> "SENT"
+            DELIVERED -> "DELIVERED"
+            READ -> "READ"
+            else -> "SAVED"
+        }
     }
 
 
@@ -67,7 +82,7 @@ data class User(var name: String = "") {
 class HomeChat {
     var otherGuy: User = User("Someone")
     var lastChat: Chat = Chat("hey")
-    var count: Int = 1
+    var count: Int = 0
 
     companion object {
         fun random() = HomeChat()
