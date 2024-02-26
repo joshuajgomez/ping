@@ -15,7 +15,7 @@ class DataUtil {
             return chats
         }
 
-        fun buildHomeChats(chats: List<Chat>, users: List<User>): List<HomeChat> {
+        fun buildHomeChats(meUserId: String, chats: List<Chat>, users: List<User>): List<HomeChat> {
             val homeChats: HashMap<String, HomeChat> = HashMap()
             for (chat in chats) {
                 Logger.debug("chat = [$chat]")
@@ -29,6 +29,7 @@ class DataUtil {
                     homeChat.count = 0
                 }
                 if (chat.status == Chat.DELIVERED) homeChat.count++
+                if (chat.fromUserId != meUserId) chat.isOutwards = false
                 homeChat.lastChat = chat
 
                 homeChats[user.docId] = homeChat

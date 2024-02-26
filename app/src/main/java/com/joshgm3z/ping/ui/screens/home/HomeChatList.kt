@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -14,6 +15,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -25,19 +27,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.joshgm3z.ping.R
+import com.joshgm3z.ping.model.data.Chat
 import com.joshgm3z.ping.model.data.HomeChat
+import com.joshgm3z.ping.ui.screens.chat.StatusIcon
 import com.joshgm3z.ping.ui.theme.Gray40
 import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.ping.utils.Logger
 import com.joshgm3z.ping.utils.getHomeChatList
 import com.joshgm3z.ping.utils.getPrettyTime
 
 
 @Preview
 @Composable
-fun PreviewHomeChat() {
+fun PreviewHomeSentChat() {
     PingTheme {
-        HomeChatItem()
+        val homeChat = HomeChat.random()
+        homeChat.lastChat.status = Chat.READ
+        homeChat.lastChat.isOutwards = true
+        HomeChatItem(homeChat)
+    }
+}
+
+@Preview
+@Composable
+fun PreviewHomeReceivedChat() {
+    PingTheme {
+        val homeChat = HomeChat.random()
+        homeChat.lastChat.isOutwards = false
+        HomeChatItem(homeChat)
     }
 }
 
@@ -89,29 +107,40 @@ fun HomeChatItem(
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier
                 .constrainAs(user) {
-                    top.linkTo(image.top)
+                    top.linkTo(parent.top, margin = 5.dp)
                     start.linkTo(image.end, margin = 15.dp)
                 }
                 .widthIn(max = 260.dp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        Text(
-            text = homeChat.lastChat.message,
-            color = colorScheme.onSurfaceVariant,
-            fontSize = 15.sp,
-            modifier = Modifier
-                .constrainAs(message) {
-                    top.linkTo(user.bottom, margin = 3.dp)
-                    start.linkTo(user.start)
-                }
-                .widthIn(max = 260.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        Row(
+            modifier = Modifier.constrainAs(message) {
+                top.linkTo(user.bottom)
+                start.linkTo(user.start)
+            }) {
+            AnimatedVisibility(visible = homeChat.lastChat.isOutwards) {
+                StatusIcon(
+                    status = homeChat.lastChat.status,
+                    modifier = Modifier.padding(end = 5.dp, top = 2.dp)
+                )
+            }
+            Text(
+                text = homeChat.lastChat.message,
+                color = colorScheme.onSurfaceVariant,
+                fontSize = 15.sp,
+                modifier = Modifier.widthIn(max = 260.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
         Text(
             text = getPrettyTime(homeChat.lastChat.sentTime),
-            color = colorScheme.outline,
+            color = if (homeChat.count > 0) {
+                colorScheme.primary
+            } else {
+                colorScheme.outline
+            },
             fontSize = 13.sp,
             modifier = Modifier
                 .constrainAs(time) {

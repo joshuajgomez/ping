@@ -91,7 +91,7 @@ fun ChatItem(chat: Chat = Chat.random()) {
             )
         }
         Row {
-            if (chat.isOutwards) StatusIcon(chat.status)
+            if (chat.isOutwards) StatusIcon(status = chat.status)
             Text(
                 text = getPrettyTime(chat.sentTime),
                 color = Color.Gray,
@@ -110,16 +110,16 @@ fun PreviewStatusIcon() {
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.width(100.dp)
         ) {
-            StatusIcon(Chat.SAVED)
-            StatusIcon(Chat.SENT)
-            StatusIcon(Chat.DELIVERED)
-            StatusIcon(Chat.READ)
+            StatusIcon(status = Chat.SAVED)
+            StatusIcon(status = Chat.SENT)
+            StatusIcon(status = Chat.DELIVERED)
+            StatusIcon(status = Chat.READ)
         }
     }
 }
 
 @Composable
-fun StatusIcon(status: Long = Chat.READ) {
+fun StatusIcon(modifier: Modifier = Modifier, status: Long = Chat.READ) {
     Icon(
         imageVector = when (status) {
             Chat.SENT -> Icons.Default.Done
@@ -133,7 +133,7 @@ fun StatusIcon(status: Long = Chat.READ) {
             Chat.READ -> colorScheme.surfaceTint
             else -> colorScheme.onSurface
         },
-        modifier = Modifier.size(17.dp)
+        modifier = modifier.size(16.dp)
     )
 }
 

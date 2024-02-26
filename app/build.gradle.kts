@@ -73,7 +73,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-    implementation ("androidx.compose.material:material-icons-extended:1.5.3")
+    implementation("androidx.compose.material:material-icons-extended:1.5.3")
 
     val roomVersion = "2.5.2"
     implementation("androidx.room:room-runtime:$roomVersion")
@@ -85,14 +85,14 @@ dependencies {
     val lifecycleVersion = "2.7.0-alpha02"
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
-    implementation ("androidx.compose.runtime:runtime-livedata:1.5.3")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.3")
 
 
     // Koin Core features
-    implementation ("io.insert-koin:koin-core:3.2.2")
+    implementation("io.insert-koin:koin-core:3.2.2")
     // Java Compatibility
-    implementation ("io.insert-koin:koin-android-compat:3.3.0")
+    implementation("io.insert-koin:koin-android-compat:3.3.0")
 
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation("com.google.firebase:firebase-analytics")
