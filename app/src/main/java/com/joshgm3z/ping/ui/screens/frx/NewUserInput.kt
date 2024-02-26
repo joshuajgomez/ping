@@ -1,23 +1,17 @@
-package com.joshgm3z.ping.ui.frx
+package com.joshgm3z.ping.ui.screens.frx
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -29,9 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,7 +31,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.theme.Yellow40
 
 @Preview
 @Composable
@@ -52,13 +42,13 @@ fun PreviewNewUserInput() {
 
 @Composable
 fun NewUserInput(
-    inputName: String = "im new",
-    onSignInClick: (name: String) -> Unit = {},
-    onGoBackClick: () -> Unit = {},
+    inputName: String = "",
+    onSignUpClick: (name: String, imagePath: String) -> Unit = { _: String, _: String -> },
+    onGoToSignInClick: () -> Unit = {},
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(50.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Text(
             text = "Sign up to ping!",
@@ -70,6 +60,8 @@ fun NewUserInput(
         ImageInput()
 
         var name by remember { mutableStateOf(inputName) }
+        var imagePath by remember { mutableStateOf("") }
+
         var error by remember { mutableStateOf("") }
 
         CustomTextField(
@@ -89,7 +81,7 @@ fun NewUserInput(
         Button(
             onClick = {
                 if (name.isNotEmpty())
-                    onSignInClick(name)
+                    onSignUpClick(name, imagePath)
                 else if (name.length <= 3)
                     error = "should be more that 3 letters"
                 else
@@ -99,7 +91,7 @@ fun NewUserInput(
             Text(text = "sign up", fontSize = 20.sp)
         }
 
-        TextButton(onClick = { onGoBackClick() }) {
+        TextButton(onClick = { onGoToSignInClick() }) {
             Text(
                 text = "sign in to another account",
                 color = colorScheme.outline,

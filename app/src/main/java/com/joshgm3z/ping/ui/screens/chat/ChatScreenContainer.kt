@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.ui.chat
+package com.joshgm3z.ping.ui.screens.chat
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
@@ -12,8 +12,8 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.utils.Logger
 import com.joshgm3z.ping.utils.getChatList
 import com.joshgm3z.ping.utils.randomUser
-import com.joshgm3z.ping.viewmodels.ChatUiState
-import com.joshgm3z.ping.viewmodels.ChatViewModel
+import com.joshgm3z.ping.ui.viewmodels.ChatUiState
+import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 
 @Composable
 fun ChatScreenContainer(chatViewModel: ChatViewModel, onBackClick: () -> Unit) {

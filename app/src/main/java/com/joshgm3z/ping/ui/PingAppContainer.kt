@@ -9,14 +9,14 @@ import com.joshgm3z.ping.ui.PingNavState.Companion.navChat
 import com.joshgm3z.ping.ui.PingNavState.Companion.navHome
 import com.joshgm3z.ping.ui.PingNavState.Companion.navSearch
 import com.joshgm3z.ping.ui.PingNavState.Companion.navSignIn
-import com.joshgm3z.ping.ui.chat.ChatScreenContainer
-import com.joshgm3z.ping.ui.frx.SignInContainer
-import com.joshgm3z.ping.ui.home.HomeScreenContainer
-import com.joshgm3z.ping.ui.search.SearchContainer
-import com.joshgm3z.ping.viewmodels.ChatViewModel
-import com.joshgm3z.ping.viewmodels.HomeViewModel
-import com.joshgm3z.ping.viewmodels.SearchViewModel
-import com.joshgm3z.ping.viewmodels.SignInViewModel
+import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
+import com.joshgm3z.ping.ui.screens.frx.FrxContainer
+import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
+import com.joshgm3z.ping.ui.screens.search.SearchContainer
+import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
+import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
+import com.joshgm3z.ping.ui.viewmodels.SearchViewModel
+import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
 
 const val navSignIn = "signin_screen"
 const val navHome = "home_screen"
@@ -49,7 +49,7 @@ fun PingAppContainer(
 
         composable(navSignIn) {
             PingNavState.currentRoute = navSignIn
-            SignInContainer(
+            FrxContainer(
                 signInViewModel = signInViewModel,
                 goToHome = { navController.navigate(navHome) }
             )

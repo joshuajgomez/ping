@@ -76,10 +76,11 @@ class PingRepository(
 
     fun registerUser(
         name: String,
+        imagePath: String,
         registerComplete: (isSuccess: Boolean, message: String) -> Unit,
     ) {
         val newUser = User(name)
-        newUser.imagePath = ""
+        newUser.imagePath = imagePath
         firestoreDb.createUser(newUser) { user, message ->
             if (user != null) {
                 runBlocking {

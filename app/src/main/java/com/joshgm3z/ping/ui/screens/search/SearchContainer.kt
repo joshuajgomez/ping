@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.ui.search
+package com.joshgm3z.ping.ui.screens.search
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -41,8 +41,8 @@ import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.utils.randomUser
 import com.joshgm3z.ping.utils.randomUsers
-import com.joshgm3z.ping.viewmodels.SearchUiState
-import com.joshgm3z.ping.viewmodels.SearchViewModel
+import com.joshgm3z.ping.ui.viewmodels.SearchUiState
+import com.joshgm3z.ping.ui.viewmodels.SearchViewModel
 
 @Preview
 @Composable

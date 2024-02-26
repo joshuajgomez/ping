@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.ui.home
+package com.joshgm3z.ping.ui.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,8 +32,8 @@ import com.joshgm3z.ping.model.data.HomeChat
 import com.joshgm3z.ping.ui.theme.Comfortaa
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.utils.getHomeChatList
-import com.joshgm3z.ping.viewmodels.HomeUiState
-import com.joshgm3z.ping.viewmodels.HomeViewModel
+import com.joshgm3z.ping.ui.viewmodels.HomeUiState
+import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 
 @Composable
 fun HomeScreenContainer(

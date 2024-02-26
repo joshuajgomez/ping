@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.viewmodels
+package com.joshgm3z.ping.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

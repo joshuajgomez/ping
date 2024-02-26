@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.ui.frx
+package com.joshgm3z.ping.ui.screens.frx
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement

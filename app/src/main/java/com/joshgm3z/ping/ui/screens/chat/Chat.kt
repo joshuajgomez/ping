@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.ui.chat
+package com.joshgm3z.ping.ui.screens.chat
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
