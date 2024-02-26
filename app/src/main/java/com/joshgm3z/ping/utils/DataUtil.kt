@@ -19,7 +19,7 @@ class DataUtil {
             val homeChats: HashMap<String, HomeChat> = HashMap()
             for (chat in chats) {
                 Logger.debug("chat = [$chat]")
-                val user = getUser(chat.fromUserId, users)
+                val user = getUser(chat.fromUserId, chat.toUserId, users)
                 var homeChat: HomeChat
                 if (homeChats.containsKey(user.docId)) {
                     homeChat = homeChats[user.docId]!!
@@ -39,9 +39,9 @@ class DataUtil {
             return arrayList
         }
 
-        private fun getUser(fromUserId: String, users: List<User>): User {
+        private fun getUser(fromUserId: String, toUserId: String, users: List<User>): User {
             for (user in users) {
-                if (user.docId == fromUserId) {
+                if (user.docId == fromUserId || user.docId == toUserId) {
                     return user
                 }
             }
