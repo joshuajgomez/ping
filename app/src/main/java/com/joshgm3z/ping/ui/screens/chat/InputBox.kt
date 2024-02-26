@@ -39,9 +39,9 @@ import com.joshgm3z.ping.ui.theme.Purple60
 
 @Composable
 fun InputBox(
+    modifier: Modifier = Modifier,
     onSendClick: (text: String) -> Unit = {},
     defaultText: String = "",
-    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,

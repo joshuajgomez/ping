@@ -39,8 +39,8 @@ import com.joshgm3z.ping.utils.getPrettyTime
 
 @Composable
 fun ChatList(
-    chats: List<Chat> = emptyList(),
     modifier: Modifier = Modifier,
+    chats: List<Chat> = emptyList(),
 ) {
     LazyColumn(reverseLayout = true, modifier = modifier) {
         items(items = chats) {
@@ -91,7 +91,10 @@ fun ChatItem(chat: Chat = Chat.random()) {
             )
         }
         Row {
-            if (chat.isOutwards) StatusIcon(status = chat.status)
+            if (chat.isOutwards) StatusIcon(
+                status = chat.status,
+                modifier = Modifier.padding(top = 3.dp)
+            )
             Text(
                 text = getPrettyTime(chat.sentTime),
                 color = Color.Gray,
@@ -133,7 +136,7 @@ fun StatusIcon(modifier: Modifier = Modifier, status: Long = Chat.READ) {
             Chat.READ -> colorScheme.surfaceTint
             else -> colorScheme.onSurface
         },
-        modifier = modifier.size(16.dp)
+        modifier = modifier.size(13.dp)
     )
 }
 

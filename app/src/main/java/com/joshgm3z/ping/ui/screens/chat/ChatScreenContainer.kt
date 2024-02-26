@@ -9,7 +9,6 @@ import com.joshgm3z.ping.model.data.Chat
 import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.utils.Logger
 import com.joshgm3z.ping.utils.getChatList
 import com.joshgm3z.ping.utils.randomUser
 import com.joshgm3z.ping.ui.viewmodels.ChatUiState
@@ -40,13 +39,13 @@ fun ChatScreenContainer(chatViewModel: ChatViewModel, onBackClick: () -> Unit) {
 @Composable
 fun ChatScreen(
     chats: List<Chat> = getChatList(),
-    user: User? = randomUser(),
+    user: User = randomUser(),
     onSendClick: (message: String) -> Unit = {},
     onBackClick: () -> Unit = {},
 ) {
     PingTheme {
         Column {
-            Title(user) { onBackClick() }
+            ChatAppBar(user = user) { onBackClick() }
             ChatList(
                 chats = chats,
                 modifier = Modifier.weight(1f)
