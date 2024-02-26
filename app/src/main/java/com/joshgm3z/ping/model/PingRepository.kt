@@ -30,7 +30,7 @@ class PingRepository(
             Logger.debug("it = [$it]")
             if (it.isNotEmpty()) {
                 runBlocking {
-                    db.userDao().insertAll(it)
+                    db.userDao().insertAll(it, dataStore.getCurrentUser().docId)
                     onUserListUpdated()
                 }
             }
@@ -99,8 +99,11 @@ class PingRepository(
         return user
     }
 
-    fun getChatsOfUser(userId: String): Flow<List<Chat>> {
-        return db.chatDao().getChatsOfUser(userId)
+    fun getChatsOfUserForChatScreen(userId: String): Flow<List<Chat>> {
+        return db.chatDao().getChatsOfUserTimeDesc(userId)
+    }
+    fun getChatsOfUserForHome(userId: String): Flow<List<Chat>> {
+        return db.chatDao().getChatsOfUserTimeAsc(userId)
     }
 
     suspend fun startFetchingChats() {

@@ -5,10 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.joshgm3z.ping.ui.PingNavState.Companion.navChat
-import com.joshgm3z.ping.ui.PingNavState.Companion.navHome
-import com.joshgm3z.ping.ui.PingNavState.Companion.navSearch
-import com.joshgm3z.ping.ui.PingNavState.Companion.navSignIn
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.frx.FrxContainer
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
@@ -25,10 +21,6 @@ const val navChat = "chat_screen"
 
 class PingNavState {
     companion object {
-        const val navSignIn = "signin_screen"
-        const val navHome = "home_screen"
-        const val navSearch = "search_screen"
-        const val navChat = "chat_screen"
         var currentRoute: String = ""
     }
 }

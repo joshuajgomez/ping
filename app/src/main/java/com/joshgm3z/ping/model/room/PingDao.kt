@@ -17,7 +17,10 @@ interface ChatDao {
     suspend fun insert(chat: Chat)
 
     @Query("select * from Chat where fromUserId = :userId or toUserId = :userId order by sentTime desc")
-    fun getChatsOfUser(userId: String): Flow<List<Chat>>
+    fun getChatsOfUserTimeDesc(userId: String): Flow<List<Chat>>
+
+    @Query("select * from Chat where fromUserId = :userId or toUserId = :userId order by sentTime asc")
+    fun getChatsOfUserTimeAsc(userId: String): Flow<List<Chat>>
 
     @Update
     suspend fun update(chat: Chat)
@@ -43,9 +46,10 @@ interface UserDao {
     suspend fun getAll(): List<User>
 
     @Transaction
-    suspend fun insertAll(userList: List<User>) {
+    suspend fun insertAll(userList: List<User>, exceptId: String) {
         for (user in userList) {
-            insert(user)
+            if (user.docId != exceptId)
+                insert(user)
         }
     }
 }

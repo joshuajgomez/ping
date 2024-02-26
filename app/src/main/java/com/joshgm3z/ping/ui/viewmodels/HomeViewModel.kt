@@ -29,7 +29,7 @@ class HomeViewModel(
         viewModelScope.launch {
             val user = dataStoreUtil.getCurrentUser()
             val users = pingRepository.getUsers()
-            pingRepository.getChatsOfUser(user.docId).collect {
+            pingRepository.getChatsOfUserForHome(user.docId).collect {
                 val homeChats = DataUtil.buildHomeChats(it, users)
                 Logger.debug("homeChats = [$homeChats]")
                 if (homeChats.isNotEmpty()) {

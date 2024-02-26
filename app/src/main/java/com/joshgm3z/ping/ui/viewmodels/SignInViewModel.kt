@@ -36,7 +36,7 @@ class SignInViewModel(private val repository: PingRepository) : ViewModel() {
         _uiState.value = SignInUiState.Loading("Creating your profile")
         repository.registerUser(name, imagePath) { isSuccess, message ->
             if (isSuccess) {
-                _uiState.value = SignInUiState.GoToHome("User created succesfully")
+                _uiState.value = SignInUiState.GoToHome("User created successfully")
             } else {
                 _uiState.value = SignInUiState.Error("Unable to create user: $message")
             }

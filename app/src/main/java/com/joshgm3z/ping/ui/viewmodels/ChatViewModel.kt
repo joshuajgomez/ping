@@ -47,7 +47,7 @@ class ChatViewModel(
         viewModelScope.launch {
             otherGuy = repository.getUser(userId)
             me = dataStoreUtil.getCurrentUser()
-            repository.getChatsOfUser(userId = otherGuy.docId).collect {
+            repository.getChatsOfUserForChatScreen(userId = otherGuy.docId).collect {
                 if (PingNavState.currentRoute == navChat) {
                     val chats = DataUtil.markOutwardChats(me.docId, ArrayList(it))
                     _uiState.value = ChatUiState.Ready(otherGuy, chats)
