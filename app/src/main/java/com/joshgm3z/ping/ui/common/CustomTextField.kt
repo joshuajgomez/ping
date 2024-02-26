@@ -1,27 +1,33 @@
 package com.joshgm3z.ping.ui.common
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
@@ -29,10 +35,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.joshgm3z.ping.ui.theme.Gray40
-import com.joshgm3z.ping.ui.theme.Gray50
+import com.joshgm3z.ping.ui.theme.Gray60
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.theme.Purple60
 
 @Preview
 @Composable
@@ -59,7 +63,6 @@ fun CustomTextField(
             .fillMaxWidth()
             .height(57.dp)
             .focusRequester(focusRequester)
-            .clip(RoundedCornerShape(20.dp))
             .onKeyEvent {
                 if (it.key == Key.Enter) {
                     onEnterPressed()
@@ -102,4 +105,72 @@ fun CustomTextField(
             focusRequester.requestFocus()
         }
     }
+}
+
+@Preview
+@Composable
+private fun PreviewCustomTextField2() {
+    PingTheme {
+        CustomTextField2(
+            text = "",
+        )
+    }
+}
+
+@Composable
+fun CustomTextField2(
+    modifier: Modifier = Modifier,
+    text: String = "",
+    hintText: String = "Type something",
+    isSingleLine: Boolean = true,
+    isFocusNeeded: Boolean = true,
+    onTextChanged: (text: String) -> Unit = {},
+    onEnterPressed: () -> Unit = {},
+) {
+    BasicTextField(modifier = modifier
+        .background(
+            Gray60,
+            shapes.extraLarge,
+        )
+        .fillMaxWidth()
+        .height(40.dp)
+        .padding(horizontal = 10.dp),
+        value = text,
+        onValueChange = {
+            onTextChanged(it)
+        },
+        singleLine = true,
+        cursorBrush = SolidColor(colorScheme.primary),
+        textStyle = LocalTextStyle.current.copy(
+            color = colorScheme.onSurface,
+            fontSize = 20.sp
+        ),
+        decorationBox = { innerTextField ->
+            Row(
+                modifier,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .padding(start = 5.dp)
+                ) {
+                    if (text.isEmpty()) Text(
+                        hintText,
+                        style = LocalTextStyle.current.copy(
+                            color = colorScheme.onSurface.copy(alpha = 0.3f),
+                            fontSize = 20.sp
+                        )
+                    )
+                    innerTextField()
+                }
+                if (text.isNotEmpty())
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = null,
+                        tint = colorScheme.outlineVariant
+                    )
+            }
+        }
+    )
 }

@@ -17,5 +17,6 @@ val Green40 = Color(0xFF38903C)
 
 val Gray40 = Color(0xFFDCDCDC)
 val Gray50 = Color(0xFFB6B6B6)
+val Gray60 = Color(0xFF313538)
 
 val Yellow40 = Color(0xFFFFC107)
