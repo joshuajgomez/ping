@@ -7,7 +7,6 @@ import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.model.PingRepository
 import com.joshgm3z.ping.ui.PingNavState
 import com.joshgm3z.ping.ui.navChat
-import com.joshgm3z.ping.utils.DataStoreUtil
 import com.joshgm3z.ping.utils.DataUtil
 import com.joshgm3z.ping.utils.Logger
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +21,6 @@ sealed class ChatUiState {
 
 class ChatViewModel(
     private val repository: PingRepository,
-    private val dataStoreUtil: DataStoreUtil,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<ChatUiState> =
@@ -30,13 +28,13 @@ class ChatViewModel(
     val uiState: StateFlow<ChatUiState> = _uiState
 
     private lateinit var otherGuy: User
-    private lateinit var me: User
+    private var me: User? = null
 
     fun onSendButtonClick(message: String) {
         Logger.debug("message = [${message}]")
         val chat = Chat(message = message)
         chat.toUserId = otherGuy.docId
-        chat.fromUserId = me.docId
+        chat.fromUserId = me!!.docId
         chat.sentTime = System.currentTimeMillis()
         viewModelScope.launch(Dispatchers.IO) {
             repository.addChat(chat)
@@ -46,10 +44,10 @@ class ChatViewModel(
     fun setUser(userId: String) {
         viewModelScope.launch {
             otherGuy = repository.getUser(userId)
-            me = dataStoreUtil.getCurrentUser()
+            me = repository.getCurrentUser()
             repository.getChatsOfUserForChatScreen(userId = otherGuy.docId).collect {
                 if (PingNavState.currentRoute == navChat) {
-                    val chats = DataUtil.markOutwardChats(me.docId, ArrayList(it))
+                    val chats = DataUtil.markOutwardChats(me!!.docId, ArrayList(it))
                     _uiState.value = ChatUiState.Ready(otherGuy, chats)
                     repository.updateChatStatus(Chat.READ, chats)
                 }

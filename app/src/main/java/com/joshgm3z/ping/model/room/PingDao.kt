@@ -1,6 +1,7 @@
 package com.joshgm3z.ping.model.room
 
 import androidx.room.Dao
+import androidx.room.DeleteTable
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -31,6 +32,9 @@ interface ChatDao {
             insert(chat)
         }
     }
+
+    @Query("delete from Chat")
+    fun clearChats()
 }
 
 @Dao
@@ -52,4 +56,7 @@ interface UserDao {
                 insert(user)
         }
     }
+
+    @Query("delete from User")
+    fun clearUsers()
 }

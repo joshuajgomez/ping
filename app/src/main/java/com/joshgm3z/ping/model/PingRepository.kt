@@ -30,8 +30,13 @@ class PingRepository(
             Logger.debug("it = [$it]")
             if (it.isNotEmpty()) {
                 runBlocking {
-                    db.userDao().insertAll(it, dataStore.getCurrentUser().docId)
-                    onUserListUpdated()
+                    val currentUser = dataStore.getCurrentUser()
+                    if (currentUser != null) {
+                        db.userDao().insertAll(it, currentUser.docId)
+                        onUserListUpdated()
+                    } else {
+                        Logger.warn("current user is null")
+                    }
                 }
             }
         }
@@ -122,8 +127,8 @@ class PingRepository(
             return
         }
         Logger.entry()
-        val me: User = dataStore.getCurrentUser()
-        firestoreDb.listenForChatToOrFromUser(me.docId) {
+        val me: User? = dataStore.getCurrentUser()
+        firestoreDb.listenForChatToOrFromUser(me!!.docId) {
             runBlocking {
                 it.forEach(action = {
                     Logger.debug("it = [$it]")
@@ -150,4 +155,17 @@ class PingRepository(
             }
         )
     }
+
+    suspend fun getCurrentUser(): User? = dataStore.getCurrentUser()
+
+    fun isUserSignedIn(): Boolean = dataStore.isUserSignedIn()
+
+    suspend fun signOutUser() {
+        Logger.entry()
+        dataStore.removeCurrentUser()
+        firestoreDb.removeChatListener()
+        db.chatDao().clearChats()
+        db.userDao().clearUsers()
+    }
+
 }

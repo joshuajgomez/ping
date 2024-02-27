@@ -31,11 +31,19 @@ class DataStoreUtil(private val context: Context) {
         context.dataStore.data.first().contains(keyUserName)
     }
 
-    suspend fun getCurrentUser(): User {
+    suspend fun getCurrentUser(): User? {
+        if (!isUserSignedIn()) {
+            return null
+        }
         val preferences = context.dataStore.data.first()
         val user = User(preferences[keyUserName].toString())
         user.docId = preferences[keyUserDocId].toString()
         user.imagePath = preferences[keyUserImagePath].toString()
         return user
+    }
+
+    suspend fun removeCurrentUser() {
+        Logger.entry()
+        context.dataStore.edit { mutablePreferences -> mutablePreferences.clear() }
     }
 }

@@ -35,13 +35,13 @@ val appModule = module {
         PingRepository(get(), get(), get())
     }
     viewModel {
-        ChatViewModel(get(), get())
+        ChatViewModel(get())
     }
     viewModel {
         UserViewModel(get())
     }
     viewModel {
-        HomeViewModel(get(), get())
+        HomeViewModel(get())
     }
     viewModel {
         SearchViewModel(get())

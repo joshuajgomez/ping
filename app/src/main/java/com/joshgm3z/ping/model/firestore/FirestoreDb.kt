@@ -1,7 +1,10 @@
 package com.joshgm3z.ping.model.firestore
 
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.Filter
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import com.joshgm3z.ping.model.data.Chat
 import com.joshgm3z.ping.model.data.User
@@ -15,6 +18,9 @@ class FirestoreDb(private val firebaseLogger: FirebaseLogger) {
 
     private val keyCollectionChatList = "chatList"
     private val keyCollectionUserList = "userList"
+
+    private lateinit var listenerRegistration: ListenerRegistration
+    private var onChatReceived: ((List<Chat>) -> Unit)? = null
 
     fun registerChat(
         chat: Chat,
@@ -81,22 +87,30 @@ class FirestoreDb(private val firebaseLogger: FirebaseLogger) {
 
     fun listenForChatToOrFromUser(
         userId: String,
-        onChatReceived: (chats: List<Chat>) -> Unit,
+        chatListener: (chats: List<Chat>) -> Unit,
     ) {
         Logger.info("userId = [${userId}]")
-        firestore.collection(keyCollectionChatList).where(
+        onChatReceived = chatListener
+        listenerRegistration = firestore.collection(keyCollectionChatList).where(
             Filter.or(
                 Filter.equalTo(FirestoreConverter.keyToUserId, userId),
                 Filter.equalTo(FirestoreConverter.keyFromUserId, userId),
             )
-        ).addSnapshotListener { value, error ->
-            if (value != null) {
-                val chats = FirestoreConverter.getChatListFromDocument(value)
-                onChatReceived(chats)
-            } else {
-                Logger.warn(error!!.message!!)
-            }
+        ).addSnapshotListener(eventListener)
+    }
+
+    private val eventListener = EventListener { value: QuerySnapshot?, error: Throwable? ->
+        if (value != null) {
+            val chats = FirestoreConverter.getChatListFromDocument(value)
+            onChatReceived?.let { it(chats) }
+        } else {
+            Logger.warn(error?.message.toString())
         }
+    }
+
+    fun removeChatListener() {
+        onChatReceived = null
+        listenerRegistration.remove()
     }
 
     fun updateChatStatus(chat: Chat) {

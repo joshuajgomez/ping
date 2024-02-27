@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,13 +41,17 @@ import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 fun HomeScreenContainer(
     homeViewModel: HomeViewModel,
     onSearchClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     onChatClick: (homeChat: HomeChat) -> Unit = {},
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        HomeTitle { onSearchClick() }
+        HomeTitle(
+            onSearchClick = { onSearchClick() },
+            onSettingsClick = { onSettingsClick() }
+        )
         val uiState = homeViewModel.uiState.collectAsState()
         when (uiState.value) {
             is HomeUiState.Empty -> EmptyScreenContainer()
@@ -116,14 +122,35 @@ fun EmptyScreenContainer() {
 }
 
 @Composable
-fun HomeTitle(onSearchClick: () -> Unit = {}) {
+fun HomeTitle(
+    onSearchClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
+) {
     ConstraintLayout(
         modifier = Modifier
             .height(70.dp)
             .fillMaxWidth()
             .background(color = colorScheme.surface)
     ) {
-        val (title, search) = createRefs()
+        val (search, title, setting) = createRefs()
+        IconButton(
+            onClick = { onSearchClick() },
+            modifier = Modifier
+                .constrainAs(search) {
+                    start.linkTo(parent.start, margin = 15.dp)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = "search",
+                tint = colorScheme.outline,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(30.dp)
+            )
+        }
         Text(
             text = "ping",
             color = colorScheme.onSurface,
@@ -136,19 +163,25 @@ fun HomeTitle(onSearchClick: () -> Unit = {}) {
                     end.linkTo(parent.end)
                 }
         )
-        Icon(
-            imageVector = Icons.Filled.Search,
-            contentDescription = "search",
-            tint = colorScheme.onSurface,
+        IconButton(
+            onClick = { onSettingsClick() },
             modifier = Modifier
-                .constrainAs(search) {
+                .constrainAs(setting) {
                     end.linkTo(parent.end, margin = 15.dp)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 }
-                .clip(CircleShape)
-                .size(30.dp)
-                .clickable { onSearchClick() })
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Settings,
+                contentDescription = "search",
+                tint = colorScheme.outline,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(30.dp)
+            )
+        }
+
     }
 }
 

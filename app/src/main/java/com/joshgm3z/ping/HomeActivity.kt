@@ -38,7 +38,7 @@ class HomeActivity : ComponentActivity() {
                     PingAppContainer(
                         navController = navController,
                         startDestination = if (isUserSignedIn) navHome else navSignIn,
-                        signInViewModel = get(),
+                        userViewModel = get(),
                         homeViewModel = get(),
                         chatViewModel = get(),
                         searchViewModel = get(),

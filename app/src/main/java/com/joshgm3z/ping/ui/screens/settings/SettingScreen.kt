@@ -1,11 +1,15 @@
 package com.joshgm3z.ping.ui.screens.settings
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,8 +26,16 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 
 @Composable
-fun SettingScreenContainer(userViewModel: UserViewModel) {
-    SettingScreen()
+fun SettingScreenContainer(
+    userViewModel: UserViewModel,
+    onGoBackClick: () -> Unit = {},
+) {
+    SettingScreen(
+        userName = userViewModel.currentUser!!.name,
+        imagePath = userViewModel.currentUser!!.imagePath,
+        onSignOutClick = { userViewModel.onSignOutClicked() },
+        onGoBackClick = { onGoBackClick() },
+    )
 }
 
 @Preview
@@ -35,9 +47,27 @@ private fun PreviewSettingScreen() {
 }
 
 @Composable
-private fun SettingScreen(onSignOutClick: () -> Unit = {}) {
+private fun SettingScreen(
+    userName: String = "dude111",
+    imagePath: String = "",
+    onSignOutClick: () -> Unit = {},
+    onGoBackClick: () -> Unit = {},
+) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (signOutBtn, image, name) = createRefs()
+        val (signOutBtn, image, name, goBack) = createRefs()
+        IconButton(
+            modifier = Modifier.constrainAs(goBack) {
+                top.linkTo(parent.top, margin = 15.dp)
+                start.linkTo(parent.start, margin = 15.dp)
+            },
+            onClick = { onGoBackClick() }
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                contentDescription = null,
+                tint = colorScheme.onSurface
+            )
+        }
         Image(
             painter = painterResource(id = R.drawable.default_user),
             contentDescription = "image",
@@ -45,20 +75,20 @@ private fun SettingScreen(onSignOutClick: () -> Unit = {}) {
                 .constrainAs(image) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                    top.linkTo(parent.top, margin = 30.dp)
+                    top.linkTo(parent.top, margin = 90.dp)
                 }
                 .clip(CircleShape)
                 .size(100.dp)
         )
         Text(
-            text = "dude111",
+            text = userName,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = colorScheme.outline,
             modifier = Modifier.constrainAs(name) {
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-                top.linkTo(image.bottom, margin = 20.dp)
+                top.linkTo(image.bottom, margin = 30.dp)
             })
         Button(
             onClick = { onSignOutClick() },

@@ -1,9 +1,13 @@
 package com.joshgm3z.ping.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.joshgm3z.ping.model.PingRepository
+import com.joshgm3z.ping.model.data.User
+import com.joshgm3z.ping.utils.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 sealed class SignInUiState {
     data class Loading(val message: String) : SignInUiState()
@@ -18,6 +22,20 @@ class UserViewModel(private val repository: PingRepository) : ViewModel() {
     private val _uiState: MutableStateFlow<SignInUiState> =
         MutableStateFlow(SignInUiState.SignIn("Enter your name"))
     val uiState: StateFlow<SignInUiState> = _uiState
+
+    var currentUser: User? = null
+
+    init {
+        setCurrentUser()
+    }
+
+    private fun setCurrentUser() {
+        Logger.entry()
+        viewModelScope.launch {
+            currentUser = repository.getCurrentUser()
+            Logger.debug("currentUser = [$currentUser]")
+        }
+    }
 
     fun onSignInClick(name: String) {
         _uiState.value = SignInUiState.Loading("Finding you")
@@ -45,6 +63,13 @@ class UserViewModel(private val repository: PingRepository) : ViewModel() {
 
     fun onGoToSignInClick() {
         _uiState.value = SignInUiState.SignIn("Enter your name")
+    }
+
+    fun onSignOutClicked() {
+        viewModelScope.launch {
+            repository.signOutUser()
+            SignInUiState.SignIn("Enter your name")
+        }
     }
 
 }

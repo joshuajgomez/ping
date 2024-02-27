@@ -18,7 +18,6 @@ sealed class HomeUiState {
 
 class HomeViewModel(
     private val pingRepository: PingRepository,
-    private val dataStoreUtil: DataStoreUtil,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<HomeUiState> =
@@ -30,14 +29,14 @@ class HomeViewModel(
     }
 
     fun startListeningToChats() {
-        if (!dataStoreUtil.isUserSignedIn()) {
+        if (!pingRepository.isUserSignedIn()) {
             Logger.warn("user not signed in")
             return
         }
         viewModelScope.launch {
-            val me = dataStoreUtil.getCurrentUser()
+            val me = pingRepository.getCurrentUser()
             val users = pingRepository.getUsers()
-            pingRepository.getChatsOfUserForHome(me.docId).collect {
+            pingRepository.getChatsOfUserForHome(me!!.docId).collect {
                 Logger.debug("home chat list update")
                 val homeChats = DataUtil.buildHomeChats(me.docId, it, users)
                 if (homeChats.isNotEmpty()) {

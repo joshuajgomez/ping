@@ -122,7 +122,7 @@ fun HomeChatItem(
             AnimatedVisibility(visible = homeChat.lastChat.isOutwards) {
                 StatusIcon(
                     status = homeChat.lastChat.status,
-                    modifier = Modifier.padding(end = 5.dp, top = 2.dp)
+                    modifier = Modifier.padding(end = 5.dp, top = 2.dp).size(17.dp)
                 )
             }
             Text(
