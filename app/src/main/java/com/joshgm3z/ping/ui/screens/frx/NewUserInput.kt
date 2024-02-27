@@ -78,6 +78,8 @@ fun NewUserInput(
             ErrorText()
         }
 
+        PasswordInput(modifier = Modifier.padding(horizontal = 50.dp))
+
         Button(
             onClick = {
                 if (name.isNotEmpty())

@@ -24,8 +24,7 @@ class HomeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         if (!PingService.isRunning) {
             Logger.debug("PingService.isRunning = [${PingService.isRunning}]")
-            val intent = Intent(this, PingService.javaClass)
-            startService(intent)
+            startService(Intent(this, PingService::class.java))
         }
         setContent {
             PingTheme {
