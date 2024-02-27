@@ -26,17 +26,24 @@ class HomeViewModel(
     val uiState: StateFlow<HomeUiState> = _uiState
 
     init {
+        startListeningToChats()
+    }
+
+    fun startListeningToChats() {
+        if (!dataStoreUtil.isUserSignedIn()) {
+            Logger.warn("user not signed in")
+            return
+        }
         viewModelScope.launch {
             val me = dataStoreUtil.getCurrentUser()
             val users = pingRepository.getUsers()
             pingRepository.getChatsOfUserForHome(me.docId).collect {
+                Logger.debug("home chat list update")
                 val homeChats = DataUtil.buildHomeChats(me.docId, it, users)
-                Logger.debug("homeChats = [$homeChats]")
                 if (homeChats.isNotEmpty()) {
                     _uiState.value = HomeUiState.Ready(homeChats)
                 }
             }
-        }.invokeOnCompletion {
         }
     }
 }
