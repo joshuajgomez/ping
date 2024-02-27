@@ -12,7 +12,7 @@ import com.joshgm3z.ping.ui.screens.search.SearchContainer
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SearchViewModel
-import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
+import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.ping.utils.Logger
 
 const val navSignIn = "signin_screen"
@@ -34,7 +34,7 @@ class PingNavState {
 fun PingAppContainer(
     navController: NavHostController,
     startDestination: String,
-    signInViewModel: SignInViewModel,
+    signInViewModel: UserViewModel,
     homeViewModel: HomeViewModel,
     chatViewModel: ChatViewModel,
     searchViewModel: SearchViewModel,

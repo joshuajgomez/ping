@@ -13,7 +13,7 @@ sealed class SignInUiState {
     data class GoToHome(val message: String) : SignInUiState()
 }
 
-class SignInViewModel(private val repository: PingRepository) : ViewModel() {
+class UserViewModel(private val repository: PingRepository) : ViewModel() {
 
     private val _uiState: MutableStateFlow<SignInUiState> =
         MutableStateFlow(SignInUiState.SignIn("Enter your name"))
