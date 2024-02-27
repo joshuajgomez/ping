@@ -127,6 +127,7 @@ fun CustomTextField2(
     onTextChanged: (text: String) -> Unit = {},
     onEnterPressed: () -> Unit = {},
 ) {
+    val focusRequester = remember { FocusRequester() }
     BasicTextField(modifier = modifier
         .background(
             Gray60,
@@ -134,12 +135,18 @@ fun CustomTextField2(
         )
         .fillMaxWidth()
         .height(40.dp)
-        .padding(horizontal = 10.dp),
+        .padding(horizontal = 10.dp)
+        .focusRequester(focusRequester)
+        .onKeyEvent {
+            if (it.key == Key.Enter) {
+                onEnterPressed()
+                true
+            } else false
+        },
         value = text,
         onValueChange = {
-            onTextChanged(it)
+            if ("\n" !in it) onTextChanged(it)
         },
-        singleLine = true,
         cursorBrush = SolidColor(colorScheme.primary),
         textStyle = LocalTextStyle.current.copy(
             color = colorScheme.onSurface,
@@ -173,4 +180,9 @@ fun CustomTextField2(
             }
         }
     )
+    LaunchedEffect(key1 = Unit) {
+        if (isFocusNeeded) {
+            focusRequester.requestFocus()
+        }
+    }
 }

@@ -47,7 +47,14 @@ fun InputBox(
             text = text,
             modifier = Modifier
                 .weight(1f)
-                .padding(vertical = 5.dp)
+                .padding(vertical = 5.dp),
+            onTextChanged = {
+                text = it
+            },
+            onEnterPressed = {
+                onSendClick(text)
+                text = ""
+            }
         )
         IconButton(
             enabled = text.isNotEmpty(),
