@@ -13,6 +13,7 @@ import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SearchViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
+import com.joshgm3z.ping.utils.Logger
 
 const val navSignIn = "signin_screen"
 const val navHome = "home_screen"
@@ -22,6 +23,10 @@ const val navChat = "chat_screen"
 class PingNavState {
     companion object {
         var currentRoute: String = ""
+            set(value) {
+                Logger.debug("PingNavState.currentRoute = $value")
+                field = value
+            }
     }
 }
 
@@ -43,7 +48,10 @@ fun PingAppContainer(
             PingNavState.currentRoute = navSignIn
             FrxContainer(
                 signInViewModel = signInViewModel,
-                goToHome = { navController.navigate(navHome) }
+                goToHome = {
+                    homeViewModel.startListeningToChats()
+                    navController.navigate(navHome)
+                }
             )
         }
 

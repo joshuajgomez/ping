@@ -6,17 +6,14 @@ import com.joshgm3z.ping.model.data.User
 
 class FirestoreConverter {
     companion object {
-        val keyLocalId = "localId"
-        val keySentTime = "sentTime"
-        val keyFromUserId = "fromUserId"
-        val keyToUserId = "toUserId"
-        val keyMessage = "message"
-        val keyStatus = "status"
+        private const val keySentTime = "sentTime"
+        const val keyFromUserId = "fromUserId"
+        const val keyToUserId = "toUserId"
+        private const val keyMessage = "message"
+        const val keyStatus = "status"
 
-        val keyName = "name"
-        val keyImagePath = "imagePath"
-
-        private val defaultDocId = "pending"
+        private const val keyName = "name"
+        private const val keyImagePath = "imagePath"
 
         fun getDocumentFromChat(chat: Chat): HashMap<String, Any> {
             return hashMapOf(
@@ -43,7 +40,6 @@ class FirestoreConverter {
         }
 
         fun findUserFromDocument(name: String, result: QuerySnapshot): User? {
-            Logger.info("result = [${result}]")
             for (document in result) {
                 if (document[keyName] == name) {
                     val user = User()

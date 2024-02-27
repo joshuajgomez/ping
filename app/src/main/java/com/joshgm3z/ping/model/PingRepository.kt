@@ -71,7 +71,15 @@ class PingRepository(
     }
 
     fun checkUser(name: String, onCheckComplete: (user: User?) -> Unit) {
-        firestoreDb.checkUser(name) { onCheckComplete(it) }
+        firestoreDb.checkUser(name) {
+            runBlocking {
+                if (it != null) {
+                    dataStore.setUser(it)
+                    startFetchingChats()
+                }
+            }
+            onCheckComplete(it)
+        }
     }
 
     fun registerUser(
@@ -85,6 +93,7 @@ class PingRepository(
             if (user != null) {
                 runBlocking {
                     dataStore.setUser(user)
+                    startFetchingChats()
                     registerComplete(true, message)
                 }
             } else {
@@ -102,11 +111,16 @@ class PingRepository(
     fun getChatsOfUserForChatScreen(userId: String): Flow<List<Chat>> {
         return db.chatDao().getChatsOfUserTimeDesc(userId)
     }
+
     fun getChatsOfUserForHome(userId: String): Flow<List<Chat>> {
         return db.chatDao().getChatsOfUserTimeAsc(userId)
     }
 
     suspend fun startFetchingChats() {
+        if (!dataStore.isUserSignedIn()) {
+            Logger.error("user not signed in")
+            return
+        }
         Logger.entry()
         val me: User = dataStore.getCurrentUser()
         firestoreDb.listenForChatToOrFromUser(me.docId) {

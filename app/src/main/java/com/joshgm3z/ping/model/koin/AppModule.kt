@@ -9,6 +9,7 @@ import com.joshgm3z.ping.utils.DataStoreUtil
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SearchViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
+import com.joshgm3z.ping.utils.FirebaseLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -22,7 +23,10 @@ val appModule = module {
             .build()
     }
     single {
-        FirestoreDb()
+        FirebaseLogger(get())
+    }
+    single {
+        FirestoreDb(get())
     }
     single {
         DataStoreUtil(get())
