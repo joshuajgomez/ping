@@ -89,9 +89,9 @@ fun PreviewHomeScreenUsers() {
     }
 }
 
-const val navChatList = "chatList"
-const val navUserList = "userList"
-const val navSettings = "settings"
+const val navChatList = "Chats"
+const val navUserList = "Users"
+const val navSettings = "Settings"
 
 sealed class HomeNavScreen(val route: String, val icon: ImageVector) {
     object ChatList : HomeNavScreen(navChatList, Icons.Rounded.ChatBubble)
@@ -128,13 +128,29 @@ fun HomeScreenContainer(
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(route = navChatList) {
-                homeViewModel.setAppTitle("Chats")
+                homeViewModel.setAppTitle(navChatList)
                 HomeChatListContainer(
                     homeViewModel = homeViewModel,
-                    onChatClick = { onChatClick(it) })
+                    onChatClick = { onChatClick(it) },
+                    onGoToUsersClicked = {
+                        navController.navigate(navUserList){
+                            // Pop up to the start destination of the graph to
+                            // avoid building up a large stack of destinations
+                            // on the back stack as users select items
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            // Avoid multiple copies of the same destination when
+                            // reselecting the same item
+                            launchSingleTop = true
+                            // Restore state when reselecting a previously selected item
+                            restoreState = true
+                        }
+                    },
+                )
             }
             composable(route = navUserList) {
-                homeViewModel.setAppTitle("Users")
+                homeViewModel.setAppTitle(navUserList)
                 UserContainer(
                     userViewModel = userViewModel,
                     onUserClick = { onUserClick(it) })

@@ -4,9 +4,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,7 +17,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.outlined.Chat
+import androidx.compose.material.icons.rounded.ArrowBackIosNew
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -27,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -67,17 +74,22 @@ fun PreviewHomeReceivedChat() {
 fun HomeChatListContainer(
     homeViewModel: HomeViewModel,
     onChatClick: (homeChat: HomeChat) -> Unit = {},
+    onGoToUsersClicked: () -> Unit = {},
 ) {
     val uiState = homeViewModel.uiState.collectAsState()
     when (uiState.value) {
         is HomeUiState.Ready -> {
             HomeChatList(
                 homeChats = (uiState.value as HomeUiState.Ready).homeChats,
-                onChatClick = { onChatClick(it) })
+                onChatClick = { onChatClick(it) },
+                onGoToUsersClicked = { onGoToUsersClicked() }
+            )
         }
 
         else -> {
-            EmptyScreen()
+            EmptyScreen {
+                onGoToUsersClicked()
+            }
         }
     }
 }
@@ -87,9 +99,10 @@ fun HomeChatListContainer(
 fun HomeChatList(
     modifier: Modifier = Modifier,
     homeChats: List<HomeChat> = getHomeChatList(),
-    onChatClick: (homeChat: HomeChat) -> Unit = {}
+    onChatClick: (homeChat: HomeChat) -> Unit = {},
+    onGoToUsersClicked: () -> Unit = {},
 ) {
-    PingTheme {
+    if (homeChats.isNotEmpty()) {
         LazyColumn {
             items(items = homeChats) { it ->
                 HomeChatItem(it) {
@@ -97,6 +110,8 @@ fun HomeChatList(
                 }
             }
         }
+    } else {
+        EmptyScreen(onGoToUsersClicked = { onGoToUsersClicked() })
     }
 }
 
@@ -188,7 +203,7 @@ fun HomeChatItem(
             )
         }
         Divider(
-            color = colorScheme.outlineVariant,
+            color = colorScheme.outlineVariant.copy(alpha = 0.1f),
             modifier = Modifier.constrainAs(line) {
                 top.linkTo(image.bottom, margin = 10.dp)
             })
@@ -197,15 +212,24 @@ fun HomeChatItem(
 
 @Preview
 @Composable
-fun EmptyScreen() {
+fun PreviewEmptyScreen() {
+    PingTheme {
+        EmptyScreen()
+    }
+}
+
+@Composable
+fun EmptyScreen(onGoToUsersClicked: () -> Unit = {}) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxSize()
     ) {
         Icon(
-            imageVector = Icons.Outlined.Chat,
+            imageVector = Icons.Filled.Forum,
             contentDescription = "no chats",
             modifier = Modifier.size(50.dp),
-            tint = colorScheme.outline
+            tint = colorScheme.primary
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
@@ -216,9 +240,20 @@ fun EmptyScreen() {
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "Press the search icon \nto find others in ping.",
+            text = "Go to users screen \nto find others in ping",
             fontSize = 16.sp,
-            color = colorScheme.outline
+            color = colorScheme.outline,
+            textAlign = TextAlign.Center,
         )
+        Spacer(modifier = Modifier.height(30.dp))
+        Button(
+            onClick = { onGoToUsersClicked() }
+        ) {
+            Text(
+                text = "Go to users",
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }

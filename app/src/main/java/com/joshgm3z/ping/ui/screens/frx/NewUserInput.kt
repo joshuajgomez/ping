@@ -71,7 +71,8 @@ fun NewUserInput(
                 name = it
                 error = ""
             },
-            modifier = Modifier.padding(horizontal = 50.dp)
+            modifier = Modifier.padding(horizontal = 50.dp),
+            isFocusNeeded = false
         )
 
         AnimatedVisibility(visible = error.isNotEmpty()) {

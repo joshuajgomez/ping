@@ -118,7 +118,7 @@ fun EmptyChat(modifier: Modifier = Modifier, message: String = "No messages in t
             imageVector = Icons.Default.Forum,
             contentDescription = "empty message",
             modifier = Modifier.size(80.dp),
-            tint = colorScheme.outline
+            tint = colorScheme.primary
         )
         Text(
             text = "Say hello!",

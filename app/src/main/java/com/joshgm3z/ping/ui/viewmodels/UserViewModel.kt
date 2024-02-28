@@ -9,14 +9,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 sealed class UsersUiState {
-    data class Empty(val message: String) : UsersUiState()
     data class Ready(val users: List<User>) : UsersUiState()
 }
 
 class UserViewModel(private val repository: PingRepository) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UsersUiState> =
-        MutableStateFlow(UsersUiState.Empty("Enter your name"))
+        MutableStateFlow(UsersUiState.Ready(emptyList()))
     val uiState: StateFlow<UsersUiState> = _uiState
 
     private lateinit var users: List<User>
@@ -28,7 +27,7 @@ class UserViewModel(private val repository: PingRepository) : ViewModel() {
                     users = repository.getUsers()
                 }.invokeOnCompletion {
                     if (users.isEmpty()) {
-                        _uiState.value = UsersUiState.Empty("No other users")
+                        _uiState.value = UsersUiState.Ready(emptyList())
                     } else {
                         _uiState.value = UsersUiState.Ready(users)
                     }

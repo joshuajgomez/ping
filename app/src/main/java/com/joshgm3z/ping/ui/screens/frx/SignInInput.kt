@@ -58,7 +58,7 @@ fun SignInInput(onSignInClick: (name: String) -> Unit = {}) {
                 name = it
                 error = ""
             },
-            modifier = Modifier.padding(horizontal = 50.dp)
+            modifier = Modifier.padding(horizontal = 50.dp),
         )
 
         AnimatedVisibility(visible = error.isNotEmpty()) {

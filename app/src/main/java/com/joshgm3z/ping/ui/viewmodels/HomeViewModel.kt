@@ -21,7 +21,7 @@ class HomeViewModel(
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<HomeUiState> =
-        MutableStateFlow(HomeUiState.Empty(""))
+        MutableStateFlow(HomeUiState.Ready(emptyList()))
     val uiState: StateFlow<HomeUiState> = _uiState
 
     var appTitle: MutableStateFlow<String> = MutableStateFlow("Ping")
@@ -41,9 +41,7 @@ class HomeViewModel(
             pingRepository.getChatsOfUserForHome(me!!.docId).collect {
                 Logger.debug("home chat list update")
                 val homeChats = DataUtil.buildHomeChats(me.docId, it, users)
-                if (homeChats.isNotEmpty()) {
-                    _uiState.value = HomeUiState.Ready(homeChats)
-                }
+                _uiState.value = HomeUiState.Ready(homeChats)
             }
         }
     }

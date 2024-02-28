@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshgm3z.ping.model.PingRepository
 import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.utils.Logger
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -46,6 +47,7 @@ class SignInViewModel(private val repository: PingRepository) : ViewModel() {
                 _uiState.value = SignInUiState.SignUp(name)
             } else {
                 // user found, proceed to home screen
+                setCurrentUser()
                 _uiState.value = SignInUiState.GoToHome("User found")
             }
         }
@@ -55,6 +57,7 @@ class SignInViewModel(private val repository: PingRepository) : ViewModel() {
         _uiState.value = SignInUiState.Loading("Creating your profile")
         repository.registerUser(name, imagePath) { isSuccess, message ->
             if (isSuccess) {
+                setCurrentUser()
                 _uiState.value = SignInUiState.GoToHome("User created successfully")
             } else {
                 _uiState.value = SignInUiState.Error("Unable to create user: $message")
@@ -67,7 +70,7 @@ class SignInViewModel(private val repository: PingRepository) : ViewModel() {
     }
 
     fun onSignOutClicked() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.signOutUser()
             SignInUiState.LoggedOut("Enter your name")
         }

@@ -8,8 +8,6 @@ import androidx.navigation.compose.composable
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.frx.FrxContainer
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
-import com.joshgm3z.ping.ui.screens.search.UserContainer
-import com.joshgm3z.ping.ui.screens.settings.SettingScreenContainer
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
@@ -53,6 +51,7 @@ fun PingAppContainer(
                     navController.navigate(navHome)
                 },
                 onLoggedOut = {
+                    Logger.error("onLoggedOut: navitate to sign in")
                     navController.navigate(navSignIn)
                 }
             )

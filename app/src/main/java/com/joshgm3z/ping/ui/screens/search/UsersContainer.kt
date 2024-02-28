@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -54,6 +55,17 @@ fun PreviewSearchContainer() {
 
 @Preview
 @Composable
+fun PreviewSearchContainerEmpty() {
+    PingTheme {
+        Column {
+            SearchBar()
+            UserList(users = emptyList())
+        }
+    }
+}
+
+@Preview
+@Composable
 fun EmptyScreen(message: String = "No users found") {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -83,8 +95,9 @@ fun UserContainer(
         SearchBar()
         val uiState = userViewModel.uiState.collectAsState()
         when (uiState.value) {
-            is UsersUiState.Empty -> EmptyScreen()
-            is UsersUiState.Ready -> UserList(users = (uiState.value as UsersUiState.Ready).users) {
+            is UsersUiState.Ready -> UserList(
+                users = (uiState.value as UsersUiState.Ready).users
+            ) {
                 onUserClick(it)
             }
         }
@@ -97,9 +110,15 @@ fun UserList(
     users: List<User> = randomUsers(),
     onSearchItemClick: (user: User) -> Unit = {}
 ) {
-    LazyColumn(modifier = modifier) {
-        items(items = users) { it ->
-            SearchItem(it) { onSearchItemClick(it) }
+    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        if (users.isNotEmpty()) {
+            LazyColumn(modifier = modifier) {
+                items(items = users) { it ->
+                    SearchItem(it) { onSearchItemClick(it) }
+                }
+            }
+        } else {
+            EmptyScreen()
         }
     }
 }
