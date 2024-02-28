@@ -26,6 +26,7 @@ class PingRepository(
     suspend fun getUsers(): List<User> = db.userDao().getAll()
 
     fun refreshUserList(onUserListUpdated: () -> Unit) {
+        Logger.entry()
         firestoreDb.getUserList {
             Logger.debug("it = [$it]")
             if (it.isNotEmpty()) {

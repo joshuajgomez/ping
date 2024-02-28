@@ -32,7 +32,7 @@ import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
 @Composable
 fun FrxContainer(
     signInViewModel: SignInViewModel,
-    goToHome: () -> Unit,
+    onUserSignedIn: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -45,7 +45,7 @@ fun FrxContainer(
             is SignInUiState.SignIn -> SignInInput {
                 signInViewModel.onSignInClick(
                     name = it,
-                    onSignInComplete = { goToHome() }
+                    onSignInComplete = { onUserSignedIn() }
                 )
             }
 
@@ -55,7 +55,7 @@ fun FrxContainer(
                     signInViewModel.onSignUpClick(
                         name = name,
                         imagePath = imagePath,
-                        onSignUpComplete = { goToHome() })
+                        onSignUpComplete = { onUserSignedIn() })
                 },
                 onGoToSignInClick = {
                     signInViewModel.onGoToSignInClick()

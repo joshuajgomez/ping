@@ -47,7 +47,8 @@ fun PingAppContainer(
             signInViewModel.resetUiState()
             FrxContainer(
                 signInViewModel = signInViewModel,
-                goToHome = {
+                onUserSignedIn = {
+                    userViewModel.refreshUserList()
                     homeViewModel.startListeningToChats()
                     navController.navigate(navHome)
                 }

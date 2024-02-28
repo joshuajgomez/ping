@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.ping.model.PingRepository
 import com.joshgm3z.ping.model.data.User
+import com.joshgm3z.ping.utils.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,6 +22,15 @@ class UserViewModel(private val repository: PingRepository) : ViewModel() {
     private lateinit var users: List<User>
 
     init {
+        refreshUserList()
+    }
+
+    fun refreshUserList() {
+        if (!repository.isUserSignedIn()) {
+            Logger.warn("user not signed in")
+            return
+        }
+        Logger.entry()
         viewModelScope.launch {
             repository.refreshUserList {
                 viewModelScope.launch {
