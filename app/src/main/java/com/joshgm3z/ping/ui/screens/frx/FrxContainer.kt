@@ -27,10 +27,15 @@ import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.SignInUiState
+import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 
 @Composable
-fun FrxContainer(signInViewModel: UserViewModel, goToHome: () -> Unit) {
+fun FrxContainer(
+    signInViewModel: SignInViewModel,
+    goToHome: () -> Unit,
+    onLoggedOut: () -> Unit,
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -61,6 +66,7 @@ fun FrxContainer(signInViewModel: UserViewModel, goToHome: () -> Unit) {
             )
 
             is SignInUiState.GoToHome -> goToHome()
+            is SignInUiState.LoggedOut -> onLoggedOut()
         }
     }
 }

@@ -32,7 +32,7 @@ fun getHomeChatList() = listOf(
     HomeChat.random(),
     HomeChat.random(),
     HomeChat.random(),
-)
+).sortedBy { homeChat -> homeChat.lastChat.sentTime }
 
 fun randomChat() = getChatList().random()
 

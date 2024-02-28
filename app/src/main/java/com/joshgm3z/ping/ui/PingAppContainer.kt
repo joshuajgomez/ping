@@ -8,19 +8,17 @@ import androidx.navigation.compose.composable
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.frx.FrxContainer
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
-import com.joshgm3z.ping.ui.screens.search.SearchContainer
+import com.joshgm3z.ping.ui.screens.search.UserContainer
 import com.joshgm3z.ping.ui.screens.settings.SettingScreenContainer
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
-import com.joshgm3z.ping.ui.viewmodels.SearchViewModel
+import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.ping.utils.Logger
 
 const val navSignIn = "signin_screen"
 const val navHome = "home_screen"
-const val navSearch = "search_screen"
 const val navChat = "chat_screen"
-const val navSettings = "chat_settings"
 
 class PingNavState {
     companion object {
@@ -39,7 +37,7 @@ fun PingAppContainer(
     userViewModel: UserViewModel,
     homeViewModel: HomeViewModel,
     chatViewModel: ChatViewModel,
-    searchViewModel: SearchViewModel,
+    signInViewModel: SignInViewModel,
 ) {
     NavHost(
         navController = navController,
@@ -49,10 +47,13 @@ fun PingAppContainer(
         composable(navSignIn) {
             PingNavState.currentRoute = navSignIn
             FrxContainer(
-                signInViewModel = userViewModel,
+                signInViewModel = signInViewModel,
                 goToHome = {
                     homeViewModel.startListeningToChats()
                     navController.navigate(navHome)
+                },
+                onLoggedOut = {
+                    navController.navigate(navSignIn)
                 }
             )
         }
@@ -61,9 +62,14 @@ fun PingAppContainer(
             PingNavState.currentRoute = navHome
             HomeScreenContainer(
                 homeViewModel = homeViewModel,
-                onSearchClick = { navController.navigate(navSearch) },
-                onSettingsClick = { navController.navigate(navSettings) },
-                onChatClick = { navController.navigate("$navChat/${it.otherGuy.docId}") },
+                userViewModel = userViewModel,
+                signInViewModel = signInViewModel,
+                onUserClick = {
+                    navController.navigate("$navChat/${it.docId}")
+                },
+                onChatClick = {
+                    navController.navigate("$navChat/${it.otherGuy.docId}")
+                },
             )
         }
 
@@ -78,25 +84,5 @@ fun PingAppContainer(
                 onBackClick = { navController.navigate(navHome) }
             )
         }
-
-        composable(navSearch) {
-            PingNavState.currentRoute = navSearch
-            SearchContainer(
-                searchViewModel = searchViewModel,
-                onSearchItemClick = { navController.navigate("$navChat/${it.docId}") },
-                onCancelClick = { navController.navigate(navHome) }
-            )
-        }
-
-        composable(navSettings) {
-            PingNavState.currentRoute = navSettings
-            SettingScreenContainer(
-                userViewModel = userViewModel,
-                onGoBackClick = {
-                    navController.navigate(navHome)
-                }
-            )
-        }
-
     }
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,10 +13,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.NoAccounts
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,8 +38,8 @@ import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.utils.randomUser
 import com.joshgm3z.ping.utils.randomUsers
-import com.joshgm3z.ping.ui.viewmodels.SearchUiState
-import com.joshgm3z.ping.ui.viewmodels.SearchViewModel
+import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import com.joshgm3z.ping.ui.viewmodels.UsersUiState
 
 @Preview
 @Composable
@@ -50,7 +47,7 @@ fun PreviewSearchContainer() {
     PingTheme {
         Column {
             SearchBar()
-            SearchList()
+            UserList()
         }
     }
 }
@@ -77,27 +74,30 @@ fun EmptyScreen(message: String = "No users found") {
 }
 
 @Composable
-fun SearchContainer(
-    searchViewModel: SearchViewModel,
-    onSearchItemClick: (user: User) -> Unit,
-    onCancelClick: () -> Unit,
+fun UserContainer(
+    modifier: Modifier = Modifier,
+    userViewModel: UserViewModel,
+    onUserClick: (user: User) -> Unit,
 ) {
-    Column {
-        SearchBar { onCancelClick() }
-        val uiState = searchViewModel.uiState.collectAsState()
+    Column(modifier = modifier) {
+        SearchBar()
+        val uiState = userViewModel.uiState.collectAsState()
         when (uiState.value) {
-            is SearchUiState.Empty -> EmptyScreen()
-            is SearchUiState.SearchResult -> TODO()
-            is SearchUiState.Ready -> SearchList((uiState.value as SearchUiState.Ready).users) {
-                onSearchItemClick(it)
+            is UsersUiState.Empty -> EmptyScreen()
+            is UsersUiState.Ready -> UserList(users = (uiState.value as UsersUiState.Ready).users) {
+                onUserClick(it)
             }
         }
     }
 }
 
 @Composable
-fun SearchList(users: List<User> = randomUsers(), onSearchItemClick: (user: User) -> Unit = {}) {
-    LazyColumn {
+fun UserList(
+    modifier: Modifier = Modifier,
+    users: List<User> = randomUsers(),
+    onSearchItemClick: (user: User) -> Unit = {}
+) {
+    LazyColumn(modifier = modifier) {
         items(items = users) { it ->
             SearchItem(it) { onSearchItemClick(it) }
         }
@@ -139,20 +139,10 @@ fun SearchItem(user: User = randomUser(), onSearchItemClick: (user: User) -> Uni
 }
 
 @Composable
-fun SearchBar(onCancelClick: () -> Unit = {}) {
+fun SearchBar() {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = { onCancelClick() }) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "go back",
-                modifier = Modifier
-                    .padding(start = 15.dp)
-                    .size(30.dp),
-                tint = colorScheme.onSurface
-            )
-        }
         var text by remember { mutableStateOf("") }
         CustomTextField(
             text = text,
@@ -160,6 +150,7 @@ fun SearchBar(onCancelClick: () -> Unit = {}) {
             modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp),
             onTextChanged = { text = it },
             onEnterPressed = {},
+            isFocusNeeded = false,
         )
     }
 }

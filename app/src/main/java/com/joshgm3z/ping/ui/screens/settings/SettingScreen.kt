@@ -27,14 +27,15 @@ import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 
 @Composable
 fun SettingScreenContainer(
-    userViewModel: UserViewModel,
-    onGoBackClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
+    name: String = "user111",
+    imagePath: String = "",
+    onSignOutClick: () -> Unit = {},
 ) {
     SettingScreen(
-        userName = userViewModel.currentUser!!.name,
-        imagePath = userViewModel.currentUser!!.imagePath,
-        onSignOutClick = { userViewModel.onSignOutClicked() },
-        onGoBackClick = { onGoBackClick() },
+        userName = name,
+        imagePath = imagePath,
+        onSignOutClick = { onSignOutClick() },
     )
 }
 
@@ -51,23 +52,9 @@ private fun SettingScreen(
     userName: String = "dude111",
     imagePath: String = "",
     onSignOutClick: () -> Unit = {},
-    onGoBackClick: () -> Unit = {},
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (signOutBtn, image, name, goBack) = createRefs()
-        IconButton(
-            modifier = Modifier.constrainAs(goBack) {
-                top.linkTo(parent.top, margin = 15.dp)
-                start.linkTo(parent.start, margin = 15.dp)
-            },
-            onClick = { onGoBackClick() }
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = null,
-                tint = colorScheme.onSurface
-            )
-        }
+        val (signOutBtn, image, name) = createRefs()
         Image(
             painter = painterResource(id = R.drawable.default_user),
             contentDescription = "image",

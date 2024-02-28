@@ -24,6 +24,8 @@ class HomeViewModel(
         MutableStateFlow(HomeUiState.Empty(""))
     val uiState: StateFlow<HomeUiState> = _uiState
 
+    var appTitle: MutableStateFlow<String> = MutableStateFlow("Ping")
+
     init {
         startListeningToChats()
     }
@@ -44,5 +46,9 @@ class HomeViewModel(
                 }
             }
         }
+    }
+
+    fun setAppTitle(title: String) {
+        appTitle.value = title
     }
 }

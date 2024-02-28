@@ -41,7 +41,7 @@ class HomeActivity : ComponentActivity() {
                         userViewModel = get(),
                         homeViewModel = get(),
                         chatViewModel = get(),
-                        searchViewModel = get(),
+                        signInViewModel = get(),
                     )
                 }
             }
