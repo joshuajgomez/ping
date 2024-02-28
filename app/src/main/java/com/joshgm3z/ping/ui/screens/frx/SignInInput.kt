@@ -65,8 +65,6 @@ fun SignInInput(onSignInClick: (name: String) -> Unit = {}) {
             ErrorText()
         }
 
-        PasswordInput()
-
         Button(
             onClick = {
                 if (name.isNotEmpty())
