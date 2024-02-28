@@ -201,7 +201,7 @@ fun HomeChatListContainer(
     homeChats: List<HomeChat> = getHomeChatList(),
     onChatClick: (homeChat: HomeChat) -> Unit = {},
 ) {
-    HomeChatList(homeChats) {
+    HomeChatList(homeChatList = homeChats) {
         onChatClick(it)
     }
 }

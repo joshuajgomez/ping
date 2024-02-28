@@ -69,10 +69,11 @@ fun PreviewHomeChatList() {
 
 @Composable
 fun HomeChatList(
+    modifier: Modifier = Modifier,
     homeChatList: List<HomeChat> = getHomeChatList(),
     onChatClick: (homeChat: HomeChat) -> Unit = {},
 ) {
-    LazyColumn(modifier = Modifier.padding(top = 5.dp)) {
+    LazyColumn(modifier = modifier.padding(top = 5.dp)) {
         items(items = homeChatList) { it ->
             HomeChatItem(it) {
                 onChatClick(it)
@@ -122,7 +123,9 @@ fun HomeChatItem(
             AnimatedVisibility(visible = homeChat.lastChat.isOutwards) {
                 StatusIcon(
                     status = homeChat.lastChat.status,
-                    modifier = Modifier.padding(end = 5.dp, top = 2.dp).size(17.dp)
+                    modifier = Modifier
+                        .padding(end = 5.dp, top = 2.dp)
+                        .size(17.dp)
                 )
             }
             Text(
