@@ -112,6 +112,7 @@ fun HomeScreenContainer(
     signInViewModel: SignInViewModel,
     onUserClick: (user: User) -> Unit = {},
     onChatClick: (homeChat: HomeChat) -> Unit = {},
+    onLoggedOut: () -> Unit = {},
 ) {
     val navController = rememberNavController()
     Scaffold(
@@ -133,7 +134,7 @@ fun HomeScreenContainer(
                     homeViewModel = homeViewModel,
                     onChatClick = { onChatClick(it) },
                     onGoToUsersClicked = {
-                        navController.navigate(navUserList){
+                        navController.navigate(navUserList) {
                             // Pop up to the start destination of the graph to
                             // avoid building up a large stack of destinations
                             // on the back stack as users select items
@@ -160,7 +161,10 @@ fun HomeScreenContainer(
                 SettingScreenContainer(
                     name = signInViewModel.currentUser!!.name,
                     imagePath = signInViewModel.currentUser!!.imagePath,
-                    onSignOutClick = { signInViewModel.onSignOutClicked() },
+                    onSignOutClick = {
+                        signInViewModel.onSignOutClicked()
+                        onLoggedOut()
+                    },
                 )
             }
         }

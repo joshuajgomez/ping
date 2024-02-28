@@ -15,8 +15,6 @@ sealed class SignInUiState {
     data class SignIn(val message: String) : SignInUiState()
     data class SignUp(val enteredName: String) : SignInUiState()
     data class Error(val message: String) : SignInUiState()
-    data class GoToHome(val message: String) : SignInUiState()
-    data class LoggedOut(val message: String) : SignInUiState()
 }
 
 class SignInViewModel(private val repository: PingRepository) : ViewModel() {
@@ -39,7 +37,10 @@ class SignInViewModel(private val repository: PingRepository) : ViewModel() {
         }
     }
 
-    fun onSignInClick(name: String) {
+    fun onSignInClick(
+        name: String,
+        onSignInComplete: () -> Unit,
+    ) {
         _uiState.value = SignInUiState.Loading("Finding you")
         repository.checkUser(name) {
             if (it == null) {
@@ -48,17 +49,21 @@ class SignInViewModel(private val repository: PingRepository) : ViewModel() {
             } else {
                 // user found, proceed to home screen
                 setCurrentUser()
-                _uiState.value = SignInUiState.GoToHome("User found")
+                onSignInComplete()
             }
         }
     }
 
-    fun onSignUpClick(name: String, imagePath: String) {
+    fun onSignUpClick(
+        name: String,
+        imagePath: String,
+        onSignUpComplete: () -> Unit,
+    ) {
         _uiState.value = SignInUiState.Loading("Creating your profile")
         repository.registerUser(name, imagePath) { isSuccess, message ->
             if (isSuccess) {
                 setCurrentUser()
-                _uiState.value = SignInUiState.GoToHome("User created successfully")
+                onSignUpComplete()
             } else {
                 _uiState.value = SignInUiState.Error("Unable to create user: $message")
             }
@@ -72,8 +77,11 @@ class SignInViewModel(private val repository: PingRepository) : ViewModel() {
     fun onSignOutClicked() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.signOutUser()
-            SignInUiState.LoggedOut("Enter your name")
         }
+    }
+
+    fun resetUiState() {
+        _uiState.value = SignInUiState.SignIn("Enter your name")
     }
 
 }

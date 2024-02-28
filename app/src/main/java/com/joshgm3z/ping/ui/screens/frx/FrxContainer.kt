@@ -28,13 +28,11 @@ import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.SignInUiState
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
-import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 
 @Composable
 fun FrxContainer(
     signInViewModel: SignInViewModel,
     goToHome: () -> Unit,
-    onLoggedOut: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -45,13 +43,19 @@ fun FrxContainer(
         val uiState = signInViewModel.uiState.collectAsState()
         when (uiState.value) {
             is SignInUiState.SignIn -> SignInInput {
-                signInViewModel.onSignInClick(it)
+                signInViewModel.onSignInClick(
+                    name = it,
+                    onSignInComplete = { goToHome() }
+                )
             }
 
             is SignInUiState.SignUp -> NewUserInput(
                 inputName = (uiState.value as SignInUiState.SignUp).enteredName,
                 onSignUpClick = { name, imagePath ->
-                    signInViewModel.onSignUpClick(name = name, imagePath = imagePath)
+                    signInViewModel.onSignUpClick(
+                        name = name,
+                        imagePath = imagePath,
+                        onSignUpComplete = { goToHome() })
                 },
                 onGoToSignInClick = {
                     signInViewModel.onGoToSignInClick()
@@ -64,9 +68,6 @@ fun FrxContainer(
             is SignInUiState.Error -> ErrorScreen(
                 message = (uiState.value as SignInUiState.Error).message
             )
-
-            is SignInUiState.GoToHome -> goToHome()
-            is SignInUiState.LoggedOut -> onLoggedOut()
         }
     }
 }

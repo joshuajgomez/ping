@@ -44,15 +44,12 @@ fun PingAppContainer(
 
         composable(navSignIn) {
             PingNavState.currentRoute = navSignIn
+            signInViewModel.resetUiState()
             FrxContainer(
                 signInViewModel = signInViewModel,
                 goToHome = {
                     homeViewModel.startListeningToChats()
                     navController.navigate(navHome)
-                },
-                onLoggedOut = {
-                    Logger.error("onLoggedOut: navitate to sign in")
-                    navController.navigate(navSignIn)
                 }
             )
         }
@@ -69,6 +66,9 @@ fun PingAppContainer(
                 onChatClick = {
                     navController.navigate("$navChat/${it.otherGuy.docId}")
                 },
+                onLoggedOut = {
+                    navController.navigate(navSignIn)
+                }
             )
         }
 
@@ -80,7 +80,9 @@ fun PingAppContainer(
             }
             ChatScreenContainer(
                 chatViewModel = chatViewModel,
-                onBackClick = { navController.navigate(navHome) }
+                onBackClick = {
+                    navController.navigate(navHome)
+                }
             )
         }
     }
