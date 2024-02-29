@@ -137,7 +137,8 @@ class PingRepository(
                     Logger.debug("it = [$it]")
                     if (it.toUserId == me.docId && it.status == Chat.SENT) {
                         it.status = Chat.DELIVERED
-                        notificationUtil.showNotification("New message", it.message)
+                        val user = db.userDao().getUser(it.fromUserId)
+                        notificationUtil.showNotification(user, it.message)
                         firestoreDb.updateChatStatus(it)
                     }
                     db.chatDao().insert(it)

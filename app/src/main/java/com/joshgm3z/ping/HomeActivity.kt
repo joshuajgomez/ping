@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.joshgm3z.ping.service.PingService
 import com.joshgm3z.ping.ui.PingAppContainer
+import com.joshgm3z.ping.ui.navChat
 import com.joshgm3z.ping.ui.navHome
 import com.joshgm3z.ping.ui.navSignIn
 import com.joshgm3z.ping.ui.theme.PingTheme
@@ -43,8 +45,18 @@ class HomeActivity : ComponentActivity() {
                         chatViewModel = get(),
                         signInViewModel = get(),
                     )
+                    if (intent.hasExtra(OPEN_CHAT_USER)) {
+                        navController.navigate(
+                            "$navChat/${intent.getStringExtra(OPEN_CHAT_USER)}"
+                        )
+                        intent.removeExtra(OPEN_CHAT_USER)
+                    }
                 }
             }
         }
+    }
+
+    companion object {
+        const val OPEN_CHAT_USER: String = "open_chat_user_id"
     }
 }

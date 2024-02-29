@@ -9,12 +9,13 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.joshgm3z.ping.HomeActivity
 import com.joshgm3z.ping.R
+import com.joshgm3z.ping.model.data.User
 
 class NotificationUtil(private val context: Context) {
 
-    private val CHANNEL_DESC = "some desc"
-    private val CHANNEL_NAME = "ping_channel"
-    private val CHANNEL_ID = "1"
+    private val CHANNEL_DESC = "Ping will notify you when you receive new messages"
+    private val CHANNEL_NAME = "New messages"
+    private val CHANNEL_ID = "new_messages"
     private val NOTIFICATION_ID = 99
 
     private val notificationManager =
@@ -24,10 +25,13 @@ class NotificationUtil(private val context: Context) {
         createNotificationChannel()
     }
 
-    fun showNotification(title: String, message: String) {
+    fun showNotification(user: User, message: String) {
+        Logger.debug("user = [$user]")
         val intent = Intent(context, HomeActivity::class.java).apply {
-            val flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra(HomeActivity.OPEN_CHAT_USER, user.docId)
         }
+        Logger.debug("intent.extras = [${intent.extras}]")
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             context,
             0,
@@ -37,7 +41,7 @@ class NotificationUtil(private val context: Context) {
 
         var builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_ping_foreground)
-            .setContentTitle(title)
+            .setContentTitle(user.name)
             .setContentText(message)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -48,15 +52,13 @@ class NotificationUtil(private val context: Context) {
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is not in the Support Library.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = CHANNEL_NAME
-            val descriptionText = CHANNEL_DESC
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-            // Register the channel with the system.
-            notificationManager.createNotificationChannel(channel)
+        val name = CHANNEL_NAME
+        val descriptionText = CHANNEL_DESC
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+            description = descriptionText
         }
+        // Register the channel with the system.
+        notificationManager.createNotificationChannel(channel)
     }
 }
