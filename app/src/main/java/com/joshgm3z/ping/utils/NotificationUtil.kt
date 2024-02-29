@@ -16,7 +16,6 @@ class NotificationUtil(private val context: Context) {
     private val CHANNEL_DESC = "Ping will notify you when you receive new messages"
     private val CHANNEL_NAME = "New messages"
     private val CHANNEL_ID = "new_messages"
-    private val NOTIFICATION_ID = 99
 
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -25,7 +24,7 @@ class NotificationUtil(private val context: Context) {
         createNotificationChannel()
     }
 
-    fun showNotification(user: User, message: String) {
+    fun showNotification(id: Int, user: User, message: String) {
         Logger.debug("user = [$user]")
         val intent = Intent(context, HomeActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -39,14 +38,14 @@ class NotificationUtil(private val context: Context) {
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        var builder = NotificationCompat.Builder(context, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_ping_foreground)
             .setContentTitle(user.name)
             .setContentText(message)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
-        notificationManager.notify(NOTIFICATION_ID, builder.build())
+        notificationManager.notify(id, builder.build())
     }
 
     private fun createNotificationChannel() {

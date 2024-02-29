@@ -10,8 +10,11 @@ import com.joshgm3z.ping.ui.navChat
 import com.joshgm3z.ping.utils.DataUtil
 import com.joshgm3z.ping.utils.Logger
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.launch
 
 sealed class ChatUiState {
@@ -41,19 +44,28 @@ class ChatViewModel(
         }
     }
 
+    companion object {
+        private var chatObserverJob: Job? = null
+    }
+
     fun setUser(userId: String) {
-        viewModelScope.launch {
+        chatObserverJob?.cancel()
+        chatObserverJob = viewModelScope.launch {
             otherGuy = repository.getUser(userId)
             me = repository.getCurrentUser()
-            repository.getChatsOfUserForChatScreen(userId = otherGuy.docId).collect {
-                if (PingNavState.currentRoute == navChat) {
+            Logger.debug("setUser otherGuy = [${otherGuy}]")
+            repository.getChatsOfUserForChatScreen(userId = otherGuy.docId).cancellable()
+                .collect {
+                    Logger.debug("collect.user = [${otherGuy}], chats = [$it]")
                     val chats = DataUtil.markOutwardChats(me!!.docId, ArrayList(it))
                     _uiState.value = ChatUiState.Ready(otherGuy, chats)
                     repository.updateChatStatus(Chat.READ, chats)
                 }
-            }
-        }.invokeOnCompletion {
-            _uiState.value = ChatUiState.Ready(otherGuy, emptyList())
         }
+    }
+
+    fun onScreenExit() {
+        Logger.entry()
+        chatObserverJob?.cancel()
     }
 }

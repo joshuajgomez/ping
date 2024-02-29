@@ -125,20 +125,20 @@ class PingRepository(
     }
 
     suspend fun startFetchingChats() {
-        if (!dataStore.isUserSignedIn()) {
+        val me = dataStore.getCurrentUser()
+        if (me == null) {
             Logger.error("user not signed in")
             return
         }
         Logger.entry()
-        val me: User? = dataStore.getCurrentUser()
-        firestoreDb.listenForChatToOrFromUser(me!!.docId) {
+        firestoreDb.listenForChatToOrFromUser(me.docId) {
             runBlocking {
                 it.forEach(action = {
                     Logger.debug("it = [$it]")
                     if (it.toUserId == me.docId && it.status == Chat.SENT) {
                         it.status = Chat.DELIVERED
                         val user = db.userDao().getUser(it.fromUserId)
-                        notificationUtil.showNotification(user, it.message)
+                        notificationUtil.showNotification(it.sentTime.toInt(), user, it.message)
                         firestoreDb.updateChatStatus(it)
                     }
                     db.chatDao().insert(it)

@@ -77,11 +77,13 @@ fun PingAppContainer(
             PingNavState.currentRoute = navChat
             val userId = it.arguments?.getString("userId")
             LaunchedEffect(key1 = userId) {
-                chatViewModel.setUser(userId!!)
+                if (userId != null) chatViewModel.setUser(userId)
+                else Logger.error("userId is null")
             }
             ChatScreenContainer(
                 chatViewModel = chatViewModel,
                 onBackClick = {
+                    chatViewModel.onScreenExit()
                     navController.navigate(navHome)
                 }
             )
