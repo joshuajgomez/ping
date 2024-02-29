@@ -6,6 +6,7 @@ import com.joshgm3z.ping.model.firestore.FirestoreDb
 import com.joshgm3z.ping.model.room.PingDb
 import com.joshgm3z.ping.utils.Logger
 import com.joshgm3z.ping.utils.DataStoreUtil
+import com.joshgm3z.ping.utils.NotificationUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -15,6 +16,7 @@ class PingRepository(
     private val db: PingDb,
     private val firestoreDb: FirestoreDb,
     private val dataStore: DataStoreUtil,
+    private val notificationUtil: NotificationUtil,
 ) {
 
     init {
@@ -135,6 +137,7 @@ class PingRepository(
                     Logger.debug("it = [$it]")
                     if (it.toUserId == me.docId && it.status == Chat.SENT) {
                         it.status = Chat.DELIVERED
+                        notificationUtil.showNotification("New message", it.message)
                         firestoreDb.updateChatStatus(it)
                     }
                     db.chatDao().insert(it)

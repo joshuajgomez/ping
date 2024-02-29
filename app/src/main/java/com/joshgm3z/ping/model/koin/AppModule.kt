@@ -10,6 +10,7 @@ import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.ping.utils.FirebaseLogger
+import com.joshgm3z.ping.utils.NotificationUtil
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -23,6 +24,9 @@ val appModule = module {
             .build()
     }
     single {
+        NotificationUtil(get())
+    }
+    single {
         FirebaseLogger(get())
     }
     single {
@@ -32,7 +36,7 @@ val appModule = module {
         DataStoreUtil(get())
     }
     single {
-        PingRepository(get(), get(), get())
+        PingRepository(get(), get(), get(), get())
     }
     viewModel {
         ChatViewModel(get())
