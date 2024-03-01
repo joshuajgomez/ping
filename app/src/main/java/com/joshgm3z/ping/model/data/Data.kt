@@ -19,14 +19,15 @@ data class Chat(
     var sentTime: Long = 0
     var fromUserId: String = ""
     var toUserId: String = ""
+    var replyToChatId: String = ""
     var status: Long = SAVED
 
     @Ignore
     var isOutwards: Boolean = true
 
     companion object {
-        fun random(): Chat {
-            val chat = Chat(randomMessage())
+        fun random(message: String = randomMessage()): Chat {
+            val chat = Chat(message)
             chat.sentTime = System.currentTimeMillis()
             chat.fromUserId = ""
             chat.toUserId = ""
