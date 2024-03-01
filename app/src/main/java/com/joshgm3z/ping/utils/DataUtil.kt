@@ -18,7 +18,7 @@ class DataUtil {
         fun buildHomeChats(meUserId: String, chats: List<Chat>, users: List<User>): List<HomeChat> {
             val homeChats: HashMap<String, HomeChat> = HashMap()
             for (chat in chats) {
-                Logger.debug("chat = [$chat]")
+//                Logger.verbose("chat = [$chat]")
                 val user = getUser(chat.fromUserId, chat.toUserId, users)
                 var homeChat: HomeChat
                 if (homeChats.containsKey(user.docId)) {
@@ -34,7 +34,6 @@ class DataUtil {
 
                 homeChats[user.docId] = homeChat
             }
-            Logger.debug("homeChats = [$homeChats]")
             val arrayList = ArrayList(homeChats.values)
             arrayList.sortByDescending { homeChat -> homeChat.lastChat.sentTime }
             return arrayList

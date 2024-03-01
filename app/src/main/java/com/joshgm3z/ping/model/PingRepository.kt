@@ -69,7 +69,6 @@ class PingRepository(
     }
 
     private fun addDummyChat(chat: Chat) {
-        Logger.debug("chat = [${chat}]")
         val dummy = Chat(chat.message + " returned")
         dummy.toUserId = chat.fromUserId
         dummy.fromUserId = chat.toUserId
@@ -111,9 +110,7 @@ class PingRepository(
     }
 
     suspend fun getUser(userId: String): User {
-        val user = db.userDao().getUser(userId)
-        Logger.debug("userId = [${userId}], user = [$user]")
-        return user
+        return db.userDao().getUser(userId)
     }
 
     fun getChatsOfUserForChatScreen(userId: String): Flow<List<Chat>> {
@@ -134,7 +131,6 @@ class PingRepository(
         firestoreDb.listenForChatToOrFromUser(me.docId) {
             runBlocking {
                 it.forEach(action = {
-                    Logger.debug("it = [$it]")
                     if (it.toUserId == me.docId && it.status == Chat.SENT) {
                         it.status = Chat.DELIVERED
                         val user = db.userDao().getUser(it.fromUserId)

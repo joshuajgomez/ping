@@ -22,7 +22,7 @@ class PingNavState {
     companion object {
         var currentRoute: String = ""
             set(value) {
-                Logger.debug("PingNavState.currentRoute = $value")
+                Logger.verbose("PingNavState.currentRoute = $value")
                 field = value
             }
     }

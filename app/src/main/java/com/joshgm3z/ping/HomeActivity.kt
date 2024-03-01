@@ -46,9 +46,9 @@ class HomeActivity : ComponentActivity() {
                         signInViewModel = get(),
                     )
                     if (intent.hasExtra(OPEN_CHAT_USER)) {
-                        navController.navigate(
-                            "$navChat/${intent.getStringExtra(OPEN_CHAT_USER)}"
-                        )
+                        val startRoute = "$navChat/${intent.getStringExtra(OPEN_CHAT_USER)}"
+                        Logger.debug("startRoute = [${startRoute}]")
+                        navController.navigate(startRoute)
                         intent.removeExtra(OPEN_CHAT_USER)
                     }
                 }
