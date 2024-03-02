@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,7 +55,7 @@ private fun SettingScreen(
     onSignOutClick: () -> Unit = {},
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (signOutBtn, image, name) = createRefs()
+        val (signOutBtn, image, name, editImage) = createRefs()
         Image(
             painter = painterResource(id = R.drawable.default_user),
             contentDescription = "image",
@@ -67,6 +68,17 @@ private fun SettingScreen(
                 .clip(CircleShape)
                 .size(100.dp)
         )
+        TextButton(
+            onClick = { /*TODO*/ },
+            modifier = Modifier
+                .constrainAs(editImage) {
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    top.linkTo(image.bottom, margin = 90.dp)
+                }
+        ) {
+            Text(text = "Change profile pic")
+        }
         Text(
             text = userName,
             fontSize = 20.sp,
