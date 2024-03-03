@@ -2,6 +2,7 @@ package com.joshgm3z.ping.ui.screens.search
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EmojiPeople
 import androidx.compose.material.icons.filled.NoAccounts
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -29,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,21 +69,31 @@ fun PreviewSearchContainerEmpty() {
 
 @Preview
 @Composable
-fun EmptyScreen(message: String = "No users found") {
+fun PreviewEmpty() {
+    PingTheme {
+        EmptyScreen()
+    }
+}
+
+@Composable
+fun EmptyScreen(message: String = "You are first!") {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(top = 130.dp)
+            .padding(top = 130.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Icon(
-            imageVector = Icons.Default.NoAccounts,
+            imageVector = Icons.Default.EmojiPeople,
             contentDescription = "empty list",
             modifier = Modifier.size(50.dp),
-            tint = Color.Gray
+            tint = colorScheme.primary
         )
-        Spacer(modifier = Modifier.height(30.dp))
         Text(
-            text = message, fontSize = 18.sp, color = Color.Gray
+            text = message, fontSize = 18.sp, color = Color.Gray, fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = "No other users yet", fontSize = 15.sp, color = Color.Gray
         )
     }
 }
