@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.model
 
+import androidx.compose.ui.platform.LocalContext
 import com.joshgm3z.ping.model.data.Chat
 import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.model.firestore.FirestoreDb
@@ -7,10 +8,12 @@ import com.joshgm3z.ping.model.room.PingDb
 import com.joshgm3z.ping.utils.Logger
 import com.joshgm3z.ping.utils.DataStoreUtil
 import com.joshgm3z.ping.utils.NotificationUtil
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class PingRepository(
     private val db: PingDb,
@@ -21,31 +24,32 @@ class PingRepository(
 
     init {
         GlobalScope.launch {
-            startFetchingChats()
+            observerChatsForMeFromServer()
         }
     }
 
     suspend fun getUsers(): List<User> = db.userDao().getAll()
 
-    fun refreshUserList(onUserListUpdated: () -> Unit) {
+    fun syncUserListWithServer(onUserListUpdated: () -> Unit) {
         Logger.entry()
         firestoreDb.getUserList {
             Logger.debug("it = [$it]")
             if (it.isNotEmpty()) {
                 runBlocking {
-                    val currentUser = dataStore.getCurrentUser()
-                    if (currentUser != null) {
+                    if (isUserSignedIn()) {
+                        val currentUser = dataStore.getCurrentUser()
                         db.userDao().insertAll(it, currentUser.docId)
                         onUserListUpdated()
                     } else {
                         Logger.warn("current user is null")
                     }
+
                 }
             }
         }
     }
 
-    suspend fun addChat(chat: Chat) {
+    suspend fun uploadNewMessage(chat: Chat) {
         Logger.debug("chat = [${chat}]")
         chat.status = Chat.SENT
         firestoreDb.registerChat(chat,
@@ -61,13 +65,15 @@ class PingRepository(
                 }
             }
         )
-
         runBlocking {
             Thread.sleep(5000)
             addDummyChat(chat)
         }
     }
 
+    /**
+     * For testing purpose
+     */
     private fun addDummyChat(chat: Chat) {
         val dummy = Chat(chat.message + " returned")
         dummy.toUserId = chat.fromUserId
@@ -77,19 +83,19 @@ class PingRepository(
         firestoreDb.registerChat(dummy, {}, {})
     }
 
-    fun checkUser(name: String, onCheckComplete: (user: User?) -> Unit) {
+    fun checkUserInServer(name: String, onCheckComplete: (user: User?) -> Unit) {
         firestoreDb.checkUser(name) {
             runBlocking {
                 if (it != null) {
                     dataStore.setUser(it)
-                    startFetchingChats()
+                    observerChatsForMeFromServer()
                 }
             }
             onCheckComplete(it)
         }
     }
 
-    fun registerUser(
+    fun createUserInServer(
         name: String,
         imagePath: String,
         registerComplete: (isSuccess: Boolean, message: String) -> Unit,
@@ -100,7 +106,7 @@ class PingRepository(
             if (user != null) {
                 runBlocking {
                     dataStore.setUser(user)
-                    startFetchingChats()
+                    observerChatsForMeFromServer()
                     registerComplete(true, message)
                 }
             } else {
@@ -113,28 +119,33 @@ class PingRepository(
         return db.userDao().getUser(userId)
     }
 
-    fun getChatsOfUserForChatScreen(userId: String): Flow<List<Chat>> {
+    fun observeChatsForUserLocal(userId: String): Flow<List<Chat>> {
         return db.chatDao().getChatsOfUserTimeDesc(userId)
     }
 
-    fun getChatsOfUserForHome(userId: String): Flow<List<Chat>> {
+    fun observeChatsForUserHomeLocal(userId: String): Flow<List<Chat>> {
         return db.chatDao().getChatsOfUserTimeAsc(userId)
     }
 
-    suspend fun startFetchingChats() {
-        val me = dataStore.getCurrentUser()
-        if (me == null) {
+    suspend fun observerChatsForMeFromServer() {
+        if (!isUserSignedIn()) {
             Logger.error("user not signed in")
             return
         }
         Logger.entry()
+        val me = dataStore.getCurrentUser()
         firestoreDb.listenForChatToOrFromUser(me.docId) {
             runBlocking {
                 it.forEach(action = {
                     if (it.toUserId == me.docId && it.status == Chat.SENT) {
                         it.status = Chat.DELIVERED
                         val user = db.userDao().getUser(it.fromUserId)
-                        notificationUtil.showNotification(it.sentTime.toInt(), user, it.message)
+                        notificationUtil.showNotification(
+                            it.sentTime.toInt(),
+                            user,
+                            it.fromUserId,
+                            it.message
+                        )
                         firestoreDb.updateChatStatus(it)
                     }
                     db.chatDao().insert(it)
@@ -143,7 +154,7 @@ class PingRepository(
         }
     }
 
-    fun updateChatStatus(status: Long, chats: List<Chat>) {
+    fun updateChatStatusToServer(status: Long, chats: List<Chat>) {
         chats.forEach(
             action = {
                 if (status == Chat.READ && it.status == Chat.DELIVERED) {
@@ -157,7 +168,7 @@ class PingRepository(
         )
     }
 
-    suspend fun getCurrentUser(): User? = dataStore.getCurrentUser()
+    suspend fun getCurrentUser(): User = dataStore.getCurrentUser()
 
     fun isUserSignedIn(): Boolean = dataStore.isUserSignedIn()
 
@@ -167,6 +178,20 @@ class PingRepository(
         firestoreDb.removeChatListener()
         db.chatDao().clearChats()
         db.userDao().clearUsers()
+    }
+
+    suspend fun updateUserImageToServer(imageRes: Int) {
+        if (isUserSignedIn()) {
+            val me = dataStore.getCurrentUser()
+            me.imagePath = imageRes.toString()
+            firestoreDb.updateUserImage(me) {
+                runBlocking {
+                    dataStore.setUser(it)
+                }
+            }
+        } else {
+            Logger.error("current user is null")
+        }
     }
 
 }

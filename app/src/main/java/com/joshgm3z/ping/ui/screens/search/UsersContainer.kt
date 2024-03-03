@@ -134,7 +134,7 @@ fun SearchItem(user: User = randomUser(), onSearchItemClick: (user: User) -> Uni
     ) {
         val (image, name) = createRefs()
         Image(
-            painter = painterResource(id = R.drawable.default_user),
+            painter = painterResource(id = user.imageRes),
             contentDescription = "profile picture",
             modifier = Modifier
                 .clip(shape = CircleShape)

@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.model.firestore
 
+import androidx.datastore.dataStore
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.Filter
@@ -121,6 +122,15 @@ class FirestoreDb(private val firebaseLogger: FirebaseLogger) {
             .addOnSuccessListener {}
             .addOnFailureListener {
                 Logger.warn("error updating chat status: $chat")
+            }
+    }
+
+    fun updateUserImage(user: User, onUpdateComplete: (user: User) -> Unit) {
+        firestore.collection(keyCollectionUserList)
+            .document(user.docId)
+            .update(FirestoreConverter.keyImagePath, user.imagePath)
+            .addOnSuccessListener {
+                onUpdateComplete(user)
             }
     }
 

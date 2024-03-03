@@ -59,7 +59,7 @@ fun ChatAppBar(
                 .clickable { onBackClick() }
         )
         Image(
-            painter = painterResource(id = R.drawable.default_user),
+            painter = painterResource(id = user.imageRes),
             contentDescription = "default user",
             modifier = Modifier
                 .clip(shape = CircleShape)

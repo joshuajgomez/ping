@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.frx.FrxContainer
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
+import com.joshgm3z.ping.ui.screens.settings.ImagePickerContainer
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
@@ -17,6 +18,7 @@ import com.joshgm3z.ping.utils.Logger
 const val navSignIn = "signin_screen"
 const val navHome = "home_screen"
 const val navChat = "chat_screen"
+const val navImagePicker = "image_picker"
 
 class PingNavState {
     companion object {
@@ -69,6 +71,9 @@ fun PingAppContainer(
                 },
                 onLoggedOut = {
                     navController.navigate(navSignIn)
+                },
+                onOpenImagePicker = {
+                    navController.navigate(navImagePicker)
                 }
             )
         }
@@ -86,6 +91,17 @@ fun PingAppContainer(
                     chatViewModel.onScreenExit()
                     navController.navigate(navHome)
                 }
+            )
+        }
+
+        composable(navImagePicker) {
+            PingNavState.currentRoute = navImagePicker
+            userViewModel.updateCurrentUser()
+            ImagePickerContainer(
+                userViewModel = userViewModel,
+                onGoBackClick = {
+                    navController.popBackStack()
+                },
             )
         }
     }

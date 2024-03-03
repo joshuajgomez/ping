@@ -4,12 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,14 +24,19 @@ import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 @Composable
 fun SettingScreenContainer(
     modifier: Modifier = Modifier,
-    name: String = "user111",
-    imagePath: String = "",
+    userViewModel: UserViewModel,
     onSignOutClick: () -> Unit = {},
+    onOpenImagePicker: () -> Unit = {},
 ) {
     SettingScreen(
-        userName = name,
-        imagePath = imagePath,
-        onSignOutClick = { onSignOutClick() },
+        modifier = modifier,
+        userName = userViewModel.me.name,
+        imageRes = userViewModel.me.imageRes,
+        onSignOutClick = {
+            userViewModel.onSignOutClicked()
+            onSignOutClick()
+        },
+        onChangeProfilePicClick = { onOpenImagePicker() },
     )
 }
 
@@ -49,15 +49,17 @@ private fun PreviewSettingScreen() {
 }
 
 @Composable
-private fun SettingScreen(
+fun SettingScreen(
+    modifier: Modifier = Modifier,
     userName: String = "dude111",
-    imagePath: String = "",
+    imageRes: Int = R.drawable.default_user,
     onSignOutClick: () -> Unit = {},
+    onChangeProfilePicClick: () -> Unit = {},
 ) {
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+    ConstraintLayout(modifier = modifier.fillMaxSize()) {
         val (signOutBtn, image, name, editImage) = createRefs()
         Image(
-            painter = painterResource(id = R.drawable.default_user),
+            painter = painterResource(id = imageRes),
             contentDescription = "image",
             modifier = Modifier
                 .constrainAs(image) {
@@ -69,7 +71,7 @@ private fun SettingScreen(
                 .size(100.dp)
         )
         TextButton(
-            onClick = { /*TODO*/ },
+            onClick = { onChangeProfilePicClick() },
             modifier = Modifier
                 .constrainAs(editImage) {
                     start.linkTo(parent.start)

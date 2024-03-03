@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.joshgm3z.ping.model.data.Chat
 import com.joshgm3z.ping.model.data.User
 
-@Database(entities = [Chat::class, User::class], version = 7, exportSchema = false)
+@Database(entities = [Chat::class, User::class], version = 8, exportSchema = false)
 abstract class PingDb:RoomDatabase() {
     abstract fun chatDao(): ChatDao
     abstract fun userDao(): UserDao

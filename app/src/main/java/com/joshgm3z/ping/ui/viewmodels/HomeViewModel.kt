@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.ping.model.data.HomeChat
 import com.joshgm3z.ping.model.PingRepository
-import com.joshgm3z.ping.utils.DataStoreUtil
 import com.joshgm3z.ping.utils.DataUtil
 import com.joshgm3z.ping.utils.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,8 +37,12 @@ class HomeViewModel(
         viewModelScope.launch {
             val me = pingRepository.getCurrentUser()
             val users = pingRepository.getUsers()
-            pingRepository.getChatsOfUserForHome(me!!.docId).collect {
+            pingRepository.observeChatsForUserHomeLocal(me.docId).collect {
                 Logger.debug("home chat list update")
+                if (it.isNotEmpty() && users.isEmpty()) {
+                    Logger.warn("users list not fetched")
+                    _uiState.value = HomeUiState.Empty("Fetching users")
+                }
                 val homeChats = DataUtil.buildHomeChats(me.docId, it, users)
                 _uiState.value = HomeUiState.Ready(homeChats)
             }

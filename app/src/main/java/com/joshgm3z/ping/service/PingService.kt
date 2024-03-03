@@ -23,7 +23,7 @@ class PingService : Service() {
         Logger.entry()
         isRunning = true
         GlobalScope.launch(Dispatchers.IO) {
-            pingRepository.startFetchingChats()
+            pingRepository.observerChatsForMeFromServer()
         }
     }
 

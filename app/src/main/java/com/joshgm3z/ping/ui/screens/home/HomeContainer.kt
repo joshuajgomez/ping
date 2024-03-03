@@ -28,6 +28,7 @@ import com.joshgm3z.ping.model.data.HomeChat
 import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.ui.screens.search.UserContainer
 import com.joshgm3z.ping.ui.screens.search.UserList
+import com.joshgm3z.ping.ui.screens.settings.SettingScreen
 import com.joshgm3z.ping.ui.screens.settings.SettingScreenContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
@@ -71,7 +72,7 @@ fun PreviewHomeScreenSettings() {
             topBar = { HomeAppBar() },
             bottomBar = { PingBottomAppBar() },
         ) {
-            SettingScreenContainer(modifier = Modifier.padding(it))
+            SettingScreen(modifier = Modifier.padding(it))
         }
     }
 }
@@ -113,6 +114,7 @@ fun HomeScreenContainer(
     onUserClick: (user: User) -> Unit = {},
     onChatClick: (homeChat: HomeChat) -> Unit = {},
     onLoggedOut: () -> Unit = {},
+    onOpenImagePicker: () -> Unit = {},
 ) {
     val navController = rememberNavController()
     Scaffold(
@@ -157,14 +159,16 @@ fun HomeScreenContainer(
                     onUserClick = { onUserClick(it) })
             }
             composable(route = navSettings) {
+                userViewModel.updateCurrentUser()
                 homeViewModel.setAppTitle("Settings")
                 SettingScreenContainer(
-                    name = signInViewModel.currentUser!!.name,
-                    imagePath = signInViewModel.currentUser!!.imagePath,
+                    userViewModel = userViewModel,
                     onSignOutClick = {
-                        signInViewModel.onSignOutClicked()
                         onLoggedOut()
                     },
+                    onOpenImagePicker = {
+                        onOpenImagePicker()
+                    }
                 )
             }
         }

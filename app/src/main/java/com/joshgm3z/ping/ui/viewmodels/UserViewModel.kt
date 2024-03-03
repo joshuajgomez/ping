@@ -2,9 +2,11 @@ package com.joshgm3z.ping.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joshgm3z.ping.R
 import com.joshgm3z.ping.model.PingRepository
 import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.utils.Logger
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -20,6 +22,7 @@ class UserViewModel(private val repository: PingRepository) : ViewModel() {
     val uiState: StateFlow<UsersUiState> = _uiState
 
     private lateinit var users: List<User>
+    lateinit var me: User
 
     init {
         refreshUserList()
@@ -32,7 +35,7 @@ class UserViewModel(private val repository: PingRepository) : ViewModel() {
         }
         Logger.entry()
         viewModelScope.launch {
-            repository.refreshUserList {
+            repository.syncUserListWithServer {
                 viewModelScope.launch {
                     users = repository.getUsers()
                 }.invokeOnCompletion {
@@ -43,6 +46,30 @@ class UserViewModel(private val repository: PingRepository) : ViewModel() {
                     }
                 }
             }
+        }
+    }
+
+    fun onImageConfirmed(imageRes: Int) {
+        viewModelScope.launch {
+            repository.updateUserImageToServer(imageRes)
+        }
+    }
+
+    fun updateCurrentUser() {
+        viewModelScope.launch {
+            me = repository.getCurrentUser()
+        }
+    }
+
+    fun getImageRes(): Int {
+        return if (me.imagePath.isNotEmpty() && me.imagePath != "null") {
+            me.imagePath.toInt()
+        } else R.drawable.default_user
+    }
+
+    fun onSignOutClicked() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.signOutUser()
         }
     }
 

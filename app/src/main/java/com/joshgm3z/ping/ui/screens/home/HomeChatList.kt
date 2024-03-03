@@ -17,10 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Forum
-import androidx.compose.material.icons.outlined.Chat
-import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -39,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.joshgm3z.ping.R
 import com.joshgm3z.ping.model.data.Chat
 import com.joshgm3z.ping.model.data.HomeChat
 import com.joshgm3z.ping.ui.screens.chat.StatusIcon
@@ -122,8 +118,9 @@ fun HomeChatItem(
 ) {
     ConstraintLayout(modifier = Modifier.clickable { onChatClick(homeChat) }) {
         val (message, user, count, image, line, time) = createRefs()
+        val imageRes = homeChat.otherGuy.imageRes
         Image(
-            painter = painterResource(id = R.drawable.default_user),
+            painter = painterResource(id = imageRes),
             contentDescription = "default user",
             modifier = Modifier
                 .clip(shape = CircleShape)

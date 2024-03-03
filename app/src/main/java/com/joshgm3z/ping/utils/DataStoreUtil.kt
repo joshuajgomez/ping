@@ -28,13 +28,12 @@ class DataStoreUtil(private val context: Context) {
     }
 
     fun isUserSignedIn(): Boolean = runBlocking {
-        context.dataStore.data.first().contains(keyUserName)
+        val isUserSignedIn = context.dataStore.data.first().contains(keyUserName)
+        Logger.debug("$isUserSignedIn")
+        isUserSignedIn
     }
 
-    suspend fun getCurrentUser(): User? {
-        if (!isUserSignedIn()) {
-            return null
-        }
+    suspend fun getCurrentUser(): User {
         val preferences = context.dataStore.data.first()
         val user = User(preferences[keyUserName].toString())
         user.docId = preferences[keyUserDocId].toString()

@@ -5,12 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.joshgm3z.ping.model.data.Chat
 import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.model.PingRepository
-import com.joshgm3z.ping.ui.PingNavState
-import com.joshgm3z.ping.ui.navChat
 import com.joshgm3z.ping.utils.DataUtil
 import com.joshgm3z.ping.utils.Logger
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,7 +37,7 @@ class ChatViewModel(
         chat.fromUserId = me!!.docId
         chat.sentTime = System.currentTimeMillis()
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addChat(chat)
+            repository.uploadNewMessage(chat)
         }
     }
 
@@ -54,12 +51,12 @@ class ChatViewModel(
             otherGuy = repository.getUser(userId)
             me = repository.getCurrentUser()
             Logger.debug("setUser otherGuy = [${otherGuy}]")
-            repository.getChatsOfUserForChatScreen(userId = otherGuy.docId).cancellable()
+            repository.observeChatsForUserLocal(userId = otherGuy.docId).cancellable()
                 .collect {
                     Logger.debug("collect.user = [${otherGuy}], chats = [$it]")
                     val chats = DataUtil.markOutwardChats(me!!.docId, ArrayList(it))
                     _uiState.value = ChatUiState.Ready(otherGuy, chats)
-                    repository.updateChatStatus(Chat.READ, chats)
+                    repository.updateChatStatusToServer(Chat.READ, chats)
                 }
         }
     }

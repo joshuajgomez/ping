@@ -24,11 +24,15 @@ class NotificationUtil(private val context: Context) {
         createNotificationChannel()
     }
 
-    fun showNotification(id: Int, user: User, message: String) {
+    fun showNotification(id: Int, user: User?, fromUserId: String, message: String) {
+        if (user == null) {
+//            Logger.warn("user is null")
+            return
+        }
         Logger.debug("user = [$user]")
         val intent = Intent(context, HomeActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(HomeActivity.OPEN_CHAT_USER, user.docId)
+            putExtra(HomeActivity.OPEN_CHAT_USER, fromUserId)
         }
         Logger.debug("intent.extras = [${intent.extras}]")
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
@@ -40,7 +44,7 @@ class NotificationUtil(private val context: Context) {
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_ping_foreground)
-            .setContentTitle(user.name)
+            .setContentTitle(user?.name ?: fromUserId)
             .setContentText(message)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

@@ -13,7 +13,7 @@ class FirestoreConverter {
         const val keyStatus = "status"
 
         private const val keyName = "name"
-        private const val keyImagePath = "imagePath"
+        const val keyImagePath = "imagePath"
 
         fun getDocumentFromChat(chat: Chat): HashMap<String, Any> {
             return hashMapOf(

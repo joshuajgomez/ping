@@ -3,11 +3,9 @@ package com.joshgm3z.ping.model.data
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.joshgm3z.ping.utils.getRandomFromTo
-import com.joshgm3z.ping.utils.randomChat
+import com.joshgm3z.ping.R
 import com.joshgm3z.ping.utils.randomMessage
 import com.joshgm3z.ping.utils.randomName
-import com.joshgm3z.ping.utils.randomUser
 import kotlin.random.Random
 
 @Entity
@@ -77,6 +75,13 @@ data class User(var name: String = "") {
     override fun toString(): String {
         return "User(name='$name', docId='$docId', picture=$imagePath)"
     }
+
+    val imageRes: Int
+        get() {
+            return if (imagePath.isNotEmpty() && imagePath != "null")
+                imagePath.toInt()
+            else R.drawable.default_user
+        }
 }
 
 class HomeChat {
