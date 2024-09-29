@@ -7,20 +7,25 @@ import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.model.PingRepository
 import com.joshgm3z.ping.utils.DataUtil
 import com.joshgm3z.ping.utils.Logger
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed class ChatUiState {
     data class Ready(val you: User, val chats: List<Chat>) : ChatUiState()
     data class Loading(val message: String) : ChatUiState()
 }
 
-class ChatViewModel(
+@HiltViewModel
+class ChatViewModel
+@Inject constructor(
     private val repository: PingRepository,
+    private val dataUtil: DataUtil,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<ChatUiState> =
@@ -54,7 +59,7 @@ class ChatViewModel(
             repository.observeChatsForUserLocal(userId = otherGuy.docId).cancellable()
                 .collect {
                     Logger.debug("collect.user = [${otherGuy}], chats = [$it]")
-                    val chats = DataUtil.markOutwardChats(me!!.docId, ArrayList(it))
+                    val chats = dataUtil.markOutwardChats(me!!.docId, ArrayList(it))
                     _uiState.value = ChatUiState.Ready(otherGuy, chats)
                     repository.updateChatStatusToServer(Chat.READ, chats)
                 }

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.gms.google.services)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -83,10 +84,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.runtime.livedata)
 
-    // Koin Core features
-    implementation(libs.koin.core)
-    // Java Compatibility
-    implementation(libs.koin.android.compat)
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
+    ksp(libs.hilt.android.compiler)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

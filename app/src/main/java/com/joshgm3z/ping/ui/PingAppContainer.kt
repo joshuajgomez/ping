@@ -2,6 +2,7 @@ package com.joshgm3z.ping.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,10 +35,10 @@ class PingNavState {
 fun PingAppContainer(
     navController: NavHostController,
     startDestination: String,
-    userViewModel: UserViewModel,
-    homeViewModel: HomeViewModel,
-    chatViewModel: ChatViewModel,
-    signInViewModel: SignInViewModel,
+    userViewModel: UserViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    chatViewModel: ChatViewModel = hiltViewModel(),
+    signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
     NavHost(
         navController = navController,

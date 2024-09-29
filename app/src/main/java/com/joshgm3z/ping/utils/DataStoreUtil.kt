@@ -7,8 +7,15 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.joshgm3z.ping.model.data.User
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class DataStoreUtil(private val context: Context) {
+@Singleton
+class DataStoreUtil
+@Inject
+constructor(
+    private val context: Context
+) {
 
     private val dataStoreName = "ping_data_store"
 

@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.model.firestore
 
-import androidx.datastore.dataStore
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.Filter
@@ -12,9 +11,15 @@ import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.utils.FirebaseLogger
 import com.joshgm3z.ping.utils.FirestoreConverter
 import com.joshgm3z.ping.utils.Logger
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class FirestoreDb(private val firebaseLogger: FirebaseLogger) {
-
+@Singleton
+class FirestoreDb
+@Inject
+constructor(
+    private val firebaseLogger: FirebaseLogger
+) {
     private val firestore = Firebase.firestore
 
     private val keyCollectionChatList = "chatList"

@@ -6,16 +6,22 @@ import com.joshgm3z.ping.R
 import com.joshgm3z.ping.model.PingRepository
 import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.utils.Logger
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed class UsersUiState {
     data class Ready(val users: List<User>) : UsersUiState()
 }
 
-class UserViewModel(private val repository: PingRepository) : ViewModel() {
+@HiltViewModel
+class UserViewModel
+@Inject constructor(
+    private val repository: PingRepository
+) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UsersUiState> =
         MutableStateFlow(UsersUiState.Ready(emptyList()))

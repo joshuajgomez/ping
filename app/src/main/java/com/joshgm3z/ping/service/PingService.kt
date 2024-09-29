@@ -5,14 +5,18 @@ import android.content.Intent
 import android.os.IBinder
 import com.joshgm3z.ping.model.PingRepository
 import com.joshgm3z.ping.utils.Logger
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.get
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PingService : Service() {
 
-    private val pingRepository: PingRepository = get()
+    @Inject
+    lateinit var pingRepository: PingRepository
 
     companion object {
         var isRunning: Boolean = false
@@ -22,9 +26,7 @@ class PingService : Service() {
         super.onCreate()
         Logger.entry()
         isRunning = true
-        GlobalScope.launch(Dispatchers.IO) {
-            pingRepository.observerChatsForMeFromServer()
-        }
+        pingRepository.observerChatsForMeFromServer()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

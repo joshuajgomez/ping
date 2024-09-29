@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.joshgm3z.ping.model.PingRepository
 import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.utils.Logger
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed class SignInUiState {
     data class Loading(val message: String) : SignInUiState()
@@ -16,7 +18,12 @@ sealed class SignInUiState {
     data class Error(val message: String) : SignInUiState()
 }
 
-class SignInViewModel(private val repository: PingRepository) : ViewModel() {
+@HiltViewModel
+class SignInViewModel
+@Inject
+constructor(
+    private val repository: PingRepository
+) : ViewModel() {
 
     private val _uiState: MutableStateFlow<SignInUiState> =
         MutableStateFlow(SignInUiState.SignIn("Enter your name"))

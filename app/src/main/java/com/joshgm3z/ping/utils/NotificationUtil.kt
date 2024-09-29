@@ -10,8 +10,15 @@ import androidx.core.app.NotificationCompat
 import com.joshgm3z.ping.HomeActivity
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.model.data.User
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class NotificationUtil(private val context: Context) {
+@Singleton
+class NotificationUtil
+@Inject
+constructor(
+    private val context: Context
+) {
 
     private val CHANNEL_DESC = "Ping will notify you when you receive new messages"
     private val CHANNEL_NAME = "New messages"

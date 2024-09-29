@@ -3,9 +3,14 @@ package com.joshgm3z.ping.utils
 import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class FirebaseLogger(context: Context) {
-
+@Singleton
+class FirebaseLogger
+@Inject constructor(
+    context: Context
+) {
     val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
     fun debug(message: String) {

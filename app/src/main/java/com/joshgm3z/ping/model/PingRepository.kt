@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.model
 
-import androidx.compose.ui.platform.LocalContext
 import com.joshgm3z.ping.model.data.Chat
 import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.model.firestore.FirestoreDb
@@ -9,13 +8,16 @@ import com.joshgm3z.ping.utils.Logger
 import com.joshgm3z.ping.utils.DataStoreUtil
 import com.joshgm3z.ping.utils.NotificationUtil
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PingRepository(
+@Singleton
+class PingRepository
+@Inject constructor(
+    private val scope: CoroutineScope,
     private val db: PingDb,
     private val firestoreDb: FirestoreDb,
     private val dataStore: DataStoreUtil,
@@ -23,7 +25,7 @@ class PingRepository(
 ) {
 
     init {
-        GlobalScope.launch {
+        scope.launch {
             observerChatsForMeFromServer()
         }
     }
@@ -127,12 +129,13 @@ class PingRepository(
         return db.chatDao().getChatsOfUserTimeAsc(userId)
     }
 
-    suspend fun observerChatsForMeFromServer() {
+    fun observerChatsForMeFromServer() = scope.launch {
         if (!isUserSignedIn()) {
             Logger.error("user not signed in")
-            return
+            return@launch
         }
         Logger.entry()
+
         val me = dataStore.getCurrentUser()
         firestoreDb.listenForChatToOrFromUser(me.docId) {
             runBlocking {

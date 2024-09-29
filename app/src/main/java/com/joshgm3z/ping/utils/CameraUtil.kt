@@ -17,8 +17,10 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.joshgm3z.ping.HomeActivity
 import java.io.File
 import java.util.concurrent.ScheduledExecutorService
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class CameraUtil(val activity: HomeActivity) {
+class CameraUtil constructor(val activity: HomeActivity) {
 
     private val cameraProviderFuture: ListenableFuture<ProcessCameraProvider> =
         ProcessCameraProvider.getInstance(activity)
