@@ -2,9 +2,8 @@ package com.joshgm3z.ping.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshgm3z.ping.model.PingRepository
-import com.joshgm3z.ping.model.data.User
-import com.joshgm3z.ping.utils.Logger
+import com.joshgm3z.repository.PingRepository
+import com.joshgm3z.data.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +21,7 @@ sealed class SignInUiState {
 class SignInViewModel
 @Inject
 constructor(
-    private val repository: PingRepository
+    private val repository: com.joshgm3z.repository.PingRepository
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<SignInUiState> =
@@ -36,11 +35,11 @@ constructor(
     }
 
     private fun setCurrentUser() {
-        Logger.entry()
+        com.joshgm3z.utils.Logger.entry()
         viewModelScope.launch {
             if (repository.isUserSignedIn()) {
                 currentUser = repository.getCurrentUser()
-                Logger.debug("currentUser = [$currentUser]")
+                com.joshgm3z.utils.Logger.debug("currentUser = [$currentUser]")
             }
         }
     }

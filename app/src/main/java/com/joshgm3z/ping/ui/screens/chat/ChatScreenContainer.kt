@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forum
-import androidx.compose.material.icons.filled.Message
-import androidx.compose.material.icons.outlined.Forum
-import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -21,13 +18,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.joshgm3z.ping.model.data.Chat
-import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.ui.common.LoadingContainer
-import com.joshgm3z.ping.ui.screens.frx.PasswordInput
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.utils.getChatList
-import com.joshgm3z.ping.utils.randomUser
+import com.joshgm3z.data.util.getChatList
+import com.joshgm3z.data.model.Chat
+import com.joshgm3z.data.model.User
+import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.ui.viewmodels.ChatUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 

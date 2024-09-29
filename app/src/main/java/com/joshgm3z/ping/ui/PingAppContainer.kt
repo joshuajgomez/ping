@@ -14,7 +14,7 @@ import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
-import com.joshgm3z.ping.utils.Logger
+import com.joshgm3z.utils.Logger
 
 const val navSignIn = "signin_screen"
 const val navHome = "home_screen"
@@ -25,7 +25,7 @@ class PingNavState {
     companion object {
         var currentRoute: String = ""
             set(value) {
-                Logger.verbose("PingNavState.currentRoute = $value")
+                com.joshgm3z.utils.Logger.verbose("PingNavState.currentRoute = $value")
                 field = value
             }
     }
@@ -84,7 +84,7 @@ fun PingAppContainer(
             val userId = it.arguments?.getString("userId")
             LaunchedEffect(key1 = userId) {
                 if (userId != null) chatViewModel.setUser(userId)
-                else Logger.error("userId is null")
+                else com.joshgm3z.utils.Logger.error("userId is null")
             }
             ChatScreenContainer(
                 chatViewModel = chatViewModel,

@@ -6,4 +6,11 @@ plugins {
     alias(libs.plugins.gms.google.services) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.hilt.android) apply false
+    alias(libs.plugins.android.library) apply false
+}
+
+ext {
+    val compileSdkVersion = 23
+    val minSdkVersion = 15
+    val targetSdkVersion = 23
 }

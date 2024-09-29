@@ -1,8 +1,8 @@
 package com.joshgm3z.ping.utils
 
-import com.joshgm3z.ping.model.data.Chat
-import com.joshgm3z.ping.model.data.HomeChat
-import com.joshgm3z.ping.model.data.User
+import com.joshgm3z.data.model.Chat
+import com.joshgm3z.data.model.HomeChat
+import com.joshgm3z.data.model.User
 import javax.inject.Inject
 import javax.inject.Singleton
 

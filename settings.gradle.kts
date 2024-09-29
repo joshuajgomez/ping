@@ -15,4 +15,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "ping"
 include(":app")
- 
+include(":firebase")
+include(":data")
+include(":utils")
+include(":repository")

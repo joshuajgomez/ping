@@ -3,9 +3,8 @@ package com.joshgm3z.ping.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.ping.R
-import com.joshgm3z.ping.model.PingRepository
-import com.joshgm3z.ping.model.data.User
-import com.joshgm3z.ping.utils.Logger
+import com.joshgm3z.repository.PingRepository
+import com.joshgm3z.data.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +19,7 @@ sealed class UsersUiState {
 @HiltViewModel
 class UserViewModel
 @Inject constructor(
-    private val repository: PingRepository
+    private val repository: com.joshgm3z.repository.PingRepository
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UsersUiState> =
@@ -36,10 +35,10 @@ class UserViewModel
 
     fun refreshUserList() {
         if (!repository.isUserSignedIn()) {
-            Logger.warn("user not signed in")
+            com.joshgm3z.utils.Logger.warn("user not signed in")
             return
         }
-        Logger.entry()
+        com.joshgm3z.utils.Logger.entry()
         viewModelScope.launch {
             repository.syncUserListWithServer {
                 viewModelScope.launch {

@@ -9,14 +9,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.joshgm3z.ping.model.PingRepository
+import com.joshgm3z.repository.PingRepository
 import com.joshgm3z.ping.service.PingService
 import com.joshgm3z.ping.ui.PingAppContainer
 import com.joshgm3z.ping.ui.navChat
 import com.joshgm3z.ping.ui.navHome
 import com.joshgm3z.ping.ui.navSignIn
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.utils.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -29,7 +28,7 @@ class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!PingService.isRunning) {
-            Logger.debug("PingService.isRunning = [${PingService.isRunning}]")
+            com.joshgm3z.utils.Logger.debug("PingService.isRunning = [${PingService.isRunning}]")
             startService(Intent(this, PingService::class.java))
         }
         setContent {
@@ -46,7 +45,7 @@ class HomeActivity : ComponentActivity() {
                     )
                     if (intent.hasExtra(OPEN_CHAT_USER)) {
                         val startRoute = "$navChat/${intent.getStringExtra(OPEN_CHAT_USER)}"
-                        Logger.debug("startRoute = [${startRoute}]")
+                        com.joshgm3z.utils.Logger.debug("startRoute = [${startRoute}]")
                         navController.navigate(startRoute)
                         intent.removeExtra(OPEN_CHAT_USER)
                     }

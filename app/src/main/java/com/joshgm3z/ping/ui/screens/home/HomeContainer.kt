@@ -24,8 +24,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.joshgm3z.ping.model.data.HomeChat
-import com.joshgm3z.ping.model.data.User
+import com.joshgm3z.data.model.HomeChat
+import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.ui.screens.search.UserContainer
 import com.joshgm3z.ping.ui.screens.search.UserList
 import com.joshgm3z.ping.ui.screens.settings.SettingScreen

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,7 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiPeople
-import androidx.compose.material.icons.filled.NoAccounts
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -36,14 +34,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.R
-import com.joshgm3z.ping.model.data.User
 import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.utils.randomUser
-import com.joshgm3z.ping.utils.randomUsers
+import com.joshgm3z.data.util.randomUser
+import com.joshgm3z.data.util.randomUsers
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.ping.ui.viewmodels.UsersUiState
+import com.joshgm3z.utils.Logger
 
 @Preview
 @Composable
@@ -137,7 +136,10 @@ fun UserList(
 }
 
 @Composable
-fun SearchItem(user: User = randomUser(), onSearchItemClick: (user: User) -> Unit = {}) {
+fun SearchItem(
+    user: User = randomUser(),
+    onSearchItemClick: (user: User) -> Unit = {}
+) {
     ConstraintLayout(
         modifier = Modifier
             .height(70.dp)
@@ -145,9 +147,10 @@ fun SearchItem(user: User = randomUser(), onSearchItemClick: (user: User) -> Uni
             .clickable { onSearchItemClick(user) }
             .padding(start = 20.dp)
     ) {
+        com.joshgm3z.utils.Logger.debug("user = [$user]")
         val (image, name) = createRefs()
         Image(
-            painter = painterResource(id = user.imageRes),
+            painter = painterResource(id = R.drawable.stock_user_pic2),
             contentDescription = "profile picture",
             modifier = Modifier
                 .clip(shape = CircleShape)

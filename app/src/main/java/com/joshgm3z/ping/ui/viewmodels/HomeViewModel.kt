@@ -2,10 +2,9 @@ package com.joshgm3z.ping.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshgm3z.ping.model.data.HomeChat
-import com.joshgm3z.ping.model.PingRepository
+import com.joshgm3z.data.model.HomeChat
+import com.joshgm3z.repository.PingRepository
 import com.joshgm3z.ping.utils.DataUtil
-import com.joshgm3z.ping.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +20,7 @@ sealed class HomeUiState {
 class HomeViewModel
 @Inject
 constructor(
-    private val pingRepository: PingRepository,
+    private val pingRepository: com.joshgm3z.repository.PingRepository,
     private val dataUtil: DataUtil,
 ) : ViewModel() {
 
@@ -37,16 +36,16 @@ constructor(
 
     fun startListeningToChats() {
         if (!pingRepository.isUserSignedIn()) {
-            Logger.warn("user not signed in")
+            com.joshgm3z.utils.Logger.warn("user not signed in")
             return
         }
         viewModelScope.launch {
             val me = pingRepository.getCurrentUser()
             val users = pingRepository.getUsers()
             pingRepository.observeChatsForUserHomeLocal(me.docId).collect {
-                Logger.debug("home chat list update")
+                com.joshgm3z.utils.Logger.debug("home chat list update")
                 if (it.isNotEmpty() && users.isEmpty()) {
-                    Logger.warn("users list not fetched")
+                    com.joshgm3z.utils.Logger.warn("users list not fetched")
                     _uiState.value = HomeUiState.Empty("Fetching users")
                 }
                 val homeChats = dataUtil.buildHomeChats(me.docId, it, users)

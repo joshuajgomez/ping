@@ -36,13 +36,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.joshgm3z.ping.model.data.Chat
-import com.joshgm3z.ping.model.data.HomeChat
 import com.joshgm3z.ping.ui.screens.chat.StatusIcon
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeUiState
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
-import com.joshgm3z.ping.utils.getHomeChatList
+import com.joshgm3z.data.util.getHomeChatList
+import com.joshgm3z.data.model.Chat
+import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.ping.utils.getPrettyTime
 
 @Preview

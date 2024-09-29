@@ -3,13 +3,8 @@ package com.joshgm3z.ping.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import com.joshgm3z.ping.model.PingRepository
-import com.joshgm3z.ping.utils.Logger
+import com.joshgm3z.repository.PingRepository
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -24,7 +19,7 @@ class PingService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        Logger.entry()
+        com.joshgm3z.utils.Logger.entry()
         isRunning = true
         pingRepository.observerChatsForMeFromServer()
     }

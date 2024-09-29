@@ -2,11 +2,10 @@ package com.joshgm3z.ping.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshgm3z.ping.model.data.Chat
-import com.joshgm3z.ping.model.data.User
-import com.joshgm3z.ping.model.PingRepository
+import com.joshgm3z.data.model.Chat
+import com.joshgm3z.data.model.User
+import com.joshgm3z.repository.PingRepository
 import com.joshgm3z.ping.utils.DataUtil
-import com.joshgm3z.ping.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,7 +23,7 @@ sealed class ChatUiState {
 @HiltViewModel
 class ChatViewModel
 @Inject constructor(
-    private val repository: PingRepository,
+    private val repository: com.joshgm3z.repository.PingRepository,
     private val dataUtil: DataUtil,
 ) : ViewModel() {
 
@@ -36,7 +35,7 @@ class ChatViewModel
     private var me: User? = null
 
     fun onSendButtonClick(message: String) {
-        Logger.debug("message = [${message}]")
+        com.joshgm3z.utils.Logger.debug("message = [${message}]")
         val chat = Chat(message = message)
         chat.toUserId = otherGuy.docId
         chat.fromUserId = me!!.docId
@@ -55,10 +54,10 @@ class ChatViewModel
         chatObserverJob = viewModelScope.launch {
             otherGuy = repository.getUser(userId)
             me = repository.getCurrentUser()
-            Logger.debug("setUser otherGuy = [${otherGuy}]")
+            com.joshgm3z.utils.Logger.debug("setUser otherGuy = [${otherGuy}]")
             repository.observeChatsForUserLocal(userId = otherGuy.docId).cancellable()
                 .collect {
-                    Logger.debug("collect.user = [${otherGuy}], chats = [$it]")
+                    com.joshgm3z.utils.Logger.debug("collect.user = [${otherGuy}], chats = [$it]")
                     val chats = dataUtil.markOutwardChats(me!!.docId, ArrayList(it))
                     _uiState.value = ChatUiState.Ready(otherGuy, chats)
                     repository.updateChatStatusToServer(Chat.READ, chats)
@@ -67,7 +66,7 @@ class ChatViewModel
     }
 
     fun onScreenExit() {
-        Logger.entry()
+        com.joshgm3z.utils.Logger.entry()
         chatObserverJob?.cancel()
     }
 }
