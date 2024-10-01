@@ -15,8 +15,8 @@ import com.joshgm3z.ping.ui.navHome
 import com.joshgm3z.ping.ui.navSignIn
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.repository.api.CurrentUserInfo
-import com.joshgm3z.repository.api.UserRepository
 import com.joshgm3z.utils.Logger
+import com.joshgm3z.utils.const.OPEN_CHAT_USER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -54,7 +54,6 @@ class HomeActivity : ComponentActivity() {
     }
 
     companion object {
-        const val OPEN_CHAT_USER: String = "open_chat_user_id"
         const val REQUEST_IMAGE_CAPTURE = 12
     }
 }

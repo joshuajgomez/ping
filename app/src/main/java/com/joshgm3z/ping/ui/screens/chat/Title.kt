@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.randomUser
+import com.joshgm3z.ping.R
 
 @Preview
 @Composable
@@ -58,7 +59,7 @@ fun ChatAppBar(
                 .clickable { onBackClick() }
         )
         Image(
-            painter = painterResource(id = user.imageRes),
+            painter = painterResource(id = R.drawable.default_user),
             contentDescription = "default user",
             modifier = Modifier
                 .clip(shape = CircleShape)
