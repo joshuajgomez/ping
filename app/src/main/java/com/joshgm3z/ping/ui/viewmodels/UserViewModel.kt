@@ -3,8 +3,10 @@ package com.joshgm3z.ping.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.ping.R
-import com.joshgm3z.repository.PingRepository
 import com.joshgm3z.data.model.User
+import com.joshgm3z.repository.api.CurrentUserInfo
+import com.joshgm3z.repository.api.UserRepository
+import com.joshgm3z.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +21,8 @@ sealed class UsersUiState {
 @HiltViewModel
 class UserViewModel
 @Inject constructor(
-    private val repository: com.joshgm3z.repository.PingRepository
+    private val userRepository: UserRepository,
+    private val currentUserInfo: CurrentUserInfo,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<UsersUiState> =
@@ -34,15 +37,15 @@ class UserViewModel
     }
 
     fun refreshUserList() {
-        if (!repository.isUserSignedIn()) {
-            com.joshgm3z.utils.Logger.warn("user not signed in")
+        if (!currentUserInfo.isSignedIn) {
+            Logger.warn("user not signed in")
             return
         }
-        com.joshgm3z.utils.Logger.entry()
+        Logger.entry()
         viewModelScope.launch {
-            repository.syncUserListWithServer {
+            userRepository.syncUserListWithServer {
                 viewModelScope.launch {
-                    users = repository.getUsers()
+                    users = userRepository.getUsers()
                 }.invokeOnCompletion {
                     if (users.isEmpty()) {
                         _uiState.value = UsersUiState.Ready(emptyList())
@@ -56,13 +59,13 @@ class UserViewModel
 
     fun onImageConfirmed(imageRes: Int) {
         viewModelScope.launch {
-            repository.updateUserImageToServer(imageRes)
+            userRepository.updateUserImageToServer(imageRes)
         }
     }
 
     fun updateCurrentUser() {
         viewModelScope.launch {
-            me = repository.getCurrentUser()
+            me = currentUserInfo.currentUser
         }
     }
 
@@ -74,7 +77,7 @@ class UserViewModel
 
     fun onSignOutClicked() {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.signOutUser()
+            userRepository.signOutUser()
         }
     }
 

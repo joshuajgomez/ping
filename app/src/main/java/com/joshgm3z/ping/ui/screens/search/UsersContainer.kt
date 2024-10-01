@@ -147,7 +147,7 @@ fun SearchItem(
             .clickable { onSearchItemClick(user) }
             .padding(start = 20.dp)
     ) {
-        com.joshgm3z.utils.Logger.debug("user = [$user]")
+        Logger.debug("user = [$user]")
         val (image, name) = createRefs()
         Image(
             painter = painterResource(id = R.drawable.stock_user_pic2),

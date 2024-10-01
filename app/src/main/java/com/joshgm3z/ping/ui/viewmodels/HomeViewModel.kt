@@ -3,8 +3,11 @@ package com.joshgm3z.ping.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.data.model.HomeChat
-import com.joshgm3z.repository.PingRepository
 import com.joshgm3z.ping.utils.DataUtil
+import com.joshgm3z.repository.api.ChatRepository
+import com.joshgm3z.repository.api.CurrentUserInfo
+import com.joshgm3z.repository.api.UserRepository
+import com.joshgm3z.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +23,9 @@ sealed class HomeUiState {
 class HomeViewModel
 @Inject
 constructor(
-    private val pingRepository: com.joshgm3z.repository.PingRepository,
+    private val chatRepository: ChatRepository,
+    private val userRepository: UserRepository,
+    private val currentUserInfo: CurrentUserInfo,
     private val dataUtil: DataUtil,
 ) : ViewModel() {
 
@@ -35,17 +40,17 @@ constructor(
     }
 
     fun startListeningToChats() {
-        if (!pingRepository.isUserSignedIn()) {
-            com.joshgm3z.utils.Logger.warn("user not signed in")
+        if (!currentUserInfo.isSignedIn) {
+            Logger.warn("user not signed in")
             return
         }
         viewModelScope.launch {
-            val me = pingRepository.getCurrentUser()
-            val users = pingRepository.getUsers()
-            pingRepository.observeChatsForUserHomeLocal(me.docId).collect {
-                com.joshgm3z.utils.Logger.debug("home chat list update")
+            val me = currentUserInfo.currentUser
+            val users = userRepository.getUsers()
+            chatRepository.observeChatsForUserHomeLocal(me.docId).collect {
+                Logger.debug("home chat list update")
                 if (it.isNotEmpty() && users.isEmpty()) {
-                    com.joshgm3z.utils.Logger.warn("users list not fetched")
+                    Logger.warn("users list not fetched")
                     _uiState.value = HomeUiState.Empty("Fetching users")
                 }
                 val homeChats = dataUtil.buildHomeChats(me.docId, it, users)

@@ -1,9 +1,11 @@
 package com.joshgm3z.ping.service
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.IBinder
-import com.joshgm3z.repository.PingRepository
+import com.joshgm3z.repository.api.ChatRepository
+import com.joshgm3z.utils.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -11,17 +13,23 @@ import javax.inject.Inject
 class PingService : Service() {
 
     @Inject
-    lateinit var pingRepository: PingRepository
+    lateinit var chatRepository: ChatRepository
 
     companion object {
+        fun start(context: Context) {
+            Logger.debug("PingService.isRunning = [$isRunning]")
+            Intent(context, PingService::class.java).apply {
+                context.startService(this)
+            }
+        }
+
         var isRunning: Boolean = false
     }
 
     override fun onCreate() {
         super.onCreate()
-        com.joshgm3z.utils.Logger.entry()
+        Logger.entry()
         isRunning = true
-        pingRepository.observerChatsForMeFromServer()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

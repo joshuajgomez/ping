@@ -25,7 +25,7 @@ class PingNavState {
     companion object {
         var currentRoute: String = ""
             set(value) {
-                com.joshgm3z.utils.Logger.verbose("PingNavState.currentRoute = $value")
+                Logger.verbose("PingNavState.currentRoute = $value")
                 field = value
             }
     }
@@ -84,7 +84,7 @@ fun PingAppContainer(
             val userId = it.arguments?.getString("userId")
             LaunchedEffect(key1 = userId) {
                 if (userId != null) chatViewModel.setUser(userId)
-                else com.joshgm3z.utils.Logger.error("userId is null")
+                else Logger.error("userId is null")
             }
             ChatScreenContainer(
                 chatViewModel = chatViewModel,

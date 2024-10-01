@@ -3,14 +3,37 @@ package com.joshgm3z.repository
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.firebase.FirestoreDb
+import com.joshgm3z.repository.api.ChatRepository
+import com.joshgm3z.repository.api.CurrentUserInfo
+import com.joshgm3z.repository.api.UserRepository
+import com.joshgm3z.repository.room.ChatDao
 import com.joshgm3z.repository.room.PingDb
+import com.joshgm3z.repository.room.UserDao
+import com.joshgm3z.utils.Logger
 import com.joshgm3z.utils.NotificationUtil
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryProvider {
+    @Binds
+    abstract fun provideChatRepository(
+        pingRepository: PingRepository
+    ): ChatRepository
+
+    @Binds
+    abstract fun provideUserRepository(
+        pingRepository: PingRepository
+    ): UserRepository
+}
 
 @Singleton
 class PingRepository
@@ -18,9 +41,15 @@ class PingRepository
     private val scope: CoroutineScope,
     private val db: PingDb,
     private val firestoreDb: FirestoreDb,
-    private val dataStore: DataStoreUtil,
+    private val currentUserInfo: CurrentUserInfo,
     private val notificationUtil: NotificationUtil,
-) {
+) : ChatRepository, UserRepository {
+
+    private val chatDao: ChatDao
+        get() = db.chatDao()
+
+    private val userDao: UserDao
+        get() = db.userDao()
 
     init {
         scope.launch {
@@ -28,20 +57,20 @@ class PingRepository
         }
     }
 
-    suspend fun getUsers(): List<User> = db.userDao().getAll()
+    override suspend fun getUsers(): List<User> = userDao.getAll()
 
-    fun syncUserListWithServer(onUserListUpdated: () -> Unit) {
-        com.joshgm3z.utils.Logger.entry()
+    override fun syncUserListWithServer(onUserListUpdated: () -> Unit) {
+        Logger.entry()
         firestoreDb.getUserList {
-            com.joshgm3z.utils.Logger.debug("it = [$it]")
+            Logger.debug("it = [$it]")
             if (it.isNotEmpty()) {
-                runBlocking {
-                    if (isUserSignedIn()) {
-                        val currentUser = dataStore.getCurrentUser()
-                        db.userDao().insertAll(it, currentUser.docId)
+                scope.launch {
+                    if (currentUserInfo.isSignedIn) {
+                        val currentUser = currentUserInfo.currentUser
+                        userDao.insertAll(it, currentUser.docId)
                         onUserListUpdated()
                     } else {
-                        com.joshgm3z.utils.Logger.warn("current user is null")
+                        Logger.warn("current user is null")
                     }
 
                 }
@@ -49,8 +78,8 @@ class PingRepository
         }
     }
 
-    suspend fun uploadNewMessage(chat: Chat) {
-        com.joshgm3z.utils.Logger.debug("chat = [${chat}]")
+    override fun uploadNewMessage(chat: Chat) {
+        Logger.debug("chat = [${chat}]")
         chat.status = Chat.SENT
         firestoreDb.registerChat(chat,
             // chat added to firestore
@@ -58,14 +87,14 @@ class PingRepository
             },
             // error adding chat
             {
-                com.joshgm3z.utils.Logger.warn("error adding chat")
-                runBlocking {
+                Logger.warn("error adding chat")
+                scope.launch {
                     chat.status = Chat.SAVED
-                    db.chatDao().insert(chat)
+                    chatDao.insert(chat)
                 }
             }
         )
-        runBlocking {
+        scope.launch {
             Thread.sleep(5000)
             addDummyChat(chat)
         }
@@ -83,11 +112,11 @@ class PingRepository
         firestoreDb.registerChat(dummy, {}, {})
     }
 
-    fun checkUserInServer(name: String, onCheckComplete: (user: User?) -> Unit) {
+    override fun checkUserInServer(name: String, onCheckComplete: (user: User?) -> Unit) {
         firestoreDb.checkUser(name) {
-            runBlocking {
+            scope.launch {
                 if (it != null) {
-                    dataStore.setUser(it)
+                    currentUserInfo.currentUser = it
                     observerChatsForMeFromServer()
                 }
             }
@@ -95,7 +124,7 @@ class PingRepository
         }
     }
 
-    fun createUserInServer(
+    override fun createUserInServer(
         name: String,
         imagePath: String,
         registerComplete: (isSuccess: Boolean, message: String) -> Unit,
@@ -104,8 +133,8 @@ class PingRepository
         newUser.imagePath = imagePath
         firestoreDb.createUser(newUser) { user, message ->
             if (user != null) {
-                runBlocking {
-                    dataStore.setUser(user)
+                scope.launch {
+                    currentUserInfo.currentUser = user
                     observerChatsForMeFromServer()
                     registerComplete(true, message)
                 }
@@ -115,83 +144,80 @@ class PingRepository
         }
     }
 
-    suspend fun getUser(userId: String): User {
-        return db.userDao().getUser(userId)
+    override suspend fun getUser(userId: String): User =
+        userDao.getUser(userId)
+
+    override fun observeChatsForUserLocal(userId: String): Flow<List<Chat>> {
+        return chatDao.getChatsOfUserTimeDesc(userId)
     }
 
-    fun observeChatsForUserLocal(userId: String): Flow<List<Chat>> {
-        return db.chatDao().getChatsOfUserTimeDesc(userId)
+    override fun observeChatsForUserHomeLocal(userId: String): Flow<List<Chat>> {
+        return chatDao.getChatsOfUserTimeAsc(userId)
     }
 
-    fun observeChatsForUserHomeLocal(userId: String): Flow<List<Chat>> {
-        return db.chatDao().getChatsOfUserTimeAsc(userId)
-    }
-
-    fun observerChatsForMeFromServer() = scope.launch {
-        if (!isUserSignedIn()) {
-            com.joshgm3z.utils.Logger.error("user not signed in")
+    private fun observerChatsForMeFromServer() = scope.launch {
+        if (!currentUserInfo.isSignedIn) {
+            Logger.error("user not signed in")
             return@launch
         }
-        com.joshgm3z.utils.Logger.entry()
+        Logger.entry()
 
-        val me = dataStore.getCurrentUser()
+        val me = currentUserInfo.currentUser
         firestoreDb.listenForChatToOrFromUser(me.docId) {
-            runBlocking {
-                it.forEach(action = {
-                    if (it.toUserId == me.docId && it.status == Chat.SENT) {
-                        it.status = Chat.DELIVERED
-                        val user = db.userDao().getUser(it.fromUserId)
-                        notificationUtil.showNotification(
-                            it.sentTime.toInt(),
-                            user.name,
-                            it.fromUserId,
-                            it.message
-                        )
-                        firestoreDb.updateChatStatus(it)
+            scope.launch {
+                it.forEach {
+                    with(it) {
+                        if (toUserId == me.docId && status == Chat.SENT) {
+                            status = Chat.DELIVERED
+                            val user = userDao.getUser(fromUserId)
+                            notificationUtil.showNotification(
+                                sentTime.toInt(),
+                                user.name,
+                                fromUserId,
+                                message
+                            )
+                            firestoreDb.updateChatStatus(this)
+                        }
+                        chatDao.insert(this)
                     }
-                    db.chatDao().insert(it)
-                })
+                }
             }
         }
     }
 
-    fun updateChatStatusToServer(status: Long, chats: List<Chat>) {
-        chats.forEach(
-            action = {
-                if (status == Chat.READ && it.status == Chat.DELIVERED) {
-                    it.status = Chat.READ
-                    firestoreDb.updateChatStatus(it)
-                } else if (status == Chat.DELIVERED && it.status == Chat.SENT) {
-                    it.status = Chat.DELIVERED
-                    firestoreDb.updateChatStatus(it)
+    override fun updateChatStatusToServer(newStatus: Long, chats: List<Chat>) =
+        chats.forEach { it ->
+            with(it) {
+                when {
+                    newStatus == Chat.READ && status == Chat.DELIVERED -> Chat.READ
+                    newStatus == Chat.DELIVERED && status == Chat.SENT -> Chat.DELIVERED
+                    else -> null
+                }?.let {
+                    status = it
+                    firestoreDb.updateChatStatus(this)
                 }
             }
-        )
-    }
+        }
 
-    suspend fun getCurrentUser(): User = dataStore.getCurrentUser()
-
-    fun isUserSignedIn(): Boolean = dataStore.isUserSignedIn()
-
-    suspend fun signOutUser() {
-        com.joshgm3z.utils.Logger.entry()
-        dataStore.removeCurrentUser()
+    override suspend fun signOutUser() {
+        Logger.entry()
+        currentUserInfo.removeCurrentUser()
         firestoreDb.removeChatListener()
-        db.chatDao().clearChats()
-        db.userDao().clearUsers()
+        chatDao.clearChats()
+        userDao.clearUsers()
     }
 
-    suspend fun updateUserImageToServer(imageRes: Int) {
-        if (isUserSignedIn()) {
-            val me = dataStore.getCurrentUser()
+    override suspend fun updateUserImageToServer(imageRes: Int) {
+        if (currentUserInfo.isSignedIn) {
+            val me = currentUserInfo.currentUser
             me.imagePath = imageRes.toString()
             firestoreDb.updateUserImage(me) {
-                runBlocking {
-                    dataStore.setUser(it)
+                scope.launch {
+                    currentUserInfo.currentUser = it
                 }
             }
         } else {
-            com.joshgm3z.utils.Logger.error("current user is null")
+            Logger.error("current user is null")
         }
     }
 

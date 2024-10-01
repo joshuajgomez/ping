@@ -26,7 +26,7 @@ constructor(
 
     private val Context.dataStore by preferencesDataStore(name = dataStoreName)
 
-    suspend fun setUser(user: User) {
+    fun setUser(user: User) = runBlocking {
         Logger.debug("user = [$user]")
         context.dataStore.edit { mutablePreferences ->
             mutablePreferences[keyUserName] = user.name
@@ -41,15 +41,15 @@ constructor(
         isUserSignedIn
     }
 
-    suspend fun getCurrentUser(): User {
+    fun getCurrentUser(): User = runBlocking {
         val preferences = context.dataStore.data.first()
         val user = User(preferences[keyUserName].toString())
         user.docId = preferences[keyUserDocId].toString()
         user.imagePath = preferences[keyUserImagePath].toString()
-        return user
+        return@runBlocking user
     }
 
-    suspend fun removeCurrentUser() {
+    fun removeCurrentUser() = runBlocking {
         Logger.entry()
         context.dataStore.edit { mutablePreferences -> mutablePreferences.clear() }
     }

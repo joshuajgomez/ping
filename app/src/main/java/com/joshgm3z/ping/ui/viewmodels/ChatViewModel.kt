@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
-import com.joshgm3z.repository.PingRepository
 import com.joshgm3z.ping.utils.DataUtil
+import com.joshgm3z.repository.api.ChatRepository
+import com.joshgm3z.repository.api.CurrentUserInfo
+import com.joshgm3z.repository.api.UserRepository
+import com.joshgm3z.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -23,7 +26,9 @@ sealed class ChatUiState {
 @HiltViewModel
 class ChatViewModel
 @Inject constructor(
-    private val repository: com.joshgm3z.repository.PingRepository,
+    private val chatRepository: ChatRepository,
+    private val userRepository: UserRepository,
+    private val currentUserInfo: CurrentUserInfo,
     private val dataUtil: DataUtil,
 ) : ViewModel() {
 
@@ -35,13 +40,13 @@ class ChatViewModel
     private var me: User? = null
 
     fun onSendButtonClick(message: String) {
-        com.joshgm3z.utils.Logger.debug("message = [${message}]")
+        Logger.debug("message = [${message}]")
         val chat = Chat(message = message)
         chat.toUserId = otherGuy.docId
         chat.fromUserId = me!!.docId
         chat.sentTime = System.currentTimeMillis()
         viewModelScope.launch(Dispatchers.IO) {
-            repository.uploadNewMessage(chat)
+            chatRepository.uploadNewMessage(chat)
         }
     }
 
@@ -52,21 +57,21 @@ class ChatViewModel
     fun setUser(userId: String) {
         chatObserverJob?.cancel()
         chatObserverJob = viewModelScope.launch {
-            otherGuy = repository.getUser(userId)
-            me = repository.getCurrentUser()
-            com.joshgm3z.utils.Logger.debug("setUser otherGuy = [${otherGuy}]")
-            repository.observeChatsForUserLocal(userId = otherGuy.docId).cancellable()
+            otherGuy = userRepository.getUser(userId)
+            me = currentUserInfo.currentUser
+            Logger.debug("setUser otherGuy = [${otherGuy}]")
+            chatRepository.observeChatsForUserLocal(userId = otherGuy.docId).cancellable()
                 .collect {
-                    com.joshgm3z.utils.Logger.debug("collect.user = [${otherGuy}], chats = [$it]")
+                    Logger.debug("collect.user = [${otherGuy}], chats = [$it]")
                     val chats = dataUtil.markOutwardChats(me!!.docId, ArrayList(it))
                     _uiState.value = ChatUiState.Ready(otherGuy, chats)
-                    repository.updateChatStatusToServer(Chat.READ, chats)
+                    chatRepository.updateChatStatusToServer(Chat.READ, chats)
                 }
         }
     }
 
     fun onScreenExit() {
-        com.joshgm3z.utils.Logger.entry()
+        Logger.entry()
         chatObserverJob?.cancel()
     }
 }
