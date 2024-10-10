@@ -5,8 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -29,6 +32,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -42,6 +46,9 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.joshgm3z.ping.HomeActivity
 import com.joshgm3z.ping.R
+import com.joshgm3z.ping.ui.screens.settings.image.BrowseButton
+import com.joshgm3z.ping.ui.screens.settings.image.ImagePreviewer
+import com.joshgm3z.ping.ui.screens.settings.image.OpenCamera
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 
@@ -50,7 +57,6 @@ fun ImagePickerContainer(
     onGoBackClick: () -> Unit = {},
     userViewModel: UserViewModel,
 ) {
-    val homeActivity = LocalContext.current as HomeActivity
     ImagePicker(
         onGoBackClick = { onGoBackClick() },
         onImageConfirmed = { userViewModel.onImageConfirmed(it) },
@@ -104,116 +110,47 @@ private fun ImagePicker(
     onOpenCamera: () -> Unit = {},
     onOpenMedia: () -> Unit = {},
 ) {
-    val imagePath by remember { mutableStateOf(defaultImagePath) }
-    var selectedIcon by remember { mutableIntStateOf(defaultImageRes) }
 
-    ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
-        val (title, goBack, gallery, picker, done, remove) = createRefs()
-        CustomIcon(
-            iconRes = Icons.AutoMirrored.Default.ArrowBack,
-            color = colorScheme.onSurface,
-            onClick = {
-                onGoBackClick()
-            },
-            modifier = Modifier.constrainAs(goBack) {
-                start.linkTo(parent.start, margin = 10.dp)
-                top.linkTo(parent.top, margin = 10.dp)
-            }
-        )
+    SettingContainer("Choose image") {
+
+        val imagePath by remember { mutableStateOf(defaultImagePath) }
+        var selectedIcon by remember { mutableIntStateOf(defaultImageRes) }
+
         if (imagePath.isNotEmpty() || selectedIcon != 0) {
-            CustomIcon(
-                iconRes = Icons.Default.Done,
-                onClick = {
-                    onImageConfirmed(selectedIcon)
-                    onGoBackClick()
-                },
-                modifier = Modifier.constrainAs(done) {
-                    end.linkTo(parent.end, margin = 10.dp)
-                    top.linkTo(parent.top, margin = 10.dp)
-                }
-            )
-        }
-        Text(
-            text = "Pick your profile pic",
-            color = colorScheme.onSurface,
-            fontSize = 23.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.constrainAs(title) {
-                start.linkTo(goBack.end, margin = 10.dp)
-                top.linkTo(goBack.top, margin = 7.dp)
-            }
-        )
-        if (imagePath.isEmpty()) {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(130.dp),
-                modifier = Modifier.constrainAs(gallery) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    top.linkTo(title.bottom, margin = 30.dp)
-                }
-            ) {
-                items(items = stockImageList) { it ->
-                    ImageItem(
-                        imageRes = it,
-                        onIconClick = { imageRes -> selectedIcon = imageRes },
-                        isSelected = selectedIcon == it
-                    )
-                }
-            }
-            Picker(
-                onOpenCamera = { onOpenCamera() },
-                onOpenMedia = { onOpenMedia() },
-                modifier = Modifier.constrainAs(picker) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    top.linkTo(gallery.bottom, margin = 80.dp)
-                })
+            ImagePreviewer()
         } else {
-            Image(
-                painter = painterResource(id = R.drawable.default_user),
-                contentDescription = null,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .constrainAs(gallery) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        top.linkTo(title.bottom, margin = 60.dp)
-                    }
-            )
-            CustomIcon(
-                iconRes = Icons.Default.Clear,
-                color = colorScheme.error,
-                onClick = { onImageConfirmed(selectedIcon) },
-                modifier = Modifier
-                    .constrainAs(remove) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        top.linkTo(gallery.bottom, margin = 60.dp)
-                    }
-                    .clip(CircleShape)
-                    .background(color = colorScheme.errorContainer)
-                    .size(60.dp)
-            )
+            Column {
+                IconGrid(
+                    onIconClick = {
+                        selectedIcon = it
+                    },
+                    selectedIcon
+                )
+                Spacer(Modifier.height(50.dp))
+                Picker(
+                    onOpenCamera = { onOpenCamera() },
+                    onOpenMedia = { onOpenMedia() },
+                )
+            }
         }
     }
 }
 
 @Composable
-fun CustomIcon(
-    iconRes: ImageVector = Icons.Default.Done,
-    color: Color = colorScheme.primary,
-    onClick: () -> Unit,
-    modifier: Modifier,
+fun IconGrid(
+    onIconClick: (imageRes: Int) -> Unit,
+    selectedItem: Int
 ) {
-    IconButton(
-        onClick = { onClick() },
-        modifier = modifier
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(110.dp),
     ) {
-        Icon(
-            imageVector = iconRes,
-            contentDescription = null,
-            tint = color,
-        )
+        items(items = stockImageList) {
+            ImageItem(
+                imageRes = it,
+                onIconClick = onIconClick,
+                isSelected = selectedItem == it
+            )
+        }
     }
 }
 
@@ -223,38 +160,15 @@ fun Picker(
     onOpenCamera: () -> Unit,
     onOpenMedia: () -> Unit,
 ) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(50.dp)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
     ) {
-        IconButton(
-            onClick = { onOpenCamera() },
-            modifier = Modifier
-                .clip(CircleShape)
-                .background(colorScheme.outlineVariant)
-                .padding(all = 15.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.CameraAlt,
-                contentDescription = null,
-                tint = colorScheme.onSurface,
-                modifier = Modifier.size(50.dp)
-            )
-        }
-        IconButton(
-            onClick = { onOpenMedia() },
-            modifier = Modifier
-                .clip(CircleShape)
-                .background(colorScheme.outlineVariant)
-                .padding(all = 15.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.PhotoLibrary,
-                contentDescription = null,
-                tint = colorScheme.onSurface,
-                modifier = Modifier.size(50.dp)
-            )
-        }
+        BrowseButton()
+        Spacer(Modifier.height(10.dp))
+        Text("or", fontSize = 20.sp)
+        Spacer(Modifier.height(10.dp))
+        OpenCamera()
     }
 }
 

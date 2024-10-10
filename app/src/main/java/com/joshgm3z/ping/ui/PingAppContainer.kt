@@ -3,6 +3,7 @@ package com.joshgm3z.ping.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,6 +16,7 @@ import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.utils.Logger
+import kotlinx.coroutines.launch
 
 const val navSignIn = "signin_screen"
 const val navHome = "home_screen"
@@ -53,7 +55,9 @@ fun PingAppContainer(
                 onUserSignedIn = {
                     userViewModel.refreshUserList()
                     homeViewModel.startListeningToChats()
-                    navController.navigate(navHome)
+                    signInViewModel.viewModelScope.launch {
+                        navController.navigate(navHome)
+                    }
                 }
             )
         }

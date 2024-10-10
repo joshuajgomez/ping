@@ -113,6 +113,7 @@ class PingRepository
     }
 
     override fun checkUserInServer(name: String, onCheckComplete: (user: User?) -> Unit) {
+        Logger.info("name=$name")
         firestoreDb.checkUser(name) {
             scope.launch {
                 if (it != null) {
@@ -129,6 +130,7 @@ class PingRepository
         imagePath: String,
         registerComplete: (isSuccess: Boolean, message: String) -> Unit,
     ) {
+        Logger.entry
         val newUser = User(name)
         newUser.imagePath = imagePath
         firestoreDb.createUser(newUser) { user, message ->

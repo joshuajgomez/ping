@@ -10,5 +10,5 @@ interface ChatRepository {
 
     fun observeChatsForUserHomeLocal(userId: String): Flow<List<Chat>>
 
-    fun updateChatStatusToServer(status: Long, chats: List<Chat>)
+    fun updateChatStatusToServer(newStatus: Long, chats: List<Chat>)
 }

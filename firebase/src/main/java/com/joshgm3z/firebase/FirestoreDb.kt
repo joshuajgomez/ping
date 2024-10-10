@@ -47,6 +47,7 @@ constructor(
 
     fun checkUser(name: String, onCheckComplete: (user: User?) -> Unit) {
         firebaseLogger.debug("checking user for sign in: $name")
+        Logger.debug("name = [${name}]")
         firestore.collection(keyCollectionUserList)
             .get()
             .addOnSuccessListener { result ->
@@ -62,6 +63,7 @@ constructor(
     }
 
     fun createUser(user: User, onUserCreated: (user: User?, message: String) -> Unit) {
+        Logger.debug("user = [${user}]")
         val userDoc = FirestoreConverter.getDocumentFromUser(user)
         firestore.collection(keyCollectionUserList)
             .add(userDoc)

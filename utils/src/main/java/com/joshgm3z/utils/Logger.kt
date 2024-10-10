@@ -5,6 +5,7 @@ import android.util.Log
 class Logger {
     companion object {
         private const val TAG = "pingLogger"
+
         /**
          * Set to high log levels to avoid printing low priority logs
          */
@@ -14,12 +15,18 @@ class Logger {
         }
 
         private val methodName: String
-            private get() {
+            get() {
                 val element = Thread.currentThread().stackTrace[4]
                 var className = element.className
                 className = className.substring(className.lastIndexOf(".") + 1)
                 val methodName = element.methodName
                 return "$className:$methodName> "
+            }
+
+        val entry: String
+            get() {
+                logControl(Log.VERBOSE, methodName + "entry >>")
+                return "entry"
             }
 
         fun entry() {
