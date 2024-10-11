@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -44,14 +43,14 @@ private fun SettingContainerPreview() {
 fun SettingContainer(
     title: String,
     isCloseEnabled: Boolean = true,
-    content: @Composable ColumnScope.() -> Unit
+    onCloseClick: () -> Unit = {},
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 20.dp),
     ) {
-        SettingTitle(title, isCloseEnabled)
+        SettingTitle(title, isCloseEnabled, onCloseClick)
         content()
     }
 }

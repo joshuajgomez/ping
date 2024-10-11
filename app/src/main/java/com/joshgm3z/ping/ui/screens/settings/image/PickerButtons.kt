@@ -21,37 +21,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.joshgm3z.ping.ui.common.dashedBorder
-import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 
 @Preview
 @Composable
 fun ImageUploaderPreview() {
     PingTheme {
-        ImageUploader()
-    }
-}
-
-@Composable
-fun ImageUploader() {
-    SettingContainer("Upload profile picture") {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column {
             BrowseButton()
-            Spacer(Modifier.height(25.dp))
-            Text("or", fontSize = 20.sp)
-            Spacer(Modifier.height(25.dp))
             OpenCamera()
         }
     }
 }
 
-
 @Composable
-fun BrowseButton() {
+fun BrowseButton(
+    onOpenGalleryClick: () -> Unit = {}
+) {
     TextButton(
-        {},
+        onOpenGalleryClick,
         modifier = Modifier
             .fillMaxWidth()
             .dashedBorder()
@@ -74,9 +63,9 @@ fun BrowseButton() {
 }
 
 @Composable
-fun OpenCamera() {
+fun OpenCamera(onOpenCameraClick: () -> Unit = {}) {
     TextButton(
-        {},
+        onOpenCameraClick,
         modifier = Modifier
             .background(
                 color = colorScheme.primaryContainer,
