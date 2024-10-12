@@ -53,6 +53,7 @@ android {
 dependencies {
     implementation(project(":data"))
     implementation(project(":utils"))
+    implementation(project(":repository"))
 
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -66,7 +67,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
-    implementation(project(":repository"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -88,4 +88,6 @@ dependencies {
     ksp(libs.hilt.android.compiler)
 
     implementation(libs.guava)
+
+    implementation(libs.coil.compose)
 }

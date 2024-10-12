@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.ui.viewmodels
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.ping.R
@@ -79,6 +80,14 @@ class UserViewModel
         viewModelScope.launch(Dispatchers.IO) {
             userRepository.signOutUser()
         }
+    }
+
+    fun saveImage(imageUri: Uri) {
+        TODO("Not yet implemented")
+    }
+
+    fun saveIcon(selectedIcon: Int) {
+        TODO("Not yet implemented")
     }
 
 }
