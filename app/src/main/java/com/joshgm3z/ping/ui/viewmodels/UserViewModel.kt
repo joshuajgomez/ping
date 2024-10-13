@@ -7,6 +7,7 @@ import com.joshgm3z.ping.R
 import com.joshgm3z.data.model.User
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.api.UserRepository
+import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,7 @@ sealed class UsersUiState {
 @HiltViewModel
 class UserViewModel
 @Inject constructor(
+    val fileUtil: FileUtil,
     private val userRepository: UserRepository,
     private val currentUserInfo: CurrentUserInfo,
 ) : ViewModel() {

@@ -103,7 +103,6 @@ fun PingAppContainer(
             PingNavState.currentRoute = navImagePicker
             userViewModel.updateCurrentUser()
             ImagePickerHome(
-                userViewModel = userViewModel,
                 onGoBackClick = {
                     navController.popBackStack()
                 },
