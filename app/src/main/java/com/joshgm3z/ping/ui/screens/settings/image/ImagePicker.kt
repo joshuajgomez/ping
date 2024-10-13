@@ -68,6 +68,9 @@ fun ImagePicker(
             onClickSave = {
                 showLoading = true
                 userViewModel.saveImage(imageUri!!)
+            },
+            onClickRetake = {
+                imageUri = null
             })
     }
 }
