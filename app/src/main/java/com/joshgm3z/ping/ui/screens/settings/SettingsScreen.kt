@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -34,6 +35,7 @@ import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
 import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerHome
 import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import kotlinx.serialization.Serializable
 
 @DarkPreview
@@ -94,7 +96,10 @@ sealed class SettingsNav {
 }
 
 @Composable
-fun SettingScreenContainer(modifier: Modifier = Modifier) {
+fun SettingScreenContainer(
+    modifier: Modifier = Modifier,
+    userViewModel: UserViewModel = hiltViewModel()
+) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -132,8 +137,8 @@ fun SettingScreenContainer(modifier: Modifier = Modifier) {
             }
         }
         composable<SettingsNav.SignOut> {
-            SettingContainer("Sign out", onCloseClick = { navController.popBackStack() }) {
-                Text("Sample setting")
+            SignOutSetting(navController) {
+                userViewModel.onSignOutClicked()
             }
         }
     }

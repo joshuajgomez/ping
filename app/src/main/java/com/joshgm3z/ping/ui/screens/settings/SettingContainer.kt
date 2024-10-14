@@ -52,7 +52,9 @@ fun SettingContainer(
             .fillMaxSize()
     ) {
         SettingTitle(title, isCloseEnabled, onCloseClick)
-        content()
+        Column(Modifier.padding(horizontal = 20.dp, vertical = 20.dp)) {
+            content()
+        }
     }
 }
 
