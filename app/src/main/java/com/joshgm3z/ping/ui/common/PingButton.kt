@@ -58,6 +58,7 @@ fun PingButton(
     textColor: Color = colorScheme.onSurface,
     containerColor: Color = colorScheme.surfaceContainerHighest,
     isShowLoading: Boolean = false,
+    progress: Float = 0f,
 ) {
     Button(
         onClick,
@@ -92,6 +93,7 @@ fun PingButton(
             }
             if (isShowLoading) {
                 CircularProgressIndicator(
+                    progress = { progress },
                     color = textColor,
                     modifier = Modifier
                         .constrainAs(right) {

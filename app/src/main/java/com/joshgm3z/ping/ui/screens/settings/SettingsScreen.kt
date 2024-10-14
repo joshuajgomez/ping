@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.ui.screens.settings
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,13 +29,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
+import com.joshgm3z.data.model.User
+import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
 import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
+import com.joshgm3z.ping.ui.screens.settings.image.getUserViewModel
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import com.joshgm3z.utils.Logger
 import kotlinx.serialization.Serializable
 
 @DarkPreview
@@ -148,12 +153,15 @@ fun SettingScreenContainer(
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    userName: String = "Diddly",
-    imageRes: Int = R.drawable.default_user,
+    userViewModel: UserViewModel? = getUserViewModel(),
     onSettingNavigate: (setting: SettingsNav) -> Unit = {},
 ) {
+    val user = when {
+        userViewModel == null -> randomUser()
+        else -> userViewModel.me
+    }
     Column(modifier.fillMaxSize()) {
-        ProfileView(userName, imageRes)
+        ProfileView(user)
         Spacer(Modifier.height(20.dp))
         ElevatedCard(
             modifier = Modifier.padding(horizontal = 15.dp),
@@ -189,28 +197,37 @@ fun SettingItem(
 }
 
 @Composable
-fun ProfileView(userName: String, imageRes: Int) {
+fun ProfileView(user: User) {
     Column(
         Modifier
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(imageRes),
+        Logger.debug(user.imagePath)
+        AsyncImage(
+            model = user.imagePath,
+            placeholder = painterResource(R.drawable.default_user),
             contentDescription = null,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(100.dp)
-                .clip(CircleShape)
+                .clip(CircleShape),
+            onError = {
+                Logger.error(it.toString())
+            },
+            onSuccess = {
+                Logger.info(it.toString())
+            },
         )
         Spacer(Modifier.height(20.dp))
         Text(
-            userName,
+            user.name,
             color = colorScheme.onSurface,
             fontSize = 25.sp
         )
         Spacer(Modifier.height(10.dp))
         Text(
-            "$userName@google.com",
+            "${user.name}@google.com",
             color = colorScheme.onSurfaceVariant,
         )
     }

@@ -16,14 +16,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
 
 @Composable
-fun ImagePicker(onSaveImageClick: (uri: Uri) -> Unit) {
+fun ImagePicker(
+    closePicker: () -> Unit,
+) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -61,20 +66,16 @@ fun ImagePicker(onSaveImageClick: (uri: Uri) -> Unit) {
                 galleryLauncher.launch("image/*")
             })
     } else {
-        var showLoading by remember { mutableStateOf(false) }
         ImagePreviewer(
             imageUri = imageUri!!,
-            isShowLoading = showLoading,
-            onClickSave = {
-                showLoading = true
-                onSaveImageClick(imageUri!!)
-            },
             onClickRetake = {
                 imageUri = null
-            })
+            },
+            closePicker = closePicker
+        )
+
     }
 }
-
 
 @DarkPreview
 @Composable

@@ -19,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.DarkPreview
-import androidx.compose.ui.tooling.preview.Preview
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
@@ -52,7 +51,7 @@ fun ImagePickerContainer(
     ImagePickerHome(
         onGoBackClick,
         onSaveClick = { userViewModel.onImageConfirmed(it) },
-        onSaveImageClick = { userViewModel.saveImage(it) },
+        goBack = onGoBackClick,
     )
 }
 
@@ -60,12 +59,12 @@ fun ImagePickerContainer(
 private fun ImagePickerHome(
     onGoBackClick: () -> Unit,
     onSaveClick: (icon: Int) -> Unit = {},
-    onSaveImageClick: (uri: Uri) -> Unit = {},
+    goBack: () -> Unit = {},
 ) {
     SettingContainer("Choose a picture", onCloseClick = onGoBackClick) {
         TabScreen(
             onSaveClick = onSaveClick,
-            onSaveImageClick = onSaveImageClick
+            goBack = goBack
         )
     }
 }
@@ -74,7 +73,7 @@ private fun ImagePickerHome(
 private fun TabScreen(
     defaultTab: Int = 0,
     onSaveClick: (icon: Int) -> Unit = {},
-    onSaveImageClick: (uri: Uri) -> Unit = {},
+    goBack: () -> Unit = {},
 ) {
     var tabIndex by remember { mutableIntStateOf(defaultTab) }
 
@@ -99,7 +98,7 @@ private fun TabScreen(
         }
         when (tabIndex) {
             0 -> IconPicker(onSaveClick = onSaveClick)
-            1 -> ImagePicker(onSaveImageClick = onSaveImageClick)
+            1 -> ImagePicker(closePicker = goBack)
         }
     }
 }

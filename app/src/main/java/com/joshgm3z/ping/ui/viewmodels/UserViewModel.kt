@@ -38,6 +38,7 @@ class UserViewModel
     lateinit var me: User
 
     init {
+        updateCurrentUser()
         refreshUserList()
     }
 
@@ -74,12 +75,6 @@ class UserViewModel
         }
     }
 
-    fun getImageRes(): Int {
-        return if (me.imagePath.isNotEmpty() && me.imagePath != "null") {
-            me.imagePath.toInt()
-        } else R.drawable.default_user
-    }
-
     fun onSignOutClicked(onSignOutComplete: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             userRepository.signOutUser()
@@ -90,10 +85,20 @@ class UserViewModel
         }
     }
 
-    fun saveImage(imageUri: Uri) {
+    fun saveImage(
+        imageUri: Uri,
+        onImageSaved: () -> Unit,
+        onProgress: (progress: Float) -> Unit,
+        onFailure: () -> Unit,
+    ) {
         Logger.debug("imageUri = [${imageUri}]")
         viewModelScope.launch {
-            userRepository.uploadImage(imageUri)
+            userRepository.uploadImage(
+                imageUri,
+                onProgress,
+                onImageSaved,
+                onFailure
+            )
         }
     }
 

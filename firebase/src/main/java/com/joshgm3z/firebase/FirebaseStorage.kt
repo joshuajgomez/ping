@@ -35,6 +35,7 @@ constructor(
         fileName: String,
         uri: Uri,
         onUploadComplete: (fileUrl: String) -> Unit,
+        onUploadProgress: (progress: Float) -> Unit,
         onUploadFailed: () -> Unit,
     ) {
         Logger.debug("fileName = [${fileName}], uri = [${uri}]")
@@ -43,10 +44,14 @@ constructor(
         picReference.putFile(uri)
             .addOnSuccessListener {
                 Logger.debug("upload success")
-                onUploadComplete(picReference.path)
+                picReference.downloadUrl.addOnSuccessListener {
+                    onUploadComplete(it.toString())
+                }
             }
             .addOnProgressListener {
-                Logger.debug("progress: ${it.bytesTransferred} / ${it.totalByteCount}")
+                val progress = (it.bytesTransferred.toFloat() / it.totalByteCount.toFloat()) * 100
+                Logger.debug("progress: $progress% [${it.bytesTransferred}/${it.totalByteCount}]")
+                onUploadProgress(progress)
             }
             .addOnFailureListener {
                 Logger.error("upload failed: ${it.message}")
