@@ -28,6 +28,7 @@ import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.R
+import com.joshgm3z.ping.ui.common.UserImage
 
 @Preview
 @Composable
@@ -58,22 +59,18 @@ fun ChatAppBar(
                 .padding(5.dp)
                 .clickable { onBackClick() }
         )
-        Image(
-            painter = painterResource(id = R.drawable.default_user),
-            contentDescription = "default user",
+        UserImage(
             modifier = Modifier
-                .clip(shape = CircleShape)
-                .size(40.dp)
+                .size(40.dp),
+            imageUrl = user.imagePath
         )
         Spacer(modifier = Modifier.width(15.dp))
-        user?.let {
-            Text(
-                text = it.name,
-                fontSize = 22.sp,
-                color = colorScheme.onSurface,
-                modifier = Modifier.widthIn(80.dp)
-            )
-        }
+        Text(
+            text = user.name,
+            fontSize = 22.sp,
+            color = colorScheme.onSurface,
+            modifier = Modifier.widthIn(80.dp)
+        )
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             imageVector = Icons.Default.MoreVert,

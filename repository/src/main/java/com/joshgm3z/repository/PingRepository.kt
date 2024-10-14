@@ -227,15 +227,15 @@ class PingRepository
     }
 
     override suspend fun uploadImage(
-        uri: Uri,
+        url: String,
         onProgress: (progress: Float) -> Unit,
         onImageSaved: () -> Unit,
         onFailure: () -> Unit,
     ) {
-        Logger.debug("uri = [${uri}]")
+        Logger.debug("uri = [${url}]")
         firebaseStorage.uploadImage(
             fileName = "${currentUserInfo.currentUser.docId}.jpg",
-            uri = uri,
+            url = url,
             onUploadComplete = {
                 if (currentUserInfo.isSignedIn) {
                     val me = currentUserInfo.currentUser

@@ -41,6 +41,7 @@ import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.data.util.randomUsers
+import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
 import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
@@ -161,17 +162,15 @@ fun SearchItem(
     ) {
         Logger.debug("user = [$user]")
         val (image, name) = createRefs()
-        Image(
-            painter = painterResource(id = R.drawable.stock_user_pic2),
-            contentDescription = "profile picture",
+        UserImage(
             modifier = Modifier
-                .clip(shape = CircleShape)
                 .size(40.dp)
                 .constrainAs(image) {
                     start.linkTo(parent.start, margin = 10.dp)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
-                }
+                },
+            imageUrl = user.imagePath
         )
         Text(
             text = user.name,

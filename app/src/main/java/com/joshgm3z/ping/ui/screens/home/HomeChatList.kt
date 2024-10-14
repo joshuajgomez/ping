@@ -1,7 +1,6 @@
 package com.joshgm3z.ping.ui.screens.home
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
@@ -29,7 +28,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,7 +43,7 @@ import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.screens.settings.SettingsScreen
+import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.utils.getPrettyTime
 
 @DarkPreview
@@ -144,10 +142,7 @@ fun HomeChatItem(
 ) {
     ConstraintLayout(modifier = Modifier.clickable { onChatClick(homeChat) }) {
         val (message, user, count, image, line, time) = createRefs()
-        val imageRes = homeChat.otherGuy.imageRes
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = "default user",
+        UserImage(
             modifier = Modifier
                 .clip(shape = CircleShape)
                 .size(45.dp)
@@ -155,7 +150,8 @@ fun HomeChatItem(
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start, margin = 10.dp)
-                }
+                },
+            imageUrl = homeChat.otherGuy.imagePath
         )
         Text(
             text = homeChat.otherGuy.name,
@@ -225,7 +221,7 @@ fun HomeChatItem(
                     .padding(horizontal = 8.dp, vertical = 1.dp)
             )
         }
-        Divider(
+        HorizontalDivider(
             color = colorScheme.outlineVariant.copy(alpha = 0.1f),
             modifier = Modifier.constrainAs(line) {
                 top.linkTo(image.bottom, margin = 10.dp)

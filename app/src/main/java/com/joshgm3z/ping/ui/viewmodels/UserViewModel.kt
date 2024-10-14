@@ -86,15 +86,15 @@ class UserViewModel
     }
 
     fun saveImage(
-        imageUri: Uri,
+        imageUrl: String,
         onImageSaved: () -> Unit,
         onProgress: (progress: Float) -> Unit,
         onFailure: () -> Unit,
     ) {
-        Logger.debug("imageUri = [${imageUri}]")
+        Logger.debug("imageUrl = [${imageUrl}]")
         viewModelScope.launch {
             userRepository.uploadImage(
-                imageUri,
+                imageUrl,
                 onProgress,
                 onImageSaved,
                 onFailure

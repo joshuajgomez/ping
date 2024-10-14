@@ -67,7 +67,7 @@ fun ImagePicker(
             })
     } else {
         ImagePreviewer(
-            imageUri = imageUri!!,
+            imageUrl = imageUri.toString(),
             onClickRetake = {
                 imageUri = null
             },

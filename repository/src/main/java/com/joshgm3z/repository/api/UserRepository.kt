@@ -23,7 +23,7 @@ interface UserRepository {
     suspend fun updateUserImageToServer(imageRes: Int)
 
     suspend fun uploadImage(
-        uri: Uri,
+        url: String,
         onProgress: (progress: Float) -> Unit,
         onImageSaved: () -> Unit,
         onFailure: () -> Unit,
