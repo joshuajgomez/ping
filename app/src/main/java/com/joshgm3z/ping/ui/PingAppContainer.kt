@@ -12,8 +12,6 @@ import com.joshgm3z.ping.ui.screens.frx.FrxContainer
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
 import com.joshgm3z.ping.ui.screens.settings.SettingScreenContainer
 import com.joshgm3z.ping.ui.screens.settings.SettingsNav
-import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
-import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerHome
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel

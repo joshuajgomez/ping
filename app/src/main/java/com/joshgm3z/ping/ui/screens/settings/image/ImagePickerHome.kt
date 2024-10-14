@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.ui.screens.settings.image
 
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.DarkPreview
+import androidx.compose.ui.tooling.preview.Preview
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
@@ -32,7 +34,7 @@ private fun PreviewImagePickerHome() {
     }
 }
 
-@DarkPreview
+//@DarkPreview
 @Composable
 private fun PreviewImagePickerHome1() {
     PingTheme {
@@ -55,7 +57,7 @@ fun ImagePickerContainer(
 }
 
 @Composable
-fun ImagePickerHome(
+private fun ImagePickerHome(
     onGoBackClick: () -> Unit,
     onSaveClick: (icon: Int) -> Unit = {},
     onSaveImageClick: (uri: Uri) -> Unit = {},
@@ -69,7 +71,7 @@ fun ImagePickerHome(
 }
 
 @Composable
-fun TabScreen(
+private fun TabScreen(
     defaultTab: Int = 0,
     onSaveClick: (icon: Int) -> Unit = {},
     onSaveImageClick: (uri: Uri) -> Unit = {},
@@ -81,7 +83,7 @@ fun TabScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         TabRow(
             selectedTabIndex = tabIndex,
-            containerColor = colorScheme.surfaceContainer,
+            containerColor = colorScheme.surface,
             contentColor = colorScheme.onSurface,
         ) {
             tabs.forEachIndexed { index, icon ->

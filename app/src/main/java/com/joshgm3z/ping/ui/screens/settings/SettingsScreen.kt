@@ -33,12 +33,10 @@ import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
 import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
-import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerHome
+import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
-import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
-import kotlin.time.Duration.Companion.seconds
 
 @DarkPreview
 @Composable
@@ -112,7 +110,7 @@ fun SettingScreenContainer(
         modifier = modifier
     ) {
         composable<SettingsNav.Profile> {
-            ImagePickerHome(onGoBackClick = onBackClick)
+            ImagePickerContainer(onGoBackClick = onBackClick)
         }
         composable<SettingsNav.Chat> {
             SettingContainer("Chat Settings", onCloseClick = onBackClick) {
@@ -180,9 +178,9 @@ fun SettingItem(
 ) {
     Column(
         Modifier
-            .padding(horizontal = 20.dp, vertical = 10.dp)
             .fillMaxWidth()
             .clickable { onSettingClick() }
+            .padding(horizontal = 20.dp, vertical = 10.dp)
     ) {
         Text(setting.title, fontSize = 18.sp, color = colorScheme.onSurface)
         Spacer(Modifier.height(5.dp))

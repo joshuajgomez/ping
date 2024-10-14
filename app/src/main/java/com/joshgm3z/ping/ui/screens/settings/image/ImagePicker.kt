@@ -17,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
 
@@ -70,6 +72,15 @@ fun ImagePicker(onSaveImageClick: (uri: Uri) -> Unit) {
             onClickRetake = {
                 imageUri = null
             })
+    }
+}
+
+
+@DarkPreview
+@Composable
+fun PreviewPickerButtons() {
+    PingTheme {
+        PickerButtons()
     }
 }
 

@@ -1,8 +1,11 @@
 package com.joshgm3z.ping.ui.screens.settings.image
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -11,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -18,17 +22,23 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.dashedBorder
 import com.joshgm3z.ping.ui.theme.PingTheme
 
-@Preview
+@DarkPreview
 @Composable
 fun ImageUploaderPreview() {
     PingTheme {
-        Column {
+        Column(
+            modifier = Modifier
+                .background(colorScheme.surface)
+                .fillMaxSize()
+        ) {
             BrowseButton()
             OpenCamera()
         }
@@ -43,8 +53,8 @@ fun BrowseButton(
         onOpenGalleryClick,
         modifier = Modifier
             .fillMaxWidth()
-            .dashedBorder()
-            .padding(50.dp),
+            .dashedBorder(),
+        contentPadding = PaddingValues(vertical = 20.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
@@ -69,10 +79,10 @@ fun OpenCamera(onOpenCameraClick: () -> Unit = {}) {
         modifier = Modifier
             .background(
                 color = colorScheme.primaryContainer,
-                shape = RoundedCornerShape(20.dp)
+                shape = RoundedCornerShape(30.dp)
             )
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),
+            .fillMaxWidth(),
+        contentPadding = PaddingValues(vertical = 20.dp)
     ) {
         Icon(
             Icons.Default.CameraAlt,
