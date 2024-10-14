@@ -18,6 +18,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -243,12 +244,14 @@ class PingRepository
                     firestoreDb.updateUserImage(me) {
                         scope.launch {
                             currentUserInfo.currentUser = it
+                            scope.launch(Dispatchers.Main) {
+                                onImageSaved()
+                            }
                         }
                     }
                 } else {
                     Logger.error("current user is null")
                 }
-                onImageSaved()
             },
             onUploadProgress = {
                 Logger.debug("$it%")

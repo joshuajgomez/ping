@@ -34,6 +34,7 @@ import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
 import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
@@ -153,15 +154,10 @@ fun SettingScreenContainer(
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel? = getUserViewModel(),
     onSettingNavigate: (setting: SettingsNav) -> Unit = {},
 ) {
-    val user = when {
-        userViewModel == null -> randomUser()
-        else -> userViewModel.me
-    }
     Column(modifier.fillMaxSize()) {
-        ProfileView(user)
+        ProfileView()
         Spacer(Modifier.height(20.dp))
         ElevatedCard(
             modifier = Modifier.padding(horizontal = 15.dp),
@@ -197,27 +193,23 @@ fun SettingItem(
 }
 
 @Composable
-fun ProfileView(user: User) {
+fun ProfileView(userViewModel: UserViewModel? = getUserViewModel()) {
+    userViewModel?.updateCurrentUser()
+    val user = when {
+        userViewModel == null -> randomUser()
+        else -> userViewModel.me
+    }
+    Logger.debug(user.toString())
     Column(
         Modifier
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Logger.debug(user.imagePath)
-        AsyncImage(
-            model = user.imagePath,
-            placeholder = painterResource(R.drawable.default_user),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+        UserImage(
+            imageUrl = user.imagePath,
             modifier = Modifier
                 .size(100.dp)
                 .clip(CircleShape),
-            onError = {
-                Logger.error(it.toString())
-            },
-            onSuccess = {
-                Logger.info(it.toString())
-            },
         )
         Spacer(Modifier.height(20.dp))
         Text(
