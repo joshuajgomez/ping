@@ -29,11 +29,10 @@ import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.ui.screens.search.UserContainer
 import com.joshgm3z.ping.ui.screens.search.UserList
-import com.joshgm3z.ping.ui.screens.settings.SettingScreenContainer
+import com.joshgm3z.ping.ui.screens.settings.SettingsNav
 import com.joshgm3z.ping.ui.screens.settings.SettingsScreen
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
-import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 
 @Preview
@@ -94,6 +93,7 @@ fun PreviewHomeScreenUsers() {
 const val navChatList = "Chats"
 const val navUserList = "Users"
 const val navSettings = "Settings"
+const val navSettingsScreen = "SettingsScreen"
 
 sealed class HomeNavScreen(val route: String, val icon: ImageVector) {
     object ChatList : HomeNavScreen(navChatList, Icons.Rounded.ChatBubble)
@@ -111,11 +111,9 @@ val homeNavItems = listOf(
 fun HomeScreenContainer(
     homeViewModel: HomeViewModel,
     userViewModel: UserViewModel,
-    signInViewModel: SignInViewModel,
     onUserClick: (user: User) -> Unit = {},
     onChatClick: (homeChat: HomeChat) -> Unit = {},
-    onLoggedOut: () -> Unit = {},
-    onOpenImagePicker: () -> Unit = {},
+    onNavigateSettings: (settingNav: SettingsNav) -> Unit
 ) {
     val navController = rememberNavController()
     Scaffold(
@@ -163,7 +161,9 @@ fun HomeScreenContainer(
             composable(route = navSettings) {
                 userViewModel.updateCurrentUser()
                 homeViewModel.setAppTitle("Settings")
-                SettingScreenContainer()
+                SettingsScreen(onSettingNavigate = {
+                    onNavigateSettings(it)
+                })
             }
         }
     }

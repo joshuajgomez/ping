@@ -14,8 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.theme.PingTheme
@@ -24,16 +22,21 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 @Composable
 private fun PreviewSignOutSetting() {
     PingTheme {
-        SignOutSetting(rememberNavController())
+        SignOutSetting()
     }
 }
 
 @Composable
 fun SignOutSetting(
-    navController: NavController,
     onSignOutClick: () -> Unit = {},
+    onBackClick: () -> Unit = {},
 ) {
-    SettingContainer("Sign out", onCloseClick = { navController.popBackStack() }) {
+    var showLoading by remember { mutableStateOf(false) }
+    SettingContainer(
+        title = "Sign out",
+        onCloseClick = onBackClick,
+        isCloseEnabled = !showLoading
+    ) {
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxSize()
@@ -43,11 +46,11 @@ fun SignOutSetting(
                 fontSize = 20.sp,
                 color = colorScheme.onSurface
             )
-            var showLoading by remember { mutableStateOf(false) }
             PingButton(
                 "Yes, sign out",
                 icon = Icons.AutoMirrored.Default.ExitToApp,
                 containerColor = colorScheme.onError,
+                isShowLoading = showLoading,
                 onClick = {
                     showLoading = true
                     onSignOutClick()

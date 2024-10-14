@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.frx.FrxContainer
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
+import com.joshgm3z.ping.ui.screens.settings.SettingScreenContainer
+import com.joshgm3z.ping.ui.screens.settings.SettingsNav
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerHome
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
@@ -22,7 +24,7 @@ import kotlinx.coroutines.launch
 const val navSignIn = "signin_screen"
 const val navHome = "home_screen"
 const val navChat = "chat_screen"
-const val navImagePicker = "image_picker"
+const val navSettings = "navSettings"
 
 class PingNavState {
     companion object {
@@ -43,6 +45,7 @@ fun PingAppContainer(
     chatViewModel: ChatViewModel = hiltViewModel(),
     signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
+    var settingsStartDestination: SettingsNav? = null
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -68,18 +71,15 @@ fun PingAppContainer(
             HomeScreenContainer(
                 homeViewModel = homeViewModel,
                 userViewModel = userViewModel,
-                signInViewModel = signInViewModel,
                 onUserClick = {
                     navController.navigate("$navChat/${it.docId}")
                 },
                 onChatClick = {
                     navController.navigate("$navChat/${it.otherGuy.docId}")
                 },
-                onLoggedOut = {
-                    navController.navigate(navSignIn)
-                },
-                onOpenImagePicker = {
-                    navController.navigate(navImagePicker)
+                onNavigateSettings = {
+                    settingsStartDestination = it
+                    navController.navigate(navSettings)
                 }
             )
         }
@@ -100,11 +100,15 @@ fun PingAppContainer(
             )
         }
 
-        composable(navImagePicker) {
-            PingNavState.currentRoute = navImagePicker
+        composable(navSettings) {
+            PingNavState.currentRoute = navSettings
             userViewModel.updateCurrentUser()
-            ImagePickerContainer(
-                onGoBackClick = {
+            SettingScreenContainer(
+                startDestination = settingsStartDestination!!,
+                onLoggedOut = {
+                    navController.navigate(navSignIn)
+                },
+                onBackClick = {
                     navController.popBackStack()
                 },
             )

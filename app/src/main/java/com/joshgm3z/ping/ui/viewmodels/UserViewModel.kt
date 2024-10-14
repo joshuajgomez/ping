@@ -12,10 +12,12 @@ import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 sealed class UsersUiState {
     data class Ready(val users: List<User>) : UsersUiState()
@@ -78,9 +80,13 @@ class UserViewModel
         } else R.drawable.default_user
     }
 
-    fun onSignOutClicked() {
+    fun onSignOutClicked(onSignOutComplete: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             userRepository.signOutUser()
+            delay(3.seconds)
+            viewModelScope.launch {
+                onSignOutComplete()
+            }
         }
     }
 

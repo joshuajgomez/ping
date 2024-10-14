@@ -36,7 +36,9 @@ import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerHome
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
+import kotlin.time.Duration.Companion.seconds
 
 @DarkPreview
 @Composable
@@ -97,49 +99,49 @@ sealed class SettingsNav {
 
 @Composable
 fun SettingScreenContainer(
+    startDestination: SettingsNav,
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel = hiltViewModel()
+    userViewModel: UserViewModel = hiltViewModel(),
+    onLoggedOut: () -> Unit = {},
+    onBackClick: () -> Unit = {},
 ) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = SettingsNav.Home,
+        startDestination = startDestination,
         modifier = modifier
     ) {
-        composable<SettingsNav.Home> {
-            SettingsScreen(onSettingNavigate = {
-                navController.navigate(it)
-            })
-        }
         composable<SettingsNav.Profile> {
-            ImagePickerHome(onGoBackClick = {
-                navController.popBackStack()
-            })
+            ImagePickerHome(onGoBackClick = onBackClick)
         }
         composable<SettingsNav.Chat> {
-            SettingContainer("Chat Settings", onCloseClick = { navController.popBackStack() }) {
+            SettingContainer("Chat Settings", onCloseClick = onBackClick) {
                 Text("Sample setting")
             }
         }
         composable<SettingsNav.Notifications> {
-            SettingContainer("Notifications", onCloseClick = { navController.popBackStack() }) {
+            SettingContainer("Notifications", onCloseClick = onBackClick) {
                 Text("Sample setting")
             }
         }
         composable<SettingsNav.Account> {
-            SettingContainer("Account", onCloseClick = { navController.popBackStack() }) {
+            SettingContainer("Account", onCloseClick = onBackClick) {
                 Text("Sample setting")
             }
         }
         composable<SettingsNav.Storage> {
-            SettingContainer("Storage", onCloseClick = { navController.popBackStack() }) {
+            SettingContainer("Storage", onCloseClick = onBackClick) {
                 Text("Sample setting")
             }
         }
         composable<SettingsNav.SignOut> {
-            SignOutSetting(navController) {
-                userViewModel.onSignOutClicked()
-            }
+            SignOutSetting(
+                onBackClick = onBackClick,
+                onSignOutClick = {
+                    userViewModel.onSignOutClicked {
+                        onLoggedOut()
+                    }
+                })
         }
     }
 }
