@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.frx.FrxContainer
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
+import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerHome
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
@@ -102,7 +103,7 @@ fun PingAppContainer(
         composable(navImagePicker) {
             PingNavState.currentRoute = navImagePicker
             userViewModel.updateCurrentUser()
-            ImagePickerHome(
+            ImagePickerContainer(
                 onGoBackClick = {
                     navController.popBackStack()
                 },

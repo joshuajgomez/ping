@@ -15,15 +15,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
 
 @Composable
-fun ImagePicker(
-    userViewModel: UserViewModel = hiltViewModel()
-) {
+fun ImagePicker(onSaveImageClick: (uri: Uri) -> Unit) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -40,8 +38,8 @@ fun ImagePicker(
         }
     )
 
-    val file = userViewModel.fileUtil.createImageFile()
-    val cameraUri = userViewModel.fileUtil.getUri(file)
+    val file = FileUtil.createImageFile(LocalContext.current)
+    val cameraUri = FileUtil.getUri(LocalContext.current, file)
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
         onResult = { success ->
@@ -67,7 +65,7 @@ fun ImagePicker(
             isShowLoading = showLoading,
             onClickSave = {
                 showLoading = true
-                userViewModel.saveImage(imageUri!!)
+                onSaveImageClick(imageUri!!)
             },
             onClickRetake = {
                 imageUri = null

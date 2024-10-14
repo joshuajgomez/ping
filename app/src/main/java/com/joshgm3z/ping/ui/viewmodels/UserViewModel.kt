@@ -1,6 +1,7 @@
 package com.joshgm3z.ping.ui.viewmodels
 
 import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.ping.R
@@ -23,7 +24,6 @@ sealed class UsersUiState {
 @HiltViewModel
 class UserViewModel
 @Inject constructor(
-    val fileUtil: FileUtil,
     private val userRepository: UserRepository,
     private val currentUserInfo: CurrentUserInfo,
 ) : ViewModel() {

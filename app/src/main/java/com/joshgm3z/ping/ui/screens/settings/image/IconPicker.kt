@@ -29,7 +29,7 @@ import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 @Composable
 fun IconPicker(
     defaultImageRes: Int = 0,
-    userViewModel: UserViewModel = hiltViewModel()
+    onSaveClick: (icon: Int) -> Unit,
 ) {
     var selectedIcon by remember { mutableIntStateOf(defaultImageRes) }
     Column(
@@ -45,7 +45,7 @@ fun IconPicker(
             selectedIcon
         )
         PingButton("Save icon", onClick = {
-            userViewModel.saveIcon(selectedIcon)
+            onSaveClick(selectedIcon)
         })
     }
 }

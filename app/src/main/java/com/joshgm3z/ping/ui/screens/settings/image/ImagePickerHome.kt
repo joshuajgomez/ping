@@ -1,9 +1,8 @@
 package com.joshgm3z.ping.ui.screens.settings.image
 
-import androidx.compose.foundation.layout.Arrangement
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.Image
@@ -17,15 +16,13 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.joshgm3z.ping.ui.common.PingButton
+import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 
-@Preview
+@DarkPreview
 @Composable
 private fun PreviewImagePickerHome() {
     PingTheme {
@@ -35,7 +32,7 @@ private fun PreviewImagePickerHome() {
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
 private fun PreviewImagePickerHome1() {
     PingTheme {
@@ -46,16 +43,37 @@ private fun PreviewImagePickerHome1() {
 }
 
 @Composable
+fun ImagePickerContainer(
+    onGoBackClick: () -> Unit = {},
+    userViewModel: UserViewModel = hiltViewModel(),
+) {
+    ImagePickerHome(
+        onGoBackClick,
+        onSaveClick = { userViewModel.onImageConfirmed(it) },
+        onSaveImageClick = { userViewModel.saveImage(it) },
+    )
+}
+
+@Composable
 fun ImagePickerHome(
-    onGoBackClick: () -> Unit
+    onGoBackClick: () -> Unit,
+    onSaveClick: (icon: Int) -> Unit = {},
+    onSaveImageClick: (uri: Uri) -> Unit = {},
 ) {
     SettingContainer("Choose a picture", onCloseClick = onGoBackClick) {
-        TabScreen()
+        TabScreen(
+            onSaveClick = onSaveClick,
+            onSaveImageClick = onSaveImageClick
+        )
     }
 }
 
 @Composable
-fun TabScreen(defaultTab: Int = 0) {
+fun TabScreen(
+    defaultTab: Int = 0,
+    onSaveClick: (icon: Int) -> Unit = {},
+    onSaveImageClick: (uri: Uri) -> Unit = {},
+) {
     var tabIndex by remember { mutableIntStateOf(defaultTab) }
 
     val tabs = listOf(Icons.Default.EmojiEmotions, Icons.Default.Image)
@@ -78,8 +96,8 @@ fun TabScreen(defaultTab: Int = 0) {
             }
         }
         when (tabIndex) {
-            0 -> IconPicker()
-            1 -> ImagePicker()
+            0 -> IconPicker(onSaveClick = onSaveClick)
+            1 -> ImagePicker(onSaveImageClick = onSaveImageClick)
         }
     }
 }
