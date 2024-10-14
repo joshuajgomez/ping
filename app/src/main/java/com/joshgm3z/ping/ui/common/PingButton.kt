@@ -92,14 +92,26 @@ fun PingButton(
                 )
             }
             if (isShowLoading) {
-                CircularProgressIndicator(
-                    progress = { progress },
-                    color = textColor,
-                    modifier = Modifier
-                        .constrainAs(right) {
-                            end.linkTo(parent.end)
-                        }
-                        .size(30.dp))
+                if (progress != 0f) {
+                    // determinate
+                    CircularProgressIndicator(
+                        progress = { progress },
+                        color = textColor,
+                        modifier = Modifier
+                            .constrainAs(right) {
+                                end.linkTo(parent.end)
+                            }
+                            .size(30.dp))
+                } else {
+                    // indeterminate
+                    CircularProgressIndicator(
+                        color = textColor,
+                        modifier = Modifier
+                            .constrainAs(right) {
+                                end.linkTo(parent.end)
+                            }
+                            .size(30.dp))
+                }
             }
         }
     }
