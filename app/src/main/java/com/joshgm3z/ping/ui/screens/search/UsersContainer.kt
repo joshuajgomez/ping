@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiPeople
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,6 +41,8 @@ import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.data.util.randomUsers
+import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
+import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.ping.ui.viewmodels.UsersUiState
 import com.joshgm3z.utils.Logger
@@ -48,9 +51,18 @@ import com.joshgm3z.utils.Logger
 @Composable
 fun PreviewSearchContainer() {
     PingTheme {
-        Column {
-            SearchBar()
-            UserList()
+        Scaffold(
+            topBar = {
+                HomeAppBarContainer("Users")
+            },
+            bottomBar = {
+                PingBottomAppBar()
+            },
+        ) { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues)) {
+                SearchBar()
+                UserList()
+            }
         }
     }
 }

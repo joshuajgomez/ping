@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.theme.Comfortaa
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
@@ -28,9 +29,8 @@ fun PreviewHomeAppBar() {
 }
 
 @Composable
-fun HomeAppBarContainer(homeViewModel: HomeViewModel) {
-    val appTitleState = homeViewModel.appTitle.collectAsState()
-    HomeAppBar(title = appTitleState.value)
+fun HomeAppBarContainer(title: String) {
+    HomeAppBar(title)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,24 +41,10 @@ fun HomeAppBar(title: String = "Chats") {
             Text(
                 text = title,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 25.sp,
+                fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
             )
         }
     )
-}
-
-@Composable
-fun AppTitle() {
-    Row {
-        Text(
-            text = "ping",
-            color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 30.sp,
-            fontFamily = Comfortaa,
-            modifier = Modifier.padding(top = 5.dp)
-        )
-    }
 }

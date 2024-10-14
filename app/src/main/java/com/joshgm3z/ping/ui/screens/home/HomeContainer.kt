@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -119,7 +120,8 @@ fun HomeScreenContainer(
     val navController = rememberNavController()
     Scaffold(
         topBar = {
-            HomeAppBarContainer(homeViewModel = homeViewModel)
+            val title = homeViewModel.appTitle.collectAsState()
+            HomeAppBarContainer(title.value)
         },
         bottomBar = {
             PingBottomAppBar(navController)

@@ -16,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,6 +30,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
+import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerHome
 import com.joshgm3z.ping.ui.theme.PingTheme
 import kotlinx.serialization.Serializable
@@ -37,7 +40,16 @@ import kotlinx.serialization.Serializable
 @Composable
 fun PreviewSettingsScreen() {
     PingTheme {
-        SettingsScreen()
+        Scaffold(
+            topBar = {
+                HomeAppBarContainer("Settings")
+            },
+            bottomBar = {
+                PingBottomAppBar()
+            },
+        ) { paddingValues ->
+            SettingsScreen(modifier = Modifier.padding(paddingValues))
+        }
     }
 }
 
@@ -175,7 +187,6 @@ fun SettingItem(
 fun ProfileView(userName: String, imageRes: Int) {
     Column(
         Modifier
-            .padding(top = 30.dp)
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

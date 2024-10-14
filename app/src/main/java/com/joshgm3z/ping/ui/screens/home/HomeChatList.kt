@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,7 +44,32 @@ import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.HomeChat
+import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.screens.settings.SettingsScreen
 import com.joshgm3z.ping.utils.getPrettyTime
+
+@DarkPreview
+@Composable
+fun PreviewHomeChatList() {
+    PingTheme {
+        PingTheme {
+            Scaffold(
+                topBar = {
+                    HomeAppBarContainer("Chats")
+                },
+                bottomBar = {
+                    PingBottomAppBar()
+                },
+            ) { paddingValues ->
+                LazyColumn(Modifier.padding(paddingValues)) {
+                    items(items = getHomeChatList()) {
+                        HomeChatItem(it) {}
+                    }
+                }
+            }
+        }
+    }
+}
 
 @Preview
 @Composable
