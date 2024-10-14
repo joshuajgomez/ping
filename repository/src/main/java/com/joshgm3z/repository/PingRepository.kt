@@ -1,7 +1,9 @@
 package com.joshgm3z.repository
 
+import android.net.Uri
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
+import com.joshgm3z.firebase.FirebaseStorage
 import com.joshgm3z.firebase.FirestoreDb
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.CurrentUserInfo
@@ -41,6 +43,7 @@ class PingRepository
     private val scope: CoroutineScope,
     private val db: PingDb,
     private val firestoreDb: FirestoreDb,
+    private val firebaseStorage: FirebaseStorage,
     private val currentUserInfo: CurrentUserInfo,
     private val notificationUtil: NotificationUtil,
 ) : ChatRepository, UserRepository {
@@ -221,6 +224,30 @@ class PingRepository
         } else {
             Logger.error("current user is null")
         }
+    }
+
+    override suspend fun uploadImage(uri: Uri) {
+        Logger.debug("uri = [${uri}]")
+        firebaseStorage.uploadImage(
+            "${currentUserInfo.currentUser.docId}.jpg",
+            uri,
+            onUploadComplete = {
+                if (currentUserInfo.isSignedIn) {
+                    val me = currentUserInfo.currentUser
+                    me.imagePath = it
+                    firestoreDb.updateUserImage(me) {
+                        scope.launch {
+                            currentUserInfo.currentUser = it
+                        }
+                    }
+                } else {
+                    Logger.error("current user is null")
+                }
+            },
+            onUploadFailed = {
+                Logger.error("upload failed")
+            }
+        )
     }
 
 }

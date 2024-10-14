@@ -1,5 +1,6 @@
 package com.joshgm3z.repository.api
 
+import android.net.Uri
 import com.joshgm3z.data.model.User
 
 interface UserRepository {
@@ -20,4 +21,6 @@ interface UserRepository {
     suspend fun signOutUser()
 
     suspend fun updateUserImageToServer(imageRes: Int)
+
+    suspend fun uploadImage(uri: Uri)
 }

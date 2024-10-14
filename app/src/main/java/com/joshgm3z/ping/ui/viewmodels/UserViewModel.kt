@@ -85,7 +85,10 @@ class UserViewModel
     }
 
     fun saveImage(imageUri: Uri) {
-        TODO("Not yet implemented")
+        Logger.debug("imageUri = [${imageUri}]")
+        viewModelScope.launch {
+            userRepository.uploadImage(imageUri)
+        }
     }
 
     fun saveIcon(selectedIcon: Int) {
