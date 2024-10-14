@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joshgm3z.ping.ui.common.CoolButton
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.PingButton
@@ -100,7 +101,7 @@ fun SaveButton(
 ) {
     Logger.debug("save button recompose")
     when (buttonState) {
-        is ButtonState.Idle -> PingButton(
+        is ButtonState.Idle -> CoolButton(
             text = "Save",
             onClick = onClick
         )
@@ -121,7 +122,7 @@ sealed class ButtonState {
 fun PreviewButtons() {
     PingTheme {
         Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-            SavingButton()
+            SavingButton(40f)
             SuccessButton()
         }
     }
@@ -129,19 +130,18 @@ fun PreviewButtons() {
 
 @Composable
 fun SavingButton(progress: Float = 0f) {
-    PingButton(
+    CoolButton(
         text = "Saving...",
-        isShowLoading = true,
-        progress = progress / 100
+        progress = progress
     )
 }
 
 @Composable
 fun SuccessButton() {
-    PingButton(
+    CoolButton(
         text = "Saved",
         icon = Icons.Default.CheckCircle,
-        containerColor = Green40
+        bgColor = Green40
     )
 }
 
