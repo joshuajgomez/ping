@@ -37,7 +37,7 @@ fun LoadingContainer(message: String = "Loading") {
         CircularProgressIndicator(
             modifier = Modifier.size(50.dp),
             color = colorScheme.outline,
-            progress = 8f
+            progress = { 8f }
         )
         Text(
             text = message,

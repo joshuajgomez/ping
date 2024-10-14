@@ -28,15 +28,10 @@ fun SettingScreenContainer(
     onSignOutClick: () -> Unit = {},
     onOpenImagePicker: () -> Unit = {},
 ) {
-    SettingScreen(
+    SettingsScreen2(
         modifier = modifier,
         userName = userViewModel.me.name,
         imageRes = userViewModel.me.imageRes,
-        onSignOutClick = {
-            userViewModel.onSignOutClicked()
-            onSignOutClick()
-        },
-        onChangeProfilePicClick = { onOpenImagePicker() },
     )
 }
 

@@ -30,6 +30,7 @@ import com.joshgm3z.ping.ui.screens.search.UserContainer
 import com.joshgm3z.ping.ui.screens.search.UserList
 import com.joshgm3z.ping.ui.screens.settings.SettingScreen
 import com.joshgm3z.ping.ui.screens.settings.SettingScreenContainer
+import com.joshgm3z.ping.ui.screens.settings.SettingsScreen2
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
@@ -72,7 +73,7 @@ fun PreviewHomeScreenSettings() {
             topBar = { HomeAppBar() },
             bottomBar = { PingBottomAppBar() },
         ) {
-            SettingScreen(modifier = Modifier.padding(it))
+            SettingsScreen2(modifier = Modifier.padding(it))
         }
     }
 }
