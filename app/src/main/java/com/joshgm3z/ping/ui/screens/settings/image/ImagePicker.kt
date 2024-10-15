@@ -4,8 +4,6 @@ import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,7 +50,6 @@ fun ImagePicker(
     closePicker: () -> Unit = {},
     userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
 ) {
-    userViewModel?.updateCurrentUser()
     var imageUrl by remember { mutableStateOf(userViewModel?.me?.imagePath) }
     Logger.debug("imageUrl=$imageUrl")
 

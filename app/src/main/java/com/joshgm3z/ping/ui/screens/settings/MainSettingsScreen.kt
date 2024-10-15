@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Output
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,6 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -109,8 +113,14 @@ fun MainSettingsScreen(
         },
     )
 
-    Column(modifier.fillMaxSize().padding(horizontal = 20.dp)) {
-        ProfileView()
+    Column(
+        modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp)
+    ) {
+        ProfileView {
+            onSettingNavigate(SettingsNav.Profile)
+        }
         Spacer(Modifier.height(20.dp))
         SettingListCard(settingList)
     }
@@ -118,31 +128,43 @@ fun MainSettingsScreen(
 
 @Composable
 fun ProfileView(
-    userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() }
+    userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
+    onClick: () -> Unit = {}
 ) {
-    userViewModel?.updateCurrentUser()
     val user = when {
         userViewModel == null -> randomUser()
         else -> userViewModel.me
     }
     Logger.debug(user.toString())
-    Column(
-        Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+    ElevatedCard(
+        colors = CardDefaults.elevatedCardColors().copy(
+            containerColor = Color.Transparent
+        ),
+        onClick = onClick
     ) {
-        UserImage(
-            imageUrl = user.imagePath,
-            modifier = Modifier
-                .size(100.dp)
-                .clip(CircleShape),
-        )
-        Spacer(Modifier.height(20.dp))
-        Text(
-            user.name, color = colorScheme.onSurface, fontSize = 25.sp
-        )
-        Spacer(Modifier.height(10.dp))
-        Text(
-            "${user.name}@google.com",
-            color = colorScheme.onSurfaceVariant,
-        )
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            UserImage(
+                imageUrl = user.imagePath,
+                modifier = Modifier
+                    .size(130.dp)
+                    .clip(CircleShape),
+            )
+            Spacer(Modifier.height(20.dp))
+            Text(
+                user.name, color = colorScheme.onSurface, fontSize = 25.sp
+            )
+            Spacer(Modifier.height(5.dp))
+            Text(
+                "Peace to us all",
+                fontStyle = FontStyle.Italic,
+                color = colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            )
+        }
     }
 }
+

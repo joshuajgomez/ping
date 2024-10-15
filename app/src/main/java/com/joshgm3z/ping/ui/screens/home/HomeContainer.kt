@@ -158,7 +158,6 @@ fun HomeScreenContainer(
                     onUserClick = { onUserClick(it) })
             }
             composable(route = navSettings) {
-                userViewModel.updateCurrentUser()
                 homeViewModel.setAppTitle("Settings")
                 MainSettingsScreen(onSettingNavigate = {
                     onNavigateSettings(it)

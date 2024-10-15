@@ -100,7 +100,6 @@ fun PingAppContainer(
 
         composable(navSettings) {
             PingNavState.currentRoute = navSettings
-            userViewModel.updateCurrentUser()
             SettingScreenContainer(
                 startDestination = settingsStartDestination!!,
                 onLoggedOut = {

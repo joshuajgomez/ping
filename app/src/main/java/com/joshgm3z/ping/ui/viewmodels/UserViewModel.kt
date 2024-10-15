@@ -35,10 +35,11 @@ class UserViewModel
     val uiState: StateFlow<UsersUiState> = _uiState
 
     private lateinit var users: List<User>
-    lateinit var me: User
+
+    val me: User
+        get() = currentUserInfo.currentUser
 
     init {
-        updateCurrentUser()
         refreshUserList()
     }
 
@@ -66,12 +67,6 @@ class UserViewModel
     fun onImageConfirmed(imageRes: Int) {
         viewModelScope.launch {
             userRepository.updateUserImageToServer(imageRes)
-        }
-    }
-
-    fun updateCurrentUser() {
-        viewModelScope.launch {
-            me = currentUserInfo.currentUser
         }
     }
 
