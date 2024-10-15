@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,8 +31,6 @@ import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
 import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
-import com.joshgm3z.utils.Logger
-import kotlinx.serialization.Serializable
 
 @DarkPreview
 @Composable
@@ -50,28 +47,6 @@ fun PreviewMainSettingsScreen() {
             MainSettingsScreen(modifier = Modifier.padding(paddingValues))
         }
     }
-}
-
-@Serializable
-sealed class SettingsNav {
-
-    @Serializable
-    data object Profile : SettingsNav()
-
-    @Serializable
-    data object Chat : SettingsNav()
-
-    @Serializable
-    data object Notifications : SettingsNav()
-
-    @Serializable
-    data object Account : SettingsNav()
-
-    @Serializable
-    data object Storage : SettingsNav()
-
-    @Serializable
-    data object SignOut : SettingsNav()
 }
 
 @Composable
@@ -135,10 +110,9 @@ fun ProfileView(
         userViewModel == null -> randomUser()
         else -> userViewModel.me
     }
-    Logger.debug(user.toString())
     ElevatedCard(
         colors = CardDefaults.elevatedCardColors().copy(
-            containerColor = Color.Transparent
+            containerColor = colorScheme.surface
         ),
         onClick = onClick
     ) {

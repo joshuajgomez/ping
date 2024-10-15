@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import kotlinx.serialization.Serializable
 
 @Composable
 fun SettingScreenContainer(
@@ -24,7 +25,12 @@ fun SettingScreenContainer(
         navController = navController, startDestination = startDestination, modifier = modifier
     ) {
         composable<SettingsNav.Profile> {
-            ImagePickerContainer(onGoBackClick = onBackClick)
+            ProfileSettings(
+                onGoBackClick = onBackClick,
+                openImagePicker = { navController.navigate(SettingsNav.ImagePicker) })
+        }
+        composable<SettingsNav.ImagePicker> {
+            ImagePickerContainer(onGoBackClick = { navController.popBackStack() })
         }
         composable<SettingsNav.Chat> {
             SettingContainer("Chat Settings", onCloseClick = onBackClick) {
@@ -54,4 +60,29 @@ fun SettingScreenContainer(
             })
         }
     }
+}
+
+@Serializable
+sealed class SettingsNav {
+
+    @Serializable
+    data object Profile : SettingsNav()
+
+    @Serializable
+    data object ImagePicker : SettingsNav()
+
+    @Serializable
+    data object Chat : SettingsNav()
+
+    @Serializable
+    data object Notifications : SettingsNav()
+
+    @Serializable
+    data object Account : SettingsNav()
+
+    @Serializable
+    data object Storage : SettingsNav()
+
+    @Serializable
+    data object SignOut : SettingsNav()
 }
