@@ -23,6 +23,8 @@ constructor(
     private val keyUserName = stringPreferencesKey("userName")
     private val keyUserDocId = stringPreferencesKey("userDocId")
     private val keyUserImagePath = stringPreferencesKey("userImagePath")
+    private val keyUserAbout = stringPreferencesKey("userAbout")
+    private val keyUserDateOfJoining = stringPreferencesKey("userDateOfJoining")
 
     private val Context.dataStore by preferencesDataStore(name = dataStoreName)
 
@@ -32,6 +34,8 @@ constructor(
             mutablePreferences[keyUserName] = user.name
             mutablePreferences[keyUserDocId] = user.docId
             mutablePreferences[keyUserImagePath] = user.imagePath
+            mutablePreferences[keyUserAbout] = user.about
+            mutablePreferences[keyUserDateOfJoining] = user.dateOfJoining.toString()
         }
     }
 
@@ -46,6 +50,8 @@ constructor(
         val user = User(preferences[keyUserName].toString())
         user.docId = preferences[keyUserDocId].toString()
         user.imagePath = preferences[keyUserImagePath].toString()
+        user.about = preferences[keyUserAbout].toString()
+        user.dateOfJoining = preferences[keyUserDateOfJoining]?.toLong() ?: 0
         return@runBlocking user
     }
 

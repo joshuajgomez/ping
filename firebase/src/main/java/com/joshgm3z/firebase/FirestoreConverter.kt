@@ -14,6 +14,8 @@ class FirestoreConverter {
 
         private const val keyName = "name"
         const val keyImagePath = "imagePath"
+        const val keyAbout = "about"
+        const val keyDateOfJoining = "dateOfJoining"
 
         fun getDocumentFromChat(chat: Chat): HashMap<String, Any> {
             return hashMapOf(
@@ -28,25 +30,29 @@ class FirestoreConverter {
         fun getChatListFromDocument(result: QuerySnapshot): ArrayList<Chat> {
             val chatList = ArrayList<Chat>()
             for (document in result) {
-                val chat = Chat(message = document[keyMessage].toString())
-                chat.docId = document.id
-                chat.sentTime = document[keySentTime] as Long
-                chat.fromUserId = document[keyFromUserId].toString()
-                chat.toUserId = document[keyToUserId].toString()
-                chat.status = document[keyStatus] as Long
-                chatList.add(chat)
+                Chat(message = document[keyMessage].toString()).apply {
+                    docId = document.id
+                    sentTime = document[keySentTime] as Long
+                    fromUserId = document[keyFromUserId].toString()
+                    toUserId = document[keyToUserId].toString()
+                    status = document[keyStatus] as Long
+                    chatList.add(this)
+                }
             }
             return chatList
         }
 
-        fun findUserFromDocument(name: String, result: QuerySnapshot): User? {
+        fun findUserFromDocument(userName: String, result: QuerySnapshot): User? {
             for (document in result) {
-                if (document[keyName] == name) {
-                    val user = User()
-                    user.docId = document.id
-                    user.name = document[keyName].toString()
-                    user.imagePath = document[keyImagePath].toString()
-                    return user
+                if (document[keyName] == userName) {
+                    User().apply {
+                        docId = document.id
+                        name = document[keyName].toString()
+                        imagePath = document[keyImagePath].toString()
+                        about = document[keyAbout].toString()
+                        document[keyDateOfJoining]?.let { dateOfJoining = it as Long }
+                        return this
+                    }
                 }
             }
             return null
@@ -56,18 +62,24 @@ class FirestoreConverter {
             return hashMapOf(
                 keyName to user.name,
                 keyImagePath to user.imagePath,
+                keyAbout to user.about,
+                keyDateOfJoining to user.dateOfJoining,
             )
         }
 
         fun getUserListFromDocument(result: QuerySnapshot): ArrayList<User> {
             val userList = ArrayList<User>()
             for (document in result) {
-                val user = User(name = document[keyName].toString())
-                user.docId = document.id
-                user.imagePath = document[keyImagePath].toString()
-                userList.add(user)
+                User(name = document[keyName].toString()).apply {
+                    docId = document.id
+                    imagePath = document[keyImagePath].toString()
+                    about = document[keyAbout]?.toString() ?: ""
+                    document[keyDateOfJoining]?.let { dateOfJoining = it as Long }
+                    userList.add(this)
+                }
             }
             return userList
         }
+
     }
 }

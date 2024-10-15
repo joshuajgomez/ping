@@ -119,7 +119,7 @@ private fun SettingItem(
                     contentDescription = null,
                     tint = color
                 )
-                Spacer(Modifier.width(20.dp))
+                Spacer(Modifier.width(10.dp))
             }
             Column(
                 Modifier

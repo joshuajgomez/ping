@@ -130,17 +130,14 @@ class PingRepository
     }
 
     override fun createUserInServer(
-        name: String,
-        imagePath: String,
+        user: User,
         registerComplete: (isSuccess: Boolean, message: String) -> Unit,
     ) {
         Logger.entry
-        val newUser = User(name)
-        newUser.imagePath = imagePath
-        firestoreDb.createUser(newUser) { user, message ->
-            if (user != null) {
+        firestoreDb.createUser(user) { _user, message ->
+            if (_user != null) {
                 scope.launch {
-                    currentUserInfo.currentUser = user
+                    currentUserInfo.currentUser = _user
                     observerChatsForMeFromServer()
                     registerComplete(true, message)
                 }

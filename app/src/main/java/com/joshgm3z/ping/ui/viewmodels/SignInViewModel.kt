@@ -49,10 +49,16 @@ constructor(
     fun onSignUpClick(
         name: String,
         imagePath: String,
+        about: String,
         onSignUpComplete: () -> Unit,
     ) {
         _uiState.value = SignInUiState.Loading("Creating your profile")
-        userRepository.createUserInServer(name, imagePath) { isSuccess, message ->
+        val user = User()
+        user.name = name
+        user.about = about
+        user.imagePath = imagePath
+        user.dateOfJoining = System.currentTimeMillis()
+        userRepository.createUserInServer(user) { isSuccess, message ->
             if (isSuccess) {
                 onSignUpComplete()
             } else {

@@ -25,6 +25,7 @@ import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import com.joshgm3z.ping.utils.getPrettyTime
 
 @DarkPreview
 @Composable
@@ -48,8 +49,8 @@ fun ProfileSettings(
         )
         val list = listOf(
             Setting("Name", user.name),
-            Setting("About", "Peace to us all"),
-            Setting("Joined on", "December 27, 2022"),
+            Setting("About", user.about),
+            Setting("Joined on", getPrettyTime(user.dateOfJoining)),
         )
         Spacer(Modifier.height(20.dp))
         SettingListCard(list)

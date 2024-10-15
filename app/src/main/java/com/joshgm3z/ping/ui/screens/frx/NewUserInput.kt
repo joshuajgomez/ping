@@ -28,9 +28,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.joshgm3z.data.util.randomAbout
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.CustomTextField
+import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
 
 @Preview
 @Composable
@@ -43,8 +47,9 @@ fun PreviewNewUserInput() {
 @Composable
 fun NewUserInput(
     inputName: String = "",
-    onSignUpClick: (name: String, imagePath: String) -> Unit = { _: String, _: String -> },
+    signInViewModel: SignInViewModel? = getIfNotPreview { hiltViewModel() },
     onGoToSignInClick: () -> Unit = {},
+    onUserSignedIn: () -> Unit = {},
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -75,6 +80,17 @@ fun NewUserInput(
             isFocusNeeded = false
         )
 
+        var about by remember { mutableStateOf(randomAbout()) }
+        CustomTextField(
+            text = about,
+            hintText = "enter something about you",
+            onTextChanged = {
+                about = it
+            },
+            modifier = Modifier.padding(horizontal = 50.dp),
+            isFocusNeeded = false
+        )
+
         AnimatedVisibility(visible = error.isNotEmpty()) {
             ErrorText()
         }
@@ -82,7 +98,9 @@ fun NewUserInput(
         Button(
             onClick = {
                 if (name.isNotEmpty())
-                    onSignUpClick(name, imagePath)
+                    signInViewModel?.onSignUpClick(name, imagePath, about) {
+                        onUserSignedIn()
+                    }
                 else if (name.length <= 3)
                     error = "should be more that 3 letters"
                 else

@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -155,16 +156,16 @@ fun SearchItem(
 ) {
     ConstraintLayout(
         modifier = Modifier
-            .height(70.dp)
+            .height(80.dp)
             .fillMaxWidth()
             .clickable { onSearchItemClick(user) }
             .padding(start = 20.dp)
     ) {
         Logger.debug("user = [$user]")
-        val (image, name) = createRefs()
+        val (image, name, about) = createRefs()
         UserImage(
             modifier = Modifier
-                .size(40.dp)
+                .size(50.dp)
                 .constrainAs(image) {
                     start.linkTo(parent.start, margin = 10.dp)
                     top.linkTo(parent.top)
@@ -174,12 +175,20 @@ fun SearchItem(
         )
         Text(
             text = user.name,
-            fontSize = 18.sp,
+            fontSize = 20.sp,
             color = colorScheme.onSurface,
             modifier = Modifier.constrainAs(name) {
                 start.linkTo(image.end, margin = 20.dp)
-                top.linkTo(image.top)
-                bottom.linkTo(image.bottom)
+                top.linkTo(image.top, margin = 2.dp)
+            })
+        Text(
+            text = user.about,
+            fontSize = 15.sp,
+            color = colorScheme.onSurface.copy(alpha = 0.5f),
+            fontStyle = FontStyle.Italic,
+            modifier = Modifier.constrainAs(about) {
+                start.linkTo(name.start)
+                top.linkTo(name.bottom, margin = 2.dp)
             })
     }
 }

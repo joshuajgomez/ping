@@ -51,6 +51,16 @@ fun randomTime() = System.currentTimeMillis() + Random.nextLong()
 fun randomName() =
     listOf("Gandalf", "Samwise", "Frodo", "Bilbo", "Araghon", "Sauron", "Sarumon").random()
 
+fun randomAbout() =
+    listOf(
+        "Peace for us all",
+        "Something fishy going on",
+        "Just joined ping",
+        "New here. whats up",
+        "He he ha ha !!",
+    ).random()
+
+
 fun randomMessage() =
     listOf(
         "Hey you guys",

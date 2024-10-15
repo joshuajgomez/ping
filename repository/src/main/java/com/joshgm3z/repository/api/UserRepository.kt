@@ -11,8 +11,7 @@ interface UserRepository {
     fun checkUserInServer(name: String, onCheckComplete: (user: User?) -> Unit)
 
     fun createUserInServer(
-        name: String,
-        imagePath: String,
+        user: User,
         registerComplete: (isSuccess: Boolean, message: String) -> Unit,
     )
 

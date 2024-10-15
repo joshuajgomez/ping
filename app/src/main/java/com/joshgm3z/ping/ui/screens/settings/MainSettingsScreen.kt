@@ -106,10 +106,7 @@ fun ProfileView(
     userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
     onClick: () -> Unit = {}
 ) {
-    val user = when {
-        userViewModel == null -> randomUser()
-        else -> userViewModel.me
-    }
+    val user = userViewModel?.me ?: randomUser()
     ElevatedCard(
         colors = CardDefaults.elevatedCardColors().copy(
             containerColor = colorScheme.surface
@@ -134,7 +131,7 @@ fun ProfileView(
             )
             Spacer(Modifier.height(5.dp))
             Text(
-                "Peace to us all",
+                user.about,
                 fontStyle = FontStyle.Italic,
                 color = colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
             )

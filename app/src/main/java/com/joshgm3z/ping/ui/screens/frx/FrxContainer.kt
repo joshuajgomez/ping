@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.joshgm3z.data.util.randomAbout
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
@@ -51,12 +52,7 @@ fun FrxContainer(
 
             is SignInUiState.SignUp -> NewUserInput(
                 inputName = (uiState.value as SignInUiState.SignUp).enteredName,
-                onSignUpClick = { name, imagePath ->
-                    signInViewModel.onSignUpClick(
-                        name = name,
-                        imagePath = imagePath,
-                        onSignUpComplete = { onUserSignedIn() })
-                },
+                onUserSignedIn = onUserSignedIn,
                 onGoToSignInClick = {
                     signInViewModel.onGoToSignInClick()
                 })
