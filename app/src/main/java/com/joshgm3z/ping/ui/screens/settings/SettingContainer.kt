@@ -3,7 +3,7 @@ package com.joshgm3z.ping.ui.screens.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,9 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joshgm3z.ping.ui.common.DarkPreview
@@ -33,8 +31,8 @@ private fun SettingContainerPreview() {
                 verticalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxSize()
             ) {
-                Text("Turn on something")
-                Text("End of setting")
+                Text("Turn on something", color = colorScheme.onSurface)
+                Text("End of setting", color = colorScheme.onSurface)
             }
         }
     }
@@ -48,11 +46,10 @@ fun SettingContainer(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(10.dp)
     ) {
         SettingTitle(title, isCloseEnabled, onCloseClick)
-        Column(Modifier.padding(horizontal = 20.dp, vertical = 20.dp)) {
+        Column(Modifier.padding(vertical = 20.dp, horizontal = 10.dp)) {
             content()
         }
     }
@@ -64,20 +61,9 @@ private fun SettingTitle(
     isCloseEnabled: Boolean,
     onCloseClick: () -> Unit = {}
 ) {
-    Row(
-        modifier = Modifier
-            .height(80.dp)
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+    Column(
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        Text(
-            title,
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            color = colorScheme.onSurface
-        )
         IconButton(
             onCloseClick,
             enabled = isCloseEnabled
@@ -89,5 +75,12 @@ private fun SettingTitle(
                 tint = colorScheme.onSurface
             )
         }
+        Spacer(Modifier.height(30.dp))
+        Text(
+            title,
+            fontSize = 35.sp,
+            color = colorScheme.onSurface,
+            modifier = Modifier.padding(horizontal = 10.dp)
+        )
     }
 }

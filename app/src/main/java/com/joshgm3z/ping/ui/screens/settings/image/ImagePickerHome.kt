@@ -85,9 +85,7 @@ private fun TabScreen(
         ) {
             tabs.forEachIndexed { index, icon ->
                 Tab(
-                    icon = {
-                        Icon(icon, contentDescription = null)
-                    },
+                    icon = { Icon(icon, contentDescription = null) },
                     selected = tabIndex == index,
                     onClick = { tabIndex = index },
                     unselectedContentColor = colorScheme.onSurface.copy(alpha = 0.3f)

@@ -41,9 +41,8 @@ fun HomeAppBar(title: String = "Chats") {
             Text(
                 text = title,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.fillMaxWidth(),
+                fontSize = 35.sp,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
             )
         }
     )

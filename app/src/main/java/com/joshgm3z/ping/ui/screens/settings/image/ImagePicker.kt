@@ -12,6 +12,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +30,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getIfNotPreview
+import com.joshgm3z.ping.ui.screens.settings.Setting
+import com.joshgm3z.ping.ui.screens.settings.SettingListCard
+import com.joshgm3z.ping.ui.theme.Green50
 import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.ping.ui.theme.Red10
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
@@ -54,28 +63,58 @@ fun ImagePicker(
     val cameraLauncher = getCameraLauncher {
         imageUrl = cameraUri.toString()
     }
+
     Column(
-        verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxSize()
-            .padding(30.dp)
+            .padding(vertical = 30.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             UserImage(
-                Modifier.size(250.dp),
+                Modifier.size(220.dp),
                 imageUrl ?: ""
             )
-            PickerButtons(
-                onOpenCameraClick = {
+            Spacer(Modifier.height(30.dp))
+            val settingList = listOf(
+                Setting(
+                    "Open Gallery", "Select a picture from your gallery",
+                    Icons.Default.PhotoLibrary
+                ) {
+                    galleryLauncher.launch("image/*")
+                },
+                Setting(
+                    "Take a picture", "Open device camera to take a new photo",
+                    Icons.Default.CameraAlt
+                ) {
                     cameraLauncher.launch(cameraUri!!)
                 },
-                onOpenGalleryClick = {
-                    galleryLauncher.launch("image/*")
-                }
+                Setting(
+                    "Remove picture", "Remove your picture from ping profile",
+                    Icons.Default.DeleteForever,
+                    color = Red10,
+                ) {
+                    imageUrl = ""
+                },
+                Setting(
+                    "Save picture", "Save as your new ping photo",
+                    Icons.Default.Save,
+                    color = Green50,
+                    enabled = imageUrl?.startsWith("content") == true
+                ) {
+                    userViewModel?.saveImage(
+                        imageUrl!!,
+                        onProgress = {},
+                        onImageSaved = {
+                            closePicker()
+                        },
+                        onFailure = {},
+                    )
+                },
             )
+            SettingListCard(settingList)
         }
 
-        AnimatedVisibility(imageUrl?.startsWith("content") == true) {
+        /*AnimatedVisibility(imageUrl?.startsWith("content") == true) {
             var buttonState: ButtonState by remember { mutableStateOf(ButtonState.Idle) }
             SaveButton(buttonState) {
                 userViewModel?.saveImage(
@@ -94,7 +133,7 @@ fun ImagePicker(
                     },
                 )
             }
-        }
+        }*/
     }
 }
 

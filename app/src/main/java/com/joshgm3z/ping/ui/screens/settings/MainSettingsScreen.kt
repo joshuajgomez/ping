@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Output
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -100,13 +102,14 @@ fun MainSettingsScreen(
         },
         Setting(
             "Sign out",
-            "Sign out from ping profile"
+            "Sign out from ping profile",
+            icon = Icons.Default.Output
         ) {
             onSettingNavigate(SettingsNav.SignOut)
         },
     )
 
-    Column(modifier.fillMaxSize()) {
+    Column(modifier.fillMaxSize().padding(horizontal = 20.dp)) {
         ProfileView()
         Spacer(Modifier.height(20.dp))
         SettingListCard(settingList)
