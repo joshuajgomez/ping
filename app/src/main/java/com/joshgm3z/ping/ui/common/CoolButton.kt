@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -52,6 +50,7 @@ private fun PreviewCoolButton() {
 @Composable
 fun CoolButton(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onClick: () -> Unit = {},
     progress: Float = 0.0f,
     text: String = "Download",
@@ -62,9 +61,10 @@ fun CoolButton(
 ) {
     Box(
         modifier = modifier
+            .clip(RoundedCornerShape(30.dp))
             .height(50.dp)
             .fillMaxWidth()
-            .clickable { onClick() },
+            .clickable(enabled) { onClick() },
         contentAlignment = Alignment.Center
     ) {
         ButtonBg(progress, trackerColor, bgColor)
@@ -91,24 +91,17 @@ fun CoolButton(
 @Composable
 fun ButtonBg(progress: Float, trackerColor: Color, bgColor: Color) {
     AnimatedVisibility(true) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .clip(RoundedCornerShape(30.dp))
-        ) {
-            Row(
+        Row {
+            Box(
                 Modifier
+                    .fillMaxSize()
                     .background(trackerColor)
-                    .fillMaxHeight()
-                    .fillMaxWidth()
                     .weight(progress + 0.1f)
             ) {}
-            Row(
+            Box(
                 Modifier
+                    .fillMaxSize()
                     .background(bgColor)
-                    .fillMaxHeight()
-                    .fillMaxWidth()
                     .weight(100.1f - progress)
             ) {}
         }

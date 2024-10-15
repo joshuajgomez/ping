@@ -29,12 +29,10 @@ fun SaveButton(
 
         is ButtonState.Saving -> SavingButton(buttonState.progress)
         is ButtonState.Success -> SuccessButton()
-        else -> {}
     }
 }
 
 sealed class ButtonState {
-    data object Hide : ButtonState()
     data object Idle : ButtonState()
     data class Saving(val progress: Float) : ButtonState()
     data object Success : ButtonState()
@@ -55,6 +53,7 @@ fun PreviewButtons() {
 fun SavingButton(progress: Float = 0f) {
     CoolButton(
         text = "Saving...",
+        enabled = false,
         progress = progress
     )
 }
@@ -63,6 +62,7 @@ fun SavingButton(progress: Float = 0f) {
 fun SuccessButton() {
     CoolButton(
         text = "Saved",
+        enabled = false,
         icon = Icons.Default.CheckCircle,
         bgColor = Green50
     )
