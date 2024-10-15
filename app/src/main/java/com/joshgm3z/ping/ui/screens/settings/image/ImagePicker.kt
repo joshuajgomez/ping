@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Save
@@ -51,14 +53,18 @@ fun ImagePicker(
     userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
 ) {
     var imageUrl by remember { mutableStateOf(userViewModel?.me?.imagePath) }
+    var buttonState: ButtonState by remember { mutableStateOf(ButtonState.Disabled) }
+
     Logger.debug("imageUrl=$imageUrl")
 
     val galleryLauncher = getGalleryLauncher {
         imageUrl = it.toString()
+        buttonState = ButtonState.Idle
     }
     val cameraUri = getIfNotPreview { FileUtil.getUri(LocalContext.current) }
     val cameraLauncher = getCameraLauncher {
         imageUrl = cameraUri.toString()
+        buttonState = ButtonState.Idle
     }
 
     Column(
@@ -72,7 +78,7 @@ fun ImagePicker(
                 imageUrl ?: ""
             )
             Spacer(Modifier.height(30.dp))
-            val settingList = listOf(
+            val settingList = mutableListOf(
                 Setting(
                     "Open Gallery", "Select a picture from your gallery",
                     Icons.Default.PhotoLibrary
@@ -92,28 +98,8 @@ fun ImagePicker(
                 ) {
                     imageUrl = ""
                 },
-                Setting(
-                    "Save picture", "Save as your new ping photo",
-                    Icons.Default.Save,
-                    color = Green50,
-                    enabled = imageUrl?.startsWith("content") == true
-                ) {
-                    userViewModel?.saveImage(
-                        imageUrl!!,
-                        onProgress = {},
-                        onImageSaved = {
-                            closePicker()
-                        },
-                        onFailure = {},
-                    )
-                },
             )
-            SettingListCard(settingList)
-        }
-
-        /*AnimatedVisibility(imageUrl?.startsWith("content") == true) {
-            var buttonState: ButtonState by remember { mutableStateOf(ButtonState.Idle) }
-            SaveButton(buttonState) {
+            settingList += saveButtonSetting(buttonState) {
                 userViewModel?.saveImage(
                     imageUrl!!,
                     onProgress = {
@@ -130,9 +116,44 @@ fun ImagePicker(
                     },
                 )
             }
-        }*/
+            SettingListCard(settingList)
+        }
     }
 }
+
+fun saveButtonSetting(
+    buttonState: ButtonState,
+    onSaveClick: () -> Unit
+): Setting =
+    when (buttonState) {
+        is ButtonState.Disabled -> Setting(
+            "Save picture",
+            "Save your picture to your profile",
+            icon = Icons.Default.Save,
+            enabled = false
+        )
+
+        is ButtonState.Idle -> Setting(
+            "Save picture",
+            "Save your picture to your profile",
+            icon = Icons.Default.Save,
+            action = onSaveClick
+        )
+
+        is ButtonState.Saving -> Setting(
+            "Saving...",
+            "Save your picture to your profile",
+            icon = Icons.Default.CloudUpload,
+        )
+
+        is ButtonState.Success -> Setting(
+            "Saved",
+            "Save your picture to your profile",
+            icon = Icons.Default.CheckCircle,
+            color = Green50,
+        )
+    }
+
 
 @Composable
 fun getGalleryLauncher(

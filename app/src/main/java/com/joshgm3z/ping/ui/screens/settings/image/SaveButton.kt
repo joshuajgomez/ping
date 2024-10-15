@@ -26,10 +26,12 @@ fun SaveButton(
 
         is ButtonState.Saving -> SavingButton(buttonState.progress)
         is ButtonState.Success -> SuccessButton()
+        else -> SuccessButton()
     }
 }
 
 sealed class ButtonState {
+    data object Disabled : ButtonState()
     data object Idle : ButtonState()
     data class Saving(val progress: Float) : ButtonState()
     data object Success : ButtonState()
