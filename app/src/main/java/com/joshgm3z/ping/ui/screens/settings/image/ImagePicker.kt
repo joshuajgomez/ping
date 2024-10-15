@@ -20,11 +20,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
+import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.utils.FileUtil
@@ -130,19 +130,6 @@ fun getCameraLauncher(
             }
         }
     )
-
-
-@Composable
-fun getUri(): Uri? = when {
-    LocalInspectionMode.current -> null
-    else -> FileUtil.getUri(LocalContext.current)
-}
-
-@Composable
-fun <T> getIfNotPreview(value: @Composable () -> T): T? = when {
-    LocalInspectionMode.current -> null
-    else -> value.invoke()
-}
 
 //@DarkPreview
 @Composable

@@ -29,8 +29,8 @@ import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.ui.screens.search.UserContainer
 import com.joshgm3z.ping.ui.screens.search.UserList
+import com.joshgm3z.ping.ui.screens.settings.MainSettingsScreen
 import com.joshgm3z.ping.ui.screens.settings.SettingsNav
-import com.joshgm3z.ping.ui.screens.settings.SettingsScreen
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
@@ -72,7 +72,7 @@ fun PreviewHomeScreenSettings() {
             topBar = { HomeAppBar() },
             bottomBar = { PingBottomAppBar() },
         ) {
-            SettingsScreen(modifier = Modifier.padding(it))
+            MainSettingsScreen(modifier = Modifier.padding(it))
         }
     }
 }
@@ -93,7 +93,6 @@ fun PreviewHomeScreenUsers() {
 const val navChatList = "Chats"
 const val navUserList = "Users"
 const val navSettings = "Settings"
-const val navSettingsScreen = "SettingsScreen"
 
 sealed class HomeNavScreen(val route: String, val icon: ImageVector) {
     object ChatList : HomeNavScreen(navChatList, Icons.Rounded.ChatBubble)
@@ -161,7 +160,7 @@ fun HomeScreenContainer(
             composable(route = navSettings) {
                 userViewModel.updateCurrentUser()
                 homeViewModel.setAppTitle("Settings")
-                SettingsScreen(onSettingNavigate = {
+                MainSettingsScreen(onSettingNavigate = {
                     onNavigateSettings(it)
                 })
             }
