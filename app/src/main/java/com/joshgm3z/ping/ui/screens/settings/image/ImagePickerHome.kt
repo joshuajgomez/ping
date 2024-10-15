@@ -1,7 +1,5 @@
 package com.joshgm3z.ping.ui.screens.settings.image
 
-import android.content.res.Configuration
-import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -77,7 +75,7 @@ private fun TabScreen(
 ) {
     var tabIndex by remember { mutableIntStateOf(defaultTab) }
 
-    val tabs = listOf(Icons.Default.EmojiEmotions, Icons.Default.Image)
+    val tabs = listOf(Icons.Default.Image, Icons.Default.EmojiEmotions)
 
     Column(modifier = Modifier.fillMaxSize()) {
         TabRow(
@@ -97,8 +95,8 @@ private fun TabScreen(
             }
         }
         when (tabIndex) {
-            0 -> IconPicker(onSaveClick = onSaveClick)
-            1 -> ImagePicker(closePicker = goBack)
+            0 -> ImagePicker(closePicker = goBack)
+            1 -> IconPicker(onSaveClick = onSaveClick)
         }
     }
 }

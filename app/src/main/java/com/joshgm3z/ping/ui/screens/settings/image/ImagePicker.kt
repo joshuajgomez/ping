@@ -1,13 +1,17 @@
 package com.joshgm3z.ping.ui.screens.settings.image
 
 import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,17 +24,85 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
 
+@DarkPreview
+@Composable
+fun PreviewImagePicker() {
+    PingTheme {
+        ImagePicker()
+    }
+}
+
 @Composable
 fun ImagePicker(
-    closePicker: () -> Unit,
+    closePicker: () -> Unit = {},
+    userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
 ) {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    val galleryLauncher = rememberLauncherForActivityResult(
+    userViewModel?.updateCurrentUser()
+    var imageUrl by remember { mutableStateOf(userViewModel?.me?.imagePath) }
+    Logger.debug("imageUrl=$imageUrl")
+
+    val galleryLauncher = getGalleryLauncher {
+        imageUrl = it.toString()
+    }
+    val cameraUri = getIfNotPreview { FileUtil.getUri(LocalContext.current) }
+    val cameraLauncher = getCameraLauncher {
+        imageUrl = cameraUri.toString()
+    }
+    Column(
+        verticalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(30.dp)
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            UserImage(
+                Modifier.size(250.dp),
+                imageUrl ?: ""
+            )
+            PickerButtons(
+                onOpenCameraClick = {
+                    cameraLauncher.launch(cameraUri!!)
+                },
+                onOpenGalleryClick = {
+                    galleryLauncher.launch("image/*")
+                }
+            )
+        }
+
+        AnimatedVisibility(imageUrl?.startsWith("content") == true) {
+            var buttonState: ButtonState by remember { mutableStateOf(ButtonState.Idle) }
+            SaveButton(buttonState) {
+                userViewModel?.saveImage(
+                    imageUrl!!,
+                    onProgress = {
+                        buttonState = when (it) {
+                            100f -> ButtonState.Success
+                            else -> ButtonState.Saving(it)
+                        }
+                    },
+                    onImageSaved = {
+                        closePicker()
+                    },
+                    onFailure = {
+                        buttonState = ButtonState.Idle
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun getGalleryLauncher(
+    onUriReady: (uri: Uri) -> Unit
+): ManagedActivityResultLauncher<String, Uri?> =
+    rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
             /**
@@ -40,44 +112,39 @@ fun ImagePicker(
              */
             Logger.debug("onResult=$uri")
             uri?.let {
-                imageUri = it
+                onUriReady(it)
             }
         }
     )
 
-    val file = FileUtil.createImageFile(LocalContext.current)
-    val cameraUri = FileUtil.getUri(LocalContext.current, file)
-    val cameraLauncher = rememberLauncherForActivityResult(
+@Composable
+fun getCameraLauncher(
+    onUriReady: () -> Unit
+): ManagedActivityResultLauncher<Uri, Boolean> =
+    rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
         onResult = { success ->
             Logger.debug("onResult success=$success")
             if (success) {
-                imageUri = cameraUri
+                onUriReady()
             }
         }
     )
 
-    if (imageUri == null) {
-        PickerButtons(
-            onOpenCameraClick = {
-                cameraLauncher.launch(cameraUri)
-            },
-            onOpenGalleryClick = {
-                galleryLauncher.launch("image/*")
-            })
-    } else {
-        ImagePreviewer(
-            imageUrl = imageUri.toString(),
-            onClickRetake = {
-                imageUri = null
-            },
-            closePicker = closePicker
-        )
 
-    }
+@Composable
+fun getUri(): Uri? = when {
+    LocalInspectionMode.current -> null
+    else -> FileUtil.getUri(LocalContext.current)
 }
 
-@DarkPreview
+@Composable
+fun <T> getIfNotPreview(value: @Composable () -> T): T? = when {
+    LocalInspectionMode.current -> null
+    else -> value.invoke()
+}
+
+//@DarkPreview
 @Composable
 fun PreviewPickerButtons() {
     PingTheme {
@@ -92,9 +159,7 @@ fun PickerButtons(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(50.dp)
+        modifier = Modifier.padding(50.dp)
     ) {
         BrowseButton(onOpenGalleryClick)
         Spacer(Modifier.height(30.dp))

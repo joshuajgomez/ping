@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 class FileUtil {
     companion object {
-        fun createImageFile(context: Context): File {
+        private fun createImageFile(context: Context): File {
             // Create an image file name
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
             val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -25,10 +25,10 @@ class FileUtil {
             )
         }
 
-        fun getUri(context: Context, file: File): Uri = FileProvider.getUriForFile(
+        fun getUri(context: Context): Uri? = FileProvider.getUriForFile(
             context,
             "com.joshgm3z.ping.fileprovider",
-            file
+            createImageFile(context)
         )
     }
 }

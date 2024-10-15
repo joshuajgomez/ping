@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,12 +35,16 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 @Composable
 private fun PreviewCoolButton() {
     PingTheme {
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.padding(20.dp)
+        ) {
             CoolButton(progress = 20f)
             CoolButton(progress = 40f)
             CoolButton(progress = 60f)
             CoolButton(progress = 80f)
             CoolButton(progress = 100f)
+            PingButton("Download")
         }
     }
 }
@@ -73,7 +79,8 @@ fun CoolButton(
             Spacer(Modifier.width(10.dp))
             Text(
                 text,
-                fontSize = 20.sp,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
                 color = contentColor,
                 textAlign = TextAlign.Center,
             )
