@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChatBubble
 import androidx.compose.material.icons.rounded.Group
+import androidx.compose.material.icons.rounded.QuestionMark
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
@@ -25,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.ui.screens.search.UserContainer
@@ -34,6 +36,8 @@ import com.joshgm3z.ping.ui.screens.settings.SettingsNav
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Preview
 @Composable
@@ -90,20 +94,25 @@ fun PreviewHomeScreenUsers() {
     }
 }
 
-const val navChatList = "Chats"
-const val navUserList = "Users"
-const val navSettings = "Settings"
+@Serializable
+sealed class HomeRoute(
+    val title: String,
+    @Transient val icon: ImageVector = Icons.Rounded.QuestionMark,
+) {
+    @Serializable
+    data object ChatList : HomeRoute("Chats", Icons.Rounded.ChatBubble)
 
-sealed class HomeNavScreen(val route: String, val icon: ImageVector) {
-    object ChatList : HomeNavScreen(navChatList, Icons.Rounded.ChatBubble)
-    object UserList : HomeNavScreen(navUserList, Icons.Rounded.Group)
-    object Settings : HomeNavScreen(navSettings, Icons.Rounded.Settings)
+    @Serializable
+    data object UserList : HomeRoute("Users", Icons.Rounded.Group)
+
+    @Serializable
+    data object SettingsList : HomeRoute("Settings", Icons.Rounded.Settings)
 }
 
 val homeNavItems = listOf(
-    HomeNavScreen.ChatList,
-    HomeNavScreen.UserList,
-    HomeNavScreen.Settings,
+    HomeRoute.ChatList,
+    HomeRoute.UserList,
+    HomeRoute.SettingsList,
 )
 
 @Composable
@@ -126,16 +135,16 @@ fun HomeScreenContainer(
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = navChatList,
+            startDestination = HomeRoute.ChatList,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable(route = navChatList) {
-                homeViewModel.setAppTitle(navChatList)
+            composable<HomeRoute.ChatList> {
+                homeViewModel.setAppTitle(it.toRoute<HomeRoute.ChatList>().title)
                 HomeChatListContainer(
                     homeViewModel = homeViewModel,
                     onChatClick = { onChatClick(it) },
                     onGoToUsersClicked = {
-                        navController.navigate(navUserList) {
+                        navController.navigate(HomeRoute.UserList) {
                             // Pop up to the start destination of the graph to
                             // avoid building up a large stack of destinations
                             // on the back stack as users select items
@@ -151,14 +160,14 @@ fun HomeScreenContainer(
                     },
                 )
             }
-            composable(route = navUserList) {
-                homeViewModel.setAppTitle(navUserList)
+            composable<HomeRoute.UserList> {
+                homeViewModel.setAppTitle(it.toRoute<HomeRoute.UserList>().title)
                 UserContainer(
                     userViewModel = userViewModel,
                     onUserClick = { onUserClick(it) })
             }
-            composable(route = navSettings) {
-                homeViewModel.setAppTitle("Settings")
+            composable<HomeRoute.SettingsList> {
+                homeViewModel.setAppTitle(it.toRoute<HomeRoute.SettingsList>().title)
                 MainSettingsScreen(onSettingNavigate = {
                     onNavigateSettings(it)
                 })
@@ -180,12 +189,12 @@ fun PingBottomAppBar(navController: NavController = rememberNavController()) {
     BottomAppBar(tonalElevation = 1.dp) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
-        homeNavItems.forEach { screen ->
+        homeNavItems.forEach { route ->
             NavigationBarItem(
-                icon = { Icon(imageVector = screen.icon, contentDescription = null) },
-                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                icon = { Icon(imageVector = route.icon, contentDescription = null) },
+                selected = currentDestination?.hierarchy?.any { it == route } == true,
                 onClick = {
-                    navController.navigate(screen.route) {
+                    navController.navigate(route) {
                         // Pop up to the start destination of the graph to
                         // avoid building up a large stack of destinations
                         // on the back stack as users select items

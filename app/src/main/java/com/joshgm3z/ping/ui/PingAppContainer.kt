@@ -4,12 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.frx.FrxContainer
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
@@ -22,11 +20,6 @@ import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.utils.Logger
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-
-/*const val navSignIn = "signin_screen"
-const val navHome = "home_screen"
-const val navChat = "chat_screen"
-const val navSettings = "navSettings"*/
 
 @Serializable
 sealed class TopLevelRoute {
