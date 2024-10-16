@@ -2,22 +2,16 @@ package com.joshgm3z.ping
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
 import com.joshgm3z.ping.service.PingService
 import com.joshgm3z.ping.ui.PingAppContainer
-import com.joshgm3z.ping.ui.navChat
-import com.joshgm3z.ping.ui.navHome
-import com.joshgm3z.ping.ui.navSignIn
+import com.joshgm3z.ping.ui.TopLevelRoute
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.repository.api.CurrentUserInfo
-import com.joshgm3z.utils.Logger
 import com.joshgm3z.utils.const.OPEN_CHAT_USER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -39,23 +33,21 @@ class HomeActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController()
-                    PingAppContainer(
-                        navController = navController,
-                        startDestination = if (currentUserInfo.isSignedIn) navHome else navSignIn
-                    )
-                    if (intent.hasExtra(OPEN_CHAT_USER)) {
-                        val startRoute = "$navChat/${intent.getStringExtra(OPEN_CHAT_USER)}"
-                        Logger.debug("startRoute = [${startRoute}]")
-                        navController.navigate(startRoute)
-                        intent.removeExtra(OPEN_CHAT_USER)
+                    val startRoute = when {
+                        intent.hasExtra(OPEN_CHAT_USER) -> with(intent) {
+                            val userId = getStringExtra(OPEN_CHAT_USER)!!
+                            removeExtra(OPEN_CHAT_USER)
+                            TopLevelRoute.Chat(userId)
+                        }
+
+                        currentUserInfo.isSignedIn -> TopLevelRoute.Home
+
+                        else -> TopLevelRoute.Frx
                     }
+                    PingAppContainer(startRoute)
                 }
             }
         }
     }
 
-    companion object {
-        const val REQUEST_IMAGE_CAPTURE = 12
-    }
 }

@@ -35,9 +35,10 @@ fun PreviewUserInfo() {
 
 @Composable
 fun UserInfo(
-    user: User = randomUser(),
+    userId: String = randomUser().docId,
     onGoBackClick: () -> Unit = {}
 ) {
+    val user = randomUser()
     SettingContainer(
         "Contact info",
         onCloseClick = onGoBackClick

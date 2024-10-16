@@ -35,7 +35,7 @@ fun SettingScreenContainer(
         }
         composable<SettingsNav.UserInfo> {
             val settingsNav = startDestination as SettingsNav.UserInfo
-            UserInfo(settingsNav.user, onGoBackClick = onBackClick)
+            UserInfo(settingsNav.userId, onGoBackClick = onBackClick)
         }
         composable<SettingsNav.Chat> {
             SettingContainer("Chat Settings", onCloseClick = onBackClick) {
@@ -74,7 +74,7 @@ sealed class SettingsNav {
     data object Profile : SettingsNav()
 
     @Serializable
-    data class UserInfo(val user: User) : SettingsNav()
+    data class UserInfo(val userId: String) : SettingsNav()
 
     @Serializable
     data object ImagePicker : SettingsNav()

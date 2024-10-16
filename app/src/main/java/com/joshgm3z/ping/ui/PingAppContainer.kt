@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.frx.FrxContainer
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
@@ -18,15 +21,28 @@ import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.utils.Logger
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
-const val navSignIn = "signin_screen"
+/*const val navSignIn = "signin_screen"
 const val navHome = "home_screen"
 const val navChat = "chat_screen"
-const val navSettings = "navSettings"
+const val navSettings = "navSettings"*/
+
+@Serializable
+sealed class TopLevelRoute {
+    @Serializable
+    data object Frx : TopLevelRoute()
+    @Serializable
+    data object Home : TopLevelRoute()
+    @Serializable
+    data class Chat(val userId: String) : TopLevelRoute()
+    @Serializable
+    data object Settings : TopLevelRoute()
+}
 
 class PingNavState {
     companion object {
-        var currentRoute: String = ""
+        var currentRoute: TopLevelRoute? = null
             set(value) {
                 Logger.verbose("PingNavState.currentRoute = $value")
                 field = value
@@ -36,21 +52,21 @@ class PingNavState {
 
 @Composable
 fun PingAppContainer(
-    navController: NavHostController,
-    startDestination: String,
+    startDestination: TopLevelRoute,
     userViewModel: UserViewModel = hiltViewModel(),
     homeViewModel: HomeViewModel = hiltViewModel(),
     chatViewModel: ChatViewModel = hiltViewModel(),
     signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
     var settingsStartDestination: SettingsNav? = null
+    val navController = rememberNavController()
     NavHost(
         navController = navController,
         startDestination = startDestination,
     ) {
 
-        composable(navSignIn) {
-            PingNavState.currentRoute = navSignIn
+        composable<TopLevelRoute.Frx> {
+            PingNavState.currentRoute = it.toRoute()
             signInViewModel.resetUiState()
             FrxContainer(
                 signInViewModel = signInViewModel,
@@ -58,56 +74,55 @@ fun PingAppContainer(
                     userViewModel.refreshUserList()
                     homeViewModel.startListeningToChats()
                     signInViewModel.viewModelScope.launch {
-                        navController.navigate(navHome)
+                        navController.navigate(TopLevelRoute.Home)
                     }
                 }
             )
         }
 
-        composable(navHome) {
-            PingNavState.currentRoute = navHome
+        composable<TopLevelRoute.Home> {
+            PingNavState.currentRoute = it.toRoute()
             HomeScreenContainer(
                 homeViewModel = homeViewModel,
                 userViewModel = userViewModel,
                 onUserClick = {
-                    navController.navigate("$navChat/${it.docId}")
+                    navController.navigate(TopLevelRoute.Chat(it.docId))
                 },
                 onChatClick = {
-                    navController.navigate("$navChat/${it.otherGuy.docId}")
+                    navController.navigate(TopLevelRoute.Chat(it.otherGuy.docId))
                 },
                 onNavigateSettings = {
                     settingsStartDestination = it
-                    navController.navigate(navSettings)
+                    navController.navigate(TopLevelRoute.Settings)
                 }
             )
         }
 
-        composable("$navChat/{userId}") {
-            PingNavState.currentRoute = navChat
-            val userId = it.arguments?.getString("userId")
+        composable<TopLevelRoute.Chat> {
+            PingNavState.currentRoute = it.toRoute()
+            val userId: String = it.toRoute<TopLevelRoute.Chat>().userId
             LaunchedEffect(key1 = userId) {
-                if (userId != null) chatViewModel.setUser(userId)
-                else Logger.error("userId is null")
+                chatViewModel.setUser(userId)
             }
             ChatScreenContainer(
                 chatViewModel = chatViewModel,
                 onBackClick = {
                     chatViewModel.onScreenExit()
-                    navController.navigate(navHome)
+                    navController.navigate(TopLevelRoute.Home)
                 },
                 onUserInfoClick = {
-                    settingsStartDestination = SettingsNav.UserInfo(it)
-                    navController.navigate(navSettings)
+                    settingsStartDestination = SettingsNav.UserInfo(it.docId)
+                    navController.navigate(TopLevelRoute.Settings)
                 }
             )
         }
 
-        composable(navSettings) {
-            PingNavState.currentRoute = navSettings
+        composable<TopLevelRoute.Settings> {
+            PingNavState.currentRoute = it.toRoute()
             SettingScreenContainer(
                 startDestination = settingsStartDestination!!,
                 onLoggedOut = {
-                    navController.navigate(navSignIn)
+                    navController.navigate(TopLevelRoute.Settings)
                 },
                 onBackClick = {
                     navController.popBackStack()
