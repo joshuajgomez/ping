@@ -2,14 +2,26 @@ package com.joshgm3z.ping.ui.screens.frx
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -23,6 +35,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +51,7 @@ import com.joshgm3z.ping.R
 import com.joshgm3z.ping.graph.Frx
 import com.joshgm3z.ping.graph.Home
 import com.joshgm3z.ping.ui.common.CustomTextField
+import com.joshgm3z.ping.ui.common.CustomTextField3
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
@@ -59,78 +74,133 @@ fun NewUserInput(
     signInViewModel: SignInViewModel? = getIfNotPreview { hiltViewModel() },
     userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
     homeViewModel: HomeViewModel? = getIfNotPreview { hiltViewModel() },
+    onSignUpClick: (name: String, imagePath: String, about: String) -> Unit = { name, imagePath, about ->
+        signInViewModel?.onSignUpClick(name, imagePath, about) {
+            userViewModel?.refreshUserList()
+            homeViewModel?.startListeningToChats()
+            signInViewModel.viewModelScope.launch {
+                navController.navigate(Home)
+            }
+        }
+    }
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            text = "Sign up to ping!",
-            color = colorScheme.onSurface,
-            fontSize = 20.sp,
-        )
+        Wallpaper()
 
-
-        ImageInput()
-
-        var name by remember { mutableStateOf(inputName) }
-        var imagePath by remember { mutableStateOf("") }
-
-        var error by remember { mutableStateOf("") }
-
-        CustomTextField(
-            text = name,
-            hintText = "enter a username",
-            onTextChanged = {
-                name = it
-                error = ""
-            },
-            modifier = Modifier.padding(horizontal = 50.dp),
-            isFocusNeeded = false
-        )
-
-        var about by remember { mutableStateOf(randomAbout()) }
-        CustomTextField(
-            text = about,
-            hintText = "enter something about you",
-            onTextChanged = {
-                about = it
-            },
-            modifier = Modifier.padding(horizontal = 50.dp),
-            isFocusNeeded = false
-        )
-
-        AnimatedVisibility(visible = error.isNotEmpty()) {
-            ErrorText()
-        }
-
-        Button(
-            onClick = {
-                if (name.isNotEmpty())
-                    signInViewModel?.onSignUpClick(name, imagePath, about) {
-                        userViewModel?.refreshUserList()
-                        homeViewModel?.startListeningToChats()
-                        signInViewModel.viewModelScope.launch {
-                            navController.navigate(Home)
-                        }
-                    }
-                else if (name.length <= 3)
-                    error = "should be more that 3 letters"
-                else
-                    error = "name cannot be empty"
-            },
+        Column(
+            modifier = Modifier
+                .padding(
+                    horizontal = 20.dp,
+                    vertical = 70.dp
+                )
         ) {
-            Text(text = "sign up", fontSize = 20.sp)
-        }
 
-        TextButton(onClick = {
-            navController.navigate(Frx)
-        }) {
             Text(
-                text = "sign in to another account",
-                color = colorScheme.outline,
-                textDecoration = TextDecoration.Underline
+                "Welcome to",
+                color = colorScheme.onSurface,
+                fontSize = 40.sp,
+                fontStyle = FontStyle.Italic
             )
+            Text(
+                "ping!",
+                color = colorScheme.onSurface,
+                fontWeight = FontWeight.Bold,
+                fontSize = 60.sp
+            )
+
+            Spacer(Modifier.height(100.dp))
+
+            Text(
+                text = "Sign up",
+                color = colorScheme.onSurface,
+                fontSize = 30.sp,
+            )
+            var name by remember { mutableStateOf(inputName) }
+            var imagePath by remember { mutableStateOf("") }
+            var about by remember { mutableStateOf("") }
+            var password by remember { mutableStateOf("") }
+            var confirmPassword by remember { mutableStateOf("") }
+            var error by remember { mutableStateOf("") }
+
+            Spacer(Modifier.height(20.dp))
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(
+                        color = colorScheme.surfaceContainerHighest
+                    )
+            ) {
+                CustomTextField3(
+                    text = name,
+                    icon = Icons.Default.AlternateEmail,
+                    hintText = "enter your name",
+                    onTextChanged = {
+                        name = it
+                        error = ""
+                    })
+                HorizontalDivider(thickness = 1.dp)
+                CustomTextField3(
+                    text = password,
+                    icon = Icons.Default.LockOpen,
+                    hintText = "enter password",
+                    onTextChanged = {
+                        password = it
+                        error = ""
+                    })
+                HorizontalDivider(thickness = 1.dp)
+                CustomTextField3(
+                    text = confirmPassword,
+                    icon = Icons.Default.Lock,
+                    hintText = "confirm password",
+                    onTextChanged = {
+                        confirmPassword = it
+                        error = ""
+                    })
+                HorizontalDivider(thickness = 1.dp)
+                CustomTextField3(
+                    text = about,
+                    icon = Icons.Default.EditNote,
+                    hintText = "something about you",
+                    onTextChanged = {
+                        about = it
+                        error = ""
+                    })
+            }
+
+            Spacer(Modifier.height(10.dp))
+            ErrorText(error)
+
+            Spacer(Modifier.height(30.dp))
+            var showLoading by remember { mutableStateOf(false) }
+            SignInButton(
+                showLoading,
+                text = if (showLoading) "Signing up" else "Sign up",
+                onClick = {
+                    when {
+                        name.isNotEmpty() -> {
+                            showLoading = true
+                            onSignUpClick(name, imagePath, about)
+                        }
+
+                        name.length <= 3 -> error = "Should be more that 3 letters"
+                        else -> error = "Name cannot be empty"
+                    }
+                },
+            )
+
+            Spacer(Modifier.height(20.dp))
+
+            TextButton(onClick = {
+                navController.navigate(Frx)
+            }) {
+                Text(
+                    text = "sign in to another account",
+                    color = colorScheme.outline,
+                    textDecoration = TextDecoration.Underline
+                )
+            }
         }
     }
 }

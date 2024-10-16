@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -28,6 +30,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
@@ -107,11 +110,76 @@ fun CustomTextField(
     }
 }
 
+@Composable
+fun CustomTextField3(
+    modifier: Modifier = Modifier,
+    text: String = "",
+    hintText: String = "Type something",
+    icon: ImageVector = Icons.Default.AlternateEmail,
+    isSingleLine: Boolean = true,
+    isFocusNeeded: Boolean = true,
+    onTextChanged: (text: String) -> Unit = {},
+    onEnterPressed: () -> Unit = {},
+) {
+    val focusRequester = remember { FocusRequester() }
+    TextField(
+        textStyle = TextStyle.Default.copy(fontSize = 20.sp),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(57.dp)
+            .focusRequester(focusRequester)
+            .onKeyEvent {
+                if (it.key == Key.Enter) {
+                    onEnterPressed()
+                    true
+                } else false
+            },
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            focusedContainerColor = Color.Transparent,
+        ),
+        shape = RoundedCornerShape(32.dp),
+        placeholder = {
+            Text(text = hintText, fontSize = 20.sp)
+        },
+        value = text,
+        onValueChange = {
+            if ("\n" !in it) onTextChanged(it)
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = icon,
+                contentDescription = null
+            )
+        },
+        maxLines = if (isSingleLine) 1 else 5,
+        singleLine = isSingleLine
+    )
+    LaunchedEffect(key1 = Unit) {
+        if (isFocusNeeded) {
+            focusRequester.requestFocus()
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun PreviewCustomTextField2() {
     PingTheme {
         CustomTextField2(
+            text = "",
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewCustomTextField3() {
+    PingTheme {
+        CustomTextField3(
             text = "",
         )
     }
