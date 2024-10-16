@@ -52,39 +52,39 @@ fun PreviewMainSettingsScreen() {
 @Composable
 fun MainSettingsScreen(
     modifier: Modifier = Modifier,
-    onSettingNavigate: (setting: SettingsNav) -> Unit = {},
+    onSettingNavigate: (setting: SettingsRoute) -> Unit = {},
 ) {
     val settingList = listOf(
         Setting(
             "Profile",
             "Edit profile details"
         ) {
-            onSettingNavigate(SettingsNav.Profile)
+            onSettingNavigate(SettingsRoute.Profile)
         },
         Setting(
             "Chat Settings",
             "Change chat settings"
         ) {
-            onSettingNavigate(SettingsNav.Chat)
+            onSettingNavigate(SettingsRoute.Chat)
         },
         Setting(
             "Notifications",
             "Modify how often you wanna be notified"
         ) {
-            onSettingNavigate(SettingsNav.Notifications)
+            onSettingNavigate(SettingsRoute.Notifications)
         },
         Setting(
             "Storage",
             "See how ping is using phones memory"
         ) {
-            onSettingNavigate(SettingsNav.Storage)
+            onSettingNavigate(SettingsRoute.Storage)
         },
         Setting(
             "Sign out",
             "Sign out from ping profile",
             icon = Icons.Default.Output
         ) {
-            onSettingNavigate(SettingsNav.SignOut)
+            onSettingNavigate(SettingsRoute.SignOut)
         },
     )
 
@@ -94,7 +94,7 @@ fun MainSettingsScreen(
             .padding(horizontal = 20.dp)
     ) {
         ProfileView {
-            onSettingNavigate(SettingsNav.Profile)
+            onSettingNavigate(SettingsRoute.Profile)
         }
         Spacer(Modifier.height(20.dp))
         SettingListCard(settingList)

@@ -32,7 +32,7 @@ import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.ui.screens.search.UserContainer
 import com.joshgm3z.ping.ui.screens.search.UserList
 import com.joshgm3z.ping.ui.screens.settings.MainSettingsScreen
-import com.joshgm3z.ping.ui.screens.settings.SettingsNav
+import com.joshgm3z.ping.ui.screens.settings.SettingsRoute
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
@@ -121,7 +121,7 @@ fun HomeScreenContainer(
     userViewModel: UserViewModel,
     onUserClick: (user: User) -> Unit = {},
     onChatClick: (homeChat: HomeChat) -> Unit = {},
-    onNavigateSettings: (settingNav: SettingsNav) -> Unit
+    onNavigateSettings: (settingNav: SettingsRoute) -> Unit
 ) {
     val navController = rememberNavController()
     Scaffold(

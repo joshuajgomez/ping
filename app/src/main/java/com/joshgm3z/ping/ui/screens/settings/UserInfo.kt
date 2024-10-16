@@ -11,8 +11,10 @@ import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,10 +37,17 @@ fun PreviewUserInfo() {
 
 @Composable
 fun UserInfo(
-    userId: String = randomUser().docId,
+    userId: String = "",
+    userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
     onGoBackClick: () -> Unit = {}
 ) {
-    val user = randomUser()
+    val user: User? =
+        when {
+            LocalInspectionMode.current -> randomUser()
+            else -> userViewModel?.getUser(userId)?.collectAsState(null)?.value
+        }
+    user ?: return
+
     SettingContainer(
         "Contact info",
         onCloseClick = onGoBackClick

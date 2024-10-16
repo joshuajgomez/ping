@@ -2,12 +2,13 @@ package com.joshgm3z.ping.ui.screens.settings
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.joshgm3z.data.model.User
+import androidx.navigation.toRoute
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
@@ -15,7 +16,7 @@ import kotlinx.serialization.Serializable
 
 @Composable
 fun SettingScreenContainer(
-    startDestination: SettingsNav,
+    startRoute: SettingsRoute,
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
     onLoggedOut: () -> Unit = {},
@@ -23,41 +24,43 @@ fun SettingScreenContainer(
 ) {
     val navController = rememberNavController()
     NavHost(
-        navController = navController, startDestination = startDestination, modifier = modifier
+        navController = navController,
+        startDestination = startRoute,
+        modifier = modifier
     ) {
-        composable<SettingsNav.Profile> {
+        composable<SettingsRoute.Profile> {
             ProfileSettings(
                 onGoBackClick = onBackClick,
-                openImagePicker = { navController.navigate(SettingsNav.ImagePicker) })
+                openImagePicker = { navController.navigate(SettingsRoute.ImagePicker) })
         }
-        composable<SettingsNav.ImagePicker> {
+        composable<SettingsRoute.ImagePicker> {
             ImagePickerContainer(onGoBackClick = { navController.popBackStack() })
         }
-        composable<SettingsNav.UserInfo> {
-            val settingsNav = startDestination as SettingsNav.UserInfo
-            UserInfo(settingsNav.userId, onGoBackClick = onBackClick)
+        composable<SettingsRoute.UserInfo> {
+            val userId = it.toRoute<SettingsRoute.UserInfo>().userId
+            UserInfo(userId, onGoBackClick = onBackClick)
         }
-        composable<SettingsNav.Chat> {
+        composable<SettingsRoute.Chat> {
             SettingContainer("Chat Settings", onCloseClick = onBackClick) {
                 Text("Sample setting")
             }
         }
-        composable<SettingsNav.Notifications> {
+        composable<SettingsRoute.Notifications> {
             SettingContainer("Notifications", onCloseClick = onBackClick) {
                 Text("Sample setting")
             }
         }
-        composable<SettingsNav.Account> {
+        composable<SettingsRoute.Account> {
             SettingContainer("Account", onCloseClick = onBackClick) {
                 Text("Sample setting")
             }
         }
-        composable<SettingsNav.Storage> {
+        composable<SettingsRoute.Storage> {
             SettingContainer("Storage", onCloseClick = onBackClick) {
                 Text("Sample setting")
             }
         }
-        composable<SettingsNav.SignOut> {
+        composable<SettingsRoute.SignOut> {
             SignOutSetting(onBackClick = onBackClick, onSignOutClick = {
                 userViewModel?.onSignOutClicked {
                     onLoggedOut()
@@ -68,29 +71,29 @@ fun SettingScreenContainer(
 }
 
 @Serializable
-sealed class SettingsNav {
+sealed class SettingsRoute {
 
     @Serializable
-    data object Profile : SettingsNav()
+    data object Profile : SettingsRoute()
 
     @Serializable
-    data class UserInfo(val userId: String) : SettingsNav()
+    data class UserInfo(val userId: String) : SettingsRoute()
 
     @Serializable
-    data object ImagePicker : SettingsNav()
+    data object ImagePicker : SettingsRoute()
 
     @Serializable
-    data object Chat : SettingsNav()
+    data object Chat : SettingsRoute()
 
     @Serializable
-    data object Notifications : SettingsNav()
+    data object Notifications : SettingsRoute()
 
     @Serializable
-    data object Account : SettingsNav()
+    data object Account : SettingsRoute()
 
     @Serializable
-    data object Storage : SettingsNav()
+    data object Storage : SettingsRoute()
 
     @Serializable
-    data object SignOut : SettingsNav()
+    data object SignOut : SettingsRoute()
 }

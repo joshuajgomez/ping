@@ -12,7 +12,7 @@ import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.frx.FrxContainer
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
 import com.joshgm3z.ping.ui.screens.settings.SettingScreenContainer
-import com.joshgm3z.ping.ui.screens.settings.SettingsNav
+import com.joshgm3z.ping.ui.screens.settings.SettingsRoute
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
@@ -25,10 +25,13 @@ import kotlinx.serialization.Serializable
 sealed class TopLevelRoute {
     @Serializable
     data object Frx : TopLevelRoute()
+
     @Serializable
     data object Home : TopLevelRoute()
+
     @Serializable
     data class Chat(val userId: String) : TopLevelRoute()
+
     @Serializable
     data object Settings : TopLevelRoute()
 }
@@ -45,17 +48,17 @@ class PingNavState {
 
 @Composable
 fun PingAppContainer(
-    startDestination: TopLevelRoute,
+    startRoute: TopLevelRoute,
     userViewModel: UserViewModel = hiltViewModel(),
     homeViewModel: HomeViewModel = hiltViewModel(),
     chatViewModel: ChatViewModel = hiltViewModel(),
     signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
-    var settingsStartDestination: SettingsNav? = null
     val navController = rememberNavController()
+    var settingsStartRoute: SettingsRoute? = null // default settings route
     NavHost(
         navController = navController,
-        startDestination = startDestination,
+        startDestination = startRoute,
     ) {
 
         composable<TopLevelRoute.Frx> {
@@ -73,7 +76,7 @@ fun PingAppContainer(
             )
         }
 
-        composable<TopLevelRoute.Home> {
+        composable<TopLevelRoute.Home> { it ->
             PingNavState.currentRoute = it.toRoute()
             HomeScreenContainer(
                 homeViewModel = homeViewModel,
@@ -84,14 +87,14 @@ fun PingAppContainer(
                 onChatClick = {
                     navController.navigate(TopLevelRoute.Chat(it.otherGuy.docId))
                 },
-                onNavigateSettings = {
-                    settingsStartDestination = it
+                onNavigateSettings = { settingsRoute ->
+                    settingsStartRoute = settingsRoute
                     navController.navigate(TopLevelRoute.Settings)
                 }
             )
         }
 
-        composable<TopLevelRoute.Chat> {
+        composable<TopLevelRoute.Chat> { it ->
             PingNavState.currentRoute = it.toRoute()
             val userId: String = it.toRoute<TopLevelRoute.Chat>().userId
             LaunchedEffect(key1 = userId) {
@@ -104,7 +107,7 @@ fun PingAppContainer(
                     navController.navigate(TopLevelRoute.Home)
                 },
                 onUserInfoClick = {
-                    settingsStartDestination = SettingsNav.UserInfo(it.docId)
+                    settingsStartRoute = SettingsRoute.UserInfo(it.docId)
                     navController.navigate(TopLevelRoute.Settings)
                 }
             )
@@ -112,15 +115,17 @@ fun PingAppContainer(
 
         composable<TopLevelRoute.Settings> {
             PingNavState.currentRoute = it.toRoute()
-            SettingScreenContainer(
-                startDestination = settingsStartDestination!!,
-                onLoggedOut = {
-                    navController.navigate(TopLevelRoute.Settings)
-                },
-                onBackClick = {
-                    navController.popBackStack()
-                },
-            )
+            settingsStartRoute?.let { settingsRoute ->
+                SettingScreenContainer(
+                    startRoute = settingsRoute,
+                    onLoggedOut = {
+                        navController.navigate(TopLevelRoute.Frx)
+                    },
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                )
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.joshgm3z.ping.ui.viewmodels
 
 import android.net.Uri
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -97,8 +100,8 @@ class UserViewModel
         }
     }
 
-    fun saveIcon(selectedIcon: Int) {
-        TODO("Not yet implemented")
+    fun getUser(userId: String) = flow {
+        emit(userRepository.getUser(userId))
     }
 
 }
