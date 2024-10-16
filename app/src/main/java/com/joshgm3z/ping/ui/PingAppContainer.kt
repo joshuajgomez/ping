@@ -94,6 +94,10 @@ fun PingAppContainer(
                 onBackClick = {
                     chatViewModel.onScreenExit()
                     navController.navigate(navHome)
+                },
+                onUserInfoClick = {
+                    settingsStartDestination = SettingsNav.UserInfo(it)
+                    navController.navigate(navSettings)
                 }
             )
         }

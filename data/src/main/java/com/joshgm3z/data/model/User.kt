@@ -4,8 +4,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.joshgm3z.data.util.randomAbout
 import com.joshgm3z.data.util.randomName
+import kotlinx.serialization.Serializable
+import java.io.Serial
 
 @Entity
+@Serializable
 data class User(var name: String = "") {
     @PrimaryKey
     var docId: String = ""

@@ -65,7 +65,6 @@ constructor(
     fun createUser(user: User, onUserCreated: (user: User?, message: String) -> Unit) {
         Logger.debug("user = [${user}]")
         val userDoc = FirestoreConverter.getDocumentFromUser(user)
-        Logger.debug("userDoc = [$userDoc]")
         firestore.collection(keyCollectionUserList)
             .add(userDoc)
             .addOnSuccessListener {

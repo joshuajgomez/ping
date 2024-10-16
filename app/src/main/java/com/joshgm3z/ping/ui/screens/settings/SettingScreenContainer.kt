@@ -7,6 +7,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
@@ -31,6 +32,10 @@ fun SettingScreenContainer(
         }
         composable<SettingsNav.ImagePicker> {
             ImagePickerContainer(onGoBackClick = { navController.popBackStack() })
+        }
+        composable<SettingsNav.UserInfo> {
+            val settingsNav = startDestination as SettingsNav.UserInfo
+            UserInfo(settingsNav.user, onGoBackClick = onBackClick)
         }
         composable<SettingsNav.Chat> {
             SettingContainer("Chat Settings", onCloseClick = onBackClick) {
@@ -67,6 +72,9 @@ sealed class SettingsNav {
 
     @Serializable
     data object Profile : SettingsNav()
+
+    @Serializable
+    data class UserInfo(val user: User) : SettingsNav()
 
     @Serializable
     data object ImagePicker : SettingsNav()

@@ -60,7 +60,11 @@ private fun PreviewChatScreenLoading() {
 }
 
 @Composable
-fun ChatScreenContainer(chatViewModel: ChatViewModel, onBackClick: () -> Unit) {
+fun ChatScreenContainer(
+    chatViewModel: ChatViewModel,
+    onUserInfoClick: (user: User) -> Unit = {},
+    onBackClick: () -> Unit
+) {
     val uiState = chatViewModel.uiState.collectAsState()
     when (uiState.value) {
         is ChatUiState.Loading -> {
@@ -74,6 +78,7 @@ fun ChatScreenContainer(chatViewModel: ChatViewModel, onBackClick: () -> Unit) {
                 chats = chats,
                 user = user,
                 onSendClick = { chatViewModel.onSendButtonClick(it) },
+                onUserInfoClick = { onUserInfoClick(user) },
                 onBackClick = { onBackClick() }
             )
         }
@@ -85,10 +90,14 @@ fun ChatScreen(
     chats: List<Chat> = getChatList(),
     user: User = randomUser(),
     onSendClick: (message: String) -> Unit = {},
+    onUserInfoClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
 ) {
     Column {
-        ChatAppBar(user = user) { onBackClick() }
+        ChatAppBar(
+            user = user,
+            onUserInfoClick = onUserInfoClick
+        ) { onBackClick() }
         if (chats.isNotEmpty()) {
             ChatList(
                 modifier = Modifier.weight(1f),

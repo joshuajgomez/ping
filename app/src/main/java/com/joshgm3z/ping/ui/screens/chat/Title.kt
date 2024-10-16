@@ -42,11 +42,14 @@ fun PreviewChatAppBar() {
 fun ChatAppBar(
     modifier: Modifier = Modifier,
     user: User = randomUser(),
+    onUserInfoClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onUserInfoClick() }
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,
