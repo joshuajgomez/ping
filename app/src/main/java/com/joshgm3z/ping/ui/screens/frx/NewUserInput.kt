@@ -29,12 +29,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.joshgm3z.data.util.randomAbout
 import com.joshgm3z.ping.R
+import com.joshgm3z.ping.graph.Frx
+import com.joshgm3z.ping.graph.Home
 import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
+import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -46,10 +54,11 @@ fun PreviewNewUserInput() {
 
 @Composable
 fun NewUserInput(
+    navController: NavController = rememberNavController(),
     inputName: String = "",
     signInViewModel: SignInViewModel? = getIfNotPreview { hiltViewModel() },
-    onGoToSignInClick: () -> Unit = {},
-    onUserSignedIn: () -> Unit = {},
+    userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
+    homeViewModel: HomeViewModel? = getIfNotPreview { hiltViewModel() },
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -99,7 +108,11 @@ fun NewUserInput(
             onClick = {
                 if (name.isNotEmpty())
                     signInViewModel?.onSignUpClick(name, imagePath, about) {
-                        onUserSignedIn()
+                        userViewModel?.refreshUserList()
+                        homeViewModel?.startListeningToChats()
+                        signInViewModel.viewModelScope.launch {
+                            navController.navigate(Home)
+                        }
                     }
                 else if (name.length <= 3)
                     error = "should be more that 3 letters"
@@ -110,7 +123,9 @@ fun NewUserInput(
             Text(text = "sign up", fontSize = 20.sp)
         }
 
-        TextButton(onClick = { onGoToSignInClick() }) {
+        TextButton(onClick = {
+            navController.navigate(Frx)
+        }) {
             Text(
                 text = "sign in to another account",
                 color = colorScheme.outline,
@@ -118,6 +133,11 @@ fun NewUserInput(
             )
         }
     }
+}
+
+@Composable
+fun ErrorText() {
+    Text("error", color = colorScheme.error)
 }
 
 @Composable

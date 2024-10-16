@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -27,12 +28,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.joshgm3z.data.model.HomeChat
-import com.joshgm3z.data.model.User
+import com.joshgm3z.ping.graph.ChatScreen
+import com.joshgm3z.ping.graph.SettingRoute
 import com.joshgm3z.ping.ui.screens.search.UserContainer
 import com.joshgm3z.ping.ui.screens.search.UserList
 import com.joshgm3z.ping.ui.screens.settings.MainSettingsScreen
-import com.joshgm3z.ping.ui.screens.settings.SettingsRoute
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
@@ -117,24 +117,22 @@ val homeNavItems = listOf(
 
 @Composable
 fun HomeScreenContainer(
-    homeViewModel: HomeViewModel,
-    userViewModel: UserViewModel,
-    onUserClick: (user: User) -> Unit = {},
-    onChatClick: (homeChat: HomeChat) -> Unit = {},
-    onNavigateSettings: (settingNav: SettingsRoute) -> Unit
+    navController: NavController = rememberNavController(),
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
 ) {
-    val navController = rememberNavController()
+    val homeNavController = rememberNavController()
     Scaffold(
         topBar = {
             val title = homeViewModel.appTitle.collectAsState()
             HomeAppBarContainer(title.value)
         },
         bottomBar = {
-            PingBottomAppBar(navController)
+            PingBottomAppBar(homeNavController)
         },
     ) { paddingValues ->
         NavHost(
-            navController = navController,
+            navController = homeNavController,
             startDestination = HomeRoute.ChatList,
             modifier = Modifier.padding(paddingValues)
         ) {
@@ -142,13 +140,15 @@ fun HomeScreenContainer(
                 homeViewModel.setAppTitle(it.toRoute<HomeRoute.ChatList>().title)
                 HomeChatListContainer(
                     homeViewModel = homeViewModel,
-                    onChatClick = { onChatClick(it) },
+                    onChatClick = { chat ->
+                        navController.navigate(ChatScreen(chat.otherGuy.docId))
+                    },
                     onGoToUsersClicked = {
-                        navController.navigate(HomeRoute.UserList) {
+                        homeNavController.navigate(HomeRoute.UserList) {
                             // Pop up to the start destination of the graph to
                             // avoid building up a large stack of destinations
                             // on the back stack as users select items
-                            popUpTo(navController.graph.findStartDestination().id) {
+                            popUpTo(homeNavController.graph.findStartDestination().id) {
                                 saveState = true
                             }
                             // Avoid multiple copies of the same destination when
@@ -164,13 +164,13 @@ fun HomeScreenContainer(
                 homeViewModel.setAppTitle(it.toRoute<HomeRoute.UserList>().title)
                 UserContainer(
                     userViewModel = userViewModel,
-                    onUserClick = { onUserClick(it) })
+                    onUserClick = { user ->
+                        navController.navigate(ChatScreen(user.docId))
+                    })
             }
             composable<HomeRoute.SettingsList> {
                 homeViewModel.setAppTitle(it.toRoute<HomeRoute.SettingsList>().title)
-                MainSettingsScreen(onSettingNavigate = {
-                    onNavigateSettings(it)
-                })
+                MainSettingsScreen(navController = navController)
             }
         }
     }

@@ -23,7 +23,14 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.joshgm3z.data.util.randomUser
+import com.joshgm3z.ping.graph.Chat
+import com.joshgm3z.ping.graph.Notifications
+import com.joshgm3z.ping.graph.Profile
+import com.joshgm3z.ping.graph.SettingRoute
+import com.joshgm3z.ping.graph.SignOut
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getIfNotPreview
@@ -52,39 +59,33 @@ fun PreviewMainSettingsScreen() {
 @Composable
 fun MainSettingsScreen(
     modifier: Modifier = Modifier,
-    onSettingNavigate: (setting: SettingsRoute) -> Unit = {},
+    navController: NavController = rememberNavController(),
 ) {
-    val settingList = listOf(
+    val settingRouteList = listOf(
         Setting(
             "Profile",
             "Edit profile details"
         ) {
-            onSettingNavigate(SettingsRoute.Profile)
+            navController.navigate(Profile)
         },
         Setting(
             "Chat Settings",
             "Change chat settings"
         ) {
-            onSettingNavigate(SettingsRoute.Chat)
+            navController.navigate(Chat)
         },
         Setting(
             "Notifications",
             "Modify how often you wanna be notified"
         ) {
-            onSettingNavigate(SettingsRoute.Notifications)
-        },
-        Setting(
-            "Storage",
-            "See how ping is using phones memory"
-        ) {
-            onSettingNavigate(SettingsRoute.Storage)
+            navController.navigate(Notifications)
         },
         Setting(
             "Sign out",
             "Sign out from ping profile",
             icon = Icons.Default.Output
         ) {
-            onSettingNavigate(SettingsRoute.SignOut)
+            navController.navigate(SignOut)
         },
     )
 
@@ -94,10 +95,10 @@ fun MainSettingsScreen(
             .padding(horizontal = 20.dp)
     ) {
         ProfileView {
-            onSettingNavigate(SettingsRoute.Profile)
+            navController.navigate(Profile)
         }
         Spacer(Modifier.height(20.dp))
-        SettingListCard(settingList)
+        SettingListCard(settingRouteList)
     }
 }
 

@@ -18,12 +18,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.randomUser
+import com.joshgm3z.ping.graph.Home
+import com.joshgm3z.ping.graph.SettingRoute
+import com.joshgm3z.ping.graph.UserInfo
 import com.joshgm3z.ping.ui.viewmodels.ChatUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 
@@ -61,9 +66,8 @@ private fun PreviewChatScreenLoading() {
 
 @Composable
 fun ChatScreenContainer(
-    chatViewModel: ChatViewModel,
-    onUserInfoClick: (user: User) -> Unit = {},
-    onBackClick: () -> Unit
+    navController: NavHostController,
+    chatViewModel: ChatViewModel = hiltViewModel(),
 ) {
     val uiState = chatViewModel.uiState.collectAsState()
     when (uiState.value) {
@@ -78,8 +82,13 @@ fun ChatScreenContainer(
                 chats = chats,
                 user = user,
                 onSendClick = { chatViewModel.onSendButtonClick(it) },
-                onUserInfoClick = { onUserInfoClick(user) },
-                onBackClick = { onBackClick() }
+                onUserInfoClick = {
+                    navController.navigate(UserInfo(user.docId))
+                },
+                onBackClick = {
+                    chatViewModel.onScreenExit()
+                    navController.navigate(Home)
+                }
             )
         }
     }

@@ -33,11 +33,13 @@ constructor(
     fun onSignInClick(
         name: String,
         onSignInComplete: () -> Unit,
+        onNewUser: (name: String) -> Unit,
     ) {
         _uiState.value = SignInUiState.Loading("Finding you")
         userRepository.checkUserInServer(name) {
             if (it == null) {
                 // new user, proceed to sign up
+                onNewUser(name)
                 _uiState.value = SignInUiState.SignUp(name)
             } else {
                 // user found, proceed to home screen
