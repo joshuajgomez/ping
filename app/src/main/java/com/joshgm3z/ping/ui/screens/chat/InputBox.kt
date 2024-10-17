@@ -4,14 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -23,14 +22,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joshgm3z.ping.ui.common.CustomTextField2
+import com.joshgm3z.ping.ui.common.getCameraLauncher
+import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.utils.FileUtil
 
 @Composable
 fun InputBox(
     modifier: Modifier = Modifier,
+    openPreview: (imageUrl: String) -> Unit = {},
     onSendClick: (text: String) -> Unit = {},
     defaultText: String = "",
 ) {
@@ -41,7 +46,22 @@ fun InputBox(
             .fillMaxWidth()
             .background(colorScheme.surface)
     ) {
-        Spacer(modifier = Modifier.width(10.dp))
+
+        val cameraUri = getIfNotPreview { FileUtil.getUri(LocalContext.current) }
+        val cameraLauncher = getCameraLauncher {
+            openPreview(cameraUri.toString())
+        }
+
+        Icon(
+            imageVector = Icons.Outlined.CameraAlt,
+            contentDescription = "open camera",
+            tint = colorScheme.onSurface.copy(alpha = 0.5f),
+            modifier = Modifier
+                .padding(3.dp)
+                .size(40.dp)
+                .padding(5.dp)
+                .clickable { cameraLauncher.launch(cameraUri!!) }
+        )
         var text by remember { mutableStateOf(defaultText) }
         CustomTextField2(
             text = text,
@@ -56,34 +76,44 @@ fun InputBox(
                 text = ""
             }
         )
-        IconButton(
+        SendButton(
             enabled = text.isNotEmpty(),
+            icon = Icons.AutoMirrored.Filled.Send,
             onClick = {
                 onSendClick(text)
                 text = ""
-            },
-            modifier = Modifier.padding(end = 5.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Send,
-                contentDescription = "send message",
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(35.dp)
-                    .background(color = colorScheme.onSecondary)
-                    .padding(all = 7.dp)
-                    .clickable(enabled = text.isNotEmpty()) {
-                        onSendClick(text)
-                        text = ""
-                    },
-                tint = colorScheme.secondary
-            )
-        }
+            })
     }
 }
 
 @Composable
-@Preview()
+fun SendButton(
+    icon: ImageVector,
+    enabled: Boolean = true,
+    onClick: () -> Unit = {},
+) {
+    IconButton(
+        enabled = enabled,
+        onClick = {
+            onClick()
+        },
+        modifier = Modifier.padding(end = 5.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = "send message",
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(35.dp)
+                .background(color = colorScheme.onSecondary)
+                .padding(all = 7.dp),
+            tint = colorScheme.secondary
+        )
+    }
+}
+
+@Composable
+@Preview
 fun PreviewInputMessage() {
     PingTheme {
         InputBox(defaultText = "Hello ")

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
+import com.joshgm3z.ping.ui.common.getCameraLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.Setting
 import com.joshgm3z.ping.ui.screens.settings.SettingListCard
@@ -170,20 +171,6 @@ fun getGalleryLauncher(
             Logger.debug("onResult=$uri")
             uri?.let {
                 onUriReady(it)
-            }
-        }
-    )
-
-@Composable
-fun getCameraLauncher(
-    onUriReady: () -> Unit
-): ManagedActivityResultLauncher<Uri, Boolean> =
-    rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture(),
-        onResult = { success ->
-            Logger.debug("onResult success=$success")
-            if (success) {
-                onUriReady()
             }
         }
     )

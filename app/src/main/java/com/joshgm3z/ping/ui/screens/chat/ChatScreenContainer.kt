@@ -26,6 +26,7 @@ import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.randomUser
+import com.joshgm3z.ping.graph.ChatImagePreview
 import com.joshgm3z.ping.graph.Home
 import com.joshgm3z.ping.graph.SettingRoute
 import com.joshgm3z.ping.graph.UserInfo
@@ -68,6 +69,9 @@ private fun PreviewChatScreenLoading() {
 fun ChatScreenContainer(
     navController: NavHostController,
     chatViewModel: ChatViewModel = hiltViewModel(),
+    openPreview: (imageUrl: String, name: String) -> Unit = { imageUrl, name ->
+        navController.navigate(ChatImagePreview(imageUrl, name))
+    },
 ) {
     val uiState = chatViewModel.uiState.collectAsState()
     when (uiState.value) {
@@ -88,7 +92,8 @@ fun ChatScreenContainer(
                 onBackClick = {
                     chatViewModel.onScreenExit()
                     navController.navigate(Home)
-                }
+                },
+                openPreview = openPreview
             )
         }
     }
@@ -101,6 +106,7 @@ fun ChatScreen(
     onSendClick: (message: String) -> Unit = {},
     onUserInfoClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
+    openPreview: (imageUrl: String, name: String) -> Unit = { _, _ -> }
 ) {
     Column {
         ChatAppBar(
@@ -115,7 +121,12 @@ fun ChatScreen(
         } else {
             EmptyChat(modifier = Modifier.weight(1f))
         }
-        InputBox(onSendClick = { onSendClick(it) })
+        InputBox(
+            onSendClick = { onSendClick(it) },
+            openPreview = {
+                openPreview(it, user.name)
+            }
+        )
     }
 }
 

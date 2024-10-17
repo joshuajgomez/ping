@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
+import com.joshgm3z.ping.ui.screens.chat.ImagePreview
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import kotlinx.serialization.Serializable
@@ -34,6 +35,9 @@ data object Home
 
 @Serializable
 data class ChatScreen(val userId: String)
+
+@Serializable
+data class ChatImagePreview(val imageUrl: String, val name: String)
 
 @Serializable
 data class PingDialog(val title: String, val message: String)
@@ -95,6 +99,15 @@ fun NavGraphBuilder.chatGraph(navController: NavHostController) {
             chatViewModel.setUser(userId)
         }
         ChatScreenContainer(navController = navController)
+    }
+    composable<ChatImagePreview> {
+        val imageUrl: String = it.toRoute<ChatImagePreview>().imageUrl
+        val name: String = it.toRoute<ChatImagePreview>().name
+        ImagePreview(
+            navController,
+            name = name,
+            imageUrl = imageUrl
+        )
     }
 }
 

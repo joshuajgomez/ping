@@ -17,6 +17,7 @@ data class Chat(
     var toUserId: String = ""
     var replyToChatId: String = ""
     var status: Long = SAVED
+    var imageUrl: String = ""
 
     @Ignore
     var isOutwards: Boolean = true
@@ -40,7 +41,8 @@ data class Chat(
     override fun toString(): String {
         return "Chat(message='$message', docId='$docId'," +
                 " sentTime=$sentTime, fromUserId=$fromUserId, toUserId=$toUserId," +
-                " isOutwards=$isOutwards, status=${textStatus(status)})"
+                " isOutwards=$isOutwards, status=${textStatus(status)}," +
+                " imageUrl=${imageUrl})"
     }
 
     private fun textStatus(status: Long): String {

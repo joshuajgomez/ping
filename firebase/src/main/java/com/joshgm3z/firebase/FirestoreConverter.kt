@@ -10,6 +10,7 @@ class FirestoreConverter {
         const val keyFromUserId = "fromUserId"
         const val keyToUserId = "toUserId"
         private const val keyMessage = "message"
+        private const val keyImageUrl = "imageUrl"
         const val keyStatus = "status"
 
         private const val keyName = "name"
@@ -23,6 +24,7 @@ class FirestoreConverter {
                 keyFromUserId to chat.fromUserId,
                 keyToUserId to chat.toUserId,
                 keyMessage to chat.message,
+                keyImageUrl to chat.imageUrl,
                 keyStatus to chat.status,
             )
         }
@@ -36,6 +38,7 @@ class FirestoreConverter {
                     fromUserId = document[keyFromUserId].toString()
                     toUserId = document[keyToUserId].toString()
                     status = document[keyStatus] as Long
+                    imageUrl = document[keyImageUrl].toString()
                     chatList.add(this)
                 }
             }

@@ -39,11 +39,15 @@ class ChatViewModel
     private lateinit var otherGuy: User
     private var me: User? = null
 
-    fun onSendButtonClick(message: String) {
+    fun onSendButtonClick(
+        message: String = "",
+        imageUrl: String = ""
+    ) {
         Logger.debug("message = [${message}]")
         val chat = Chat(message = message)
         chat.toUserId = otherGuy.docId
         chat.fromUserId = me!!.docId
+        chat.imageUrl = imageUrl
         chat.sentTime = System.currentTimeMillis()
         viewModelScope.launch(Dispatchers.IO) {
             chatRepository.uploadNewMessage(chat)
@@ -74,4 +78,5 @@ class ChatViewModel
         Logger.entry()
         chatObserverJob?.cancel()
     }
+
 }

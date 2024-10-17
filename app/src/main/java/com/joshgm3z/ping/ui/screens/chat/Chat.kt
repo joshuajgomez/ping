@@ -2,6 +2,7 @@ package com.joshgm3z.ping.ui.screens.chat
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -92,13 +93,26 @@ fun PreviewIncomingChatReply() {
     }
 }
 
+@Preview
+@Composable
+fun PreviewIncomingChatImage() {
+    PingTheme {
+        val chat = Chat.random()
+        chat.imageUrl = "im going to movie"
+        ChatItem(chat)
+    }
+}
+
 @Composable
 fun ChatItem(chat: Chat) {
     Column(
         modifier = Modifier
             .padding(horizontal = 10.dp, vertical = 10.dp)
             .fillMaxWidth(),
-        horizontalAlignment = if (chat.isOutwards) Alignment.End else Alignment.Start
+        horizontalAlignment = when {
+            chat.isOutwards -> Alignment.End
+            else -> Alignment.Start
+        }
     ) {
         Column(
             modifier = Modifier
@@ -108,45 +122,72 @@ fun ChatItem(chat: Chat) {
                 .widthIn(min = 5.dp, max = 250.dp),
             horizontalAlignment = if (chat.isOutwards) Alignment.End else Alignment.Start
         ) {
-            if (chat.replyToChatId.isNotEmpty()) {
-                Column(
-                    modifier = Modifier
-                        .background(
-                            shape = RoundedCornerShape(10.dp),
-                            color = if (chat.isOutwards) Gray70 else Gray50
-                        )
-                        .padding(vertical = 10.dp, horizontal = 10.dp)
-                ) {
-                    Text(
-                        text = "You",
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (chat.isOutwards) colorScheme.primary else colorScheme.onPrimary
-                    )
-                    Text(
-                        text = chat.replyToChatId,
-                        fontSize = 17.sp,
-                        color = if (chat.isOutwards) Gray50 else Gray30
-                    )
-                }
-            }
-            Text(
-                text = chat.message,
-                fontSize = 18.sp,
-                color = if (chat.isOutwards) Color.LightGray else Color.DarkGray,
-                modifier = Modifier.padding(horizontal = 2.dp)
-            )
+            ImagePreview(chat)
+            ReplyPreview(chat)
+            Message(chat)
         }
-        Row {
-            if (chat.isOutwards) StatusIcon(
-                status = chat.status,
-                modifier = Modifier.padding(top = 3.dp)
+        Details(chat)
+    }
+}
+
+@Composable
+fun ImagePreview(chat: Chat) {
+    if (chat.imageUrl.isEmpty()) return
+    Box {
+        ChatImage(imageUrl = chat.imageUrl)
+    }
+}
+
+@Composable
+fun Message(chat: Chat) {
+    Text(
+        text = chat.message,
+        fontSize = 18.sp,
+        color = if (chat.isOutwards) Color.LightGray else Color.DarkGray,
+        modifier = Modifier.padding(start = 2.dp, end = 2.dp, top = 5.dp)
+    )
+}
+
+@Composable
+fun Details(chat: Chat) {
+    Row {
+        if (chat.isOutwards) StatusIcon(
+            status = chat.status,
+            modifier = Modifier.padding(top = 3.dp)
+        )
+        Text(
+            text = getPrettyTime(chat.sentTime),
+            color = Color.Gray,
+            fontSize = 13.sp,
+            modifier = Modifier.padding(start = 5.dp, end = 5.dp)
+        )
+    }
+}
+
+@Composable
+fun ReplyPreview(chat: Chat) {
+    if (chat.replyToChatId.isNotEmpty()) {
+        Column(
+            modifier = Modifier
+                .background(
+                    shape = RoundedCornerShape(10.dp),
+                    color = if (chat.isOutwards) Gray70 else Gray50
+                )
+                .padding(vertical = 10.dp, horizontal = 10.dp)
+        ) {
+            Text(
+                text = "You",
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold,
+                color = when {
+                    chat.isOutwards -> colorScheme.primary
+                    else -> colorScheme.onPrimary
+                }
             )
             Text(
-                text = getPrettyTime(chat.sentTime),
-                color = Color.Gray,
-                fontSize = 13.sp,
-                modifier = Modifier.padding(start = 5.dp, end = 5.dp)
+                text = chat.replyToChatId,
+                fontSize = 17.sp,
+                color = if (chat.isOutwards) Gray50 else Gray30
             )
         }
     }

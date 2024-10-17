@@ -24,7 +24,11 @@ class DbProvider {
             .build()
 }
 
-@Database(entities = [Chat::class, User::class], version = 9, exportSchema = false)
+@Database(
+    entities = [Chat::class, User::class],
+    version = 10,
+    exportSchema = false
+)
 abstract class PingDb : RoomDatabase() {
     abstract fun chatDao(): ChatDao
     abstract fun userDao(): UserDao
