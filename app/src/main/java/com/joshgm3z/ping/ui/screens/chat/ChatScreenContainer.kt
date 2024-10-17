@@ -69,8 +69,10 @@ private fun PreviewChatScreenLoading() {
 fun ChatScreenContainer(
     navController: NavHostController,
     chatViewModel: ChatViewModel = hiltViewModel(),
-    openPreview: (imageUrl: String, name: String) -> Unit = { imageUrl, name ->
-        navController.navigate(ChatImagePreview(imageUrl, name))
+    openPreview: (imageUrl: String, userId: String, name: String) -> Unit = { imageUrl, userId, name ->
+        navController.navigate(
+            ChatImagePreview(imageUrl, userId, name)
+        )
     },
 ) {
     val uiState = chatViewModel.uiState.collectAsState()
@@ -106,7 +108,7 @@ fun ChatScreen(
     onSendClick: (message: String) -> Unit = {},
     onUserInfoClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    openPreview: (imageUrl: String, name: String) -> Unit = { _, _ -> }
+    openPreview: (imageUrl: String, userId: String, name: String) -> Unit = { _, _, _ -> }
 ) {
     Column {
         ChatAppBar(
@@ -124,7 +126,7 @@ fun ChatScreen(
         InputBox(
             onSendClick = { onSendClick(it) },
             openPreview = {
-                openPreview(it, user.name)
+                openPreview(it, user.docId, user.name)
             }
         )
     }

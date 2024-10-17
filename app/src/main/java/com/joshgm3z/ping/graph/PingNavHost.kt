@@ -37,7 +37,7 @@ data object Home
 data class ChatScreen(val userId: String)
 
 @Serializable
-data class ChatImagePreview(val imageUrl: String, val name: String)
+data class ChatImagePreview(val imageUrl: String, val userId: String, val name: String)
 
 @Serializable
 data class PingDialog(val title: String, val message: String)
@@ -103,9 +103,11 @@ fun NavGraphBuilder.chatGraph(navController: NavHostController) {
     composable<ChatImagePreview> {
         val imageUrl: String = it.toRoute<ChatImagePreview>().imageUrl
         val name: String = it.toRoute<ChatImagePreview>().name
+        val userId: String = it.toRoute<ChatImagePreview>().userId
         ImagePreview(
             navController,
             name = name,
+            userId = userId,
             imageUrl = imageUrl
         )
     }
