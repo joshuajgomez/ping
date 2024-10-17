@@ -50,6 +50,7 @@ import com.joshgm3z.data.util.randomAbout
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.graph.Frx
 import com.joshgm3z.ping.graph.Home
+import com.joshgm3z.ping.graph.Welcome
 import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.common.CustomTextField3
 import com.joshgm3z.ping.ui.common.getIfNotPreview
@@ -79,7 +80,7 @@ fun NewUserInput(
             userViewModel?.refreshUserList()
             homeViewModel?.startListeningToChats()
             signInViewModel.viewModelScope.launch {
-                navController.navigate(Home)
+                navController.navigate(Welcome(it))
             }
         }
     }

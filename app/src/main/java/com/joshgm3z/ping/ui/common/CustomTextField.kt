@@ -117,7 +117,7 @@ fun CustomTextField3(
     hintText: String = "Type something",
     icon: ImageVector = Icons.Default.AlternateEmail,
     isSingleLine: Boolean = true,
-    isFocusNeeded: Boolean = true,
+    isFocusNeeded: Boolean = false,
     onTextChanged: (text: String) -> Unit = {},
     onEnterPressed: () -> Unit = {},
 ) {

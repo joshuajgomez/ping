@@ -32,7 +32,7 @@ constructor(
 
     fun onSignInClick(
         name: String,
-        onSignInComplete: () -> Unit,
+        onSignInComplete: (name: String) -> Unit,
         onNewUser: (name: String) -> Unit,
     ) {
         _uiState.value = SignInUiState.Loading("Finding you")
@@ -40,10 +40,9 @@ constructor(
             if (it == null) {
                 // new user, proceed to sign up
                 onNewUser(name)
-                _uiState.value = SignInUiState.SignUp(name)
             } else {
                 // user found, proceed to home screen
-                onSignInComplete()
+                onSignInComplete(name)
             }
         }
     }
@@ -52,7 +51,7 @@ constructor(
         name: String,
         imagePath: String,
         about: String,
-        onSignUpComplete: () -> Unit,
+        onSignUpComplete: (name: String) -> Unit,
     ) {
         _uiState.value = SignInUiState.Loading("Creating your profile")
         val user = User()
@@ -62,7 +61,7 @@ constructor(
         user.dateOfJoining = System.currentTimeMillis()
         userRepository.createUserInServer(user) { isSuccess, message ->
             if (isSuccess) {
-                onSignUpComplete()
+                onSignUpComplete(name)
             } else {
                 _uiState.value = SignInUiState.Error("Unable to create user: $message")
             }

@@ -24,6 +24,9 @@ data object SignIn
 data class SignUp(val name: String)
 
 @Serializable
+data class Welcome(val name: String)
+
+@Serializable
 data class Loading(val message: String)
 
 @Serializable
@@ -58,6 +61,9 @@ data object Credits
 
 @Serializable
 data object SignOut
+
+@Serializable
+data object GoodBye
 
 @Composable
 fun PingNavHost(startRoute: Any) {
