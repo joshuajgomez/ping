@@ -1,8 +1,6 @@
 package com.joshgm3z.ping.graph
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -12,8 +10,10 @@ import androidx.navigation.toRoute
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.chat.ImagePreview
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
-import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import kotlinx.serialization.Serializable
+
+@Serializable
+data object Parent
 
 @Serializable
 data object Frx
@@ -37,7 +37,7 @@ data object Home
 data class ChatScreen(val userId: String)
 
 @Serializable
-data class ChatImagePreview(val imageUrl: String, val userId: String, val name: String)
+data class ChatImagePreview(val imageUrl: String, val name: String)
 
 @Serializable
 data class PingDialog(val title: String, val message: String)
@@ -74,7 +74,8 @@ fun PingNavHost(startRoute: Any) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = startRoute
+        startDestination = startRoute,
+        route = Parent::class
     ) {
         frxGraph(navController)
         composable<Loading> { }
@@ -93,21 +94,14 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
 
 fun NavGraphBuilder.chatGraph(navController: NavHostController) {
     composable<ChatScreen> {
-        val userId: String = it.toRoute<ChatScreen>().userId
-        val chatViewModel: ChatViewModel = hiltViewModel()
-        LaunchedEffect(key1 = userId) {
-            chatViewModel.setUser(userId)
-        }
         ChatScreenContainer(navController = navController)
     }
     composable<ChatImagePreview> {
         val imageUrl: String = it.toRoute<ChatImagePreview>().imageUrl
         val name: String = it.toRoute<ChatImagePreview>().name
-        val userId: String = it.toRoute<ChatImagePreview>().userId
         ImagePreview(
             navController,
             name = name,
-            userId = userId,
             imageUrl = imageUrl
         )
     }

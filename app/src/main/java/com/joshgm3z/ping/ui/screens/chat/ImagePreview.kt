@@ -48,7 +48,6 @@ fun ImagePreview(
     navController: NavController = rememberNavController(),
     chatViewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() },
     name: String = "alien",
-    userId: String = "alien",
     imageUrl: String = "",
     onBackClick: () -> Unit = {
         navController.popBackStack()
@@ -58,7 +57,6 @@ fun ImagePreview(
         navController.popBackStack()
     }
 ) {
-    chatViewModel?.setUser(userId)
     SettingContainer(
         "Send image",
         onCloseClick = onBackClick

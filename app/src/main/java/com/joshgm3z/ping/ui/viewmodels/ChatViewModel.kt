@@ -1,9 +1,12 @@
 package com.joshgm3z.ping.ui.viewmodels
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
+import com.joshgm3z.ping.graph.ChatScreen
 import com.joshgm3z.ping.utils.DataUtil
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.CurrentUserInfo
@@ -26,6 +29,7 @@ sealed class ChatUiState {
 @HiltViewModel
 class ChatViewModel
 @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val chatRepository: ChatRepository,
     private val userRepository: UserRepository,
     private val currentUserInfo: CurrentUserInfo,
@@ -38,6 +42,11 @@ class ChatViewModel
 
     private lateinit var otherGuy: User
     private var me: User? = null
+
+    init {
+        val userId = savedStateHandle.toRoute<ChatScreen>().userId
+        setUser(userId)
+    }
 
     fun onSendButtonClick(
         message: String = "",
@@ -58,7 +67,7 @@ class ChatViewModel
         private var chatObserverJob: Job? = null
     }
 
-    fun setUser(userId: String) {
+    private fun setUser(userId: String) {
         chatObserverJob?.cancel()
         chatObserverJob = viewModelScope.launch {
             otherGuy = userRepository.getUser(userId)

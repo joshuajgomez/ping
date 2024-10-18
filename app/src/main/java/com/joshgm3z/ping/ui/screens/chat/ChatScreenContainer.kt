@@ -28,7 +28,6 @@ import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.graph.ChatImagePreview
 import com.joshgm3z.ping.graph.Home
-import com.joshgm3z.ping.graph.SettingRoute
 import com.joshgm3z.ping.graph.UserInfo
 import com.joshgm3z.ping.ui.viewmodels.ChatUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
@@ -69,9 +68,9 @@ private fun PreviewChatScreenLoading() {
 fun ChatScreenContainer(
     navController: NavHostController,
     chatViewModel: ChatViewModel = hiltViewModel(),
-    openPreview: (imageUrl: String, userId: String, name: String) -> Unit = { imageUrl, userId, name ->
+    openPreview: (imageUrl: String, name: String) -> Unit = { imageUrl, name ->
         navController.navigate(
-            ChatImagePreview(imageUrl, userId, name)
+            ChatImagePreview(imageUrl, name)
         )
     },
 ) {
@@ -108,7 +107,7 @@ fun ChatScreen(
     onSendClick: (message: String) -> Unit = {},
     onUserInfoClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    openPreview: (imageUrl: String, userId: String, name: String) -> Unit = { _, _, _ -> }
+    openPreview: (imageUrl: String, name: String) -> Unit = { _, _ -> }
 ) {
     Column {
         ChatAppBar(
@@ -126,7 +125,7 @@ fun ChatScreen(
         InputBox(
             onSendClick = { onSendClick(it) },
             openPreview = {
-                openPreview(it, user.docId, user.name)
+                openPreview(it, user.name)
             }
         )
     }
