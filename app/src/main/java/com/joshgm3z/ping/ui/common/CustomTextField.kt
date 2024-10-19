@@ -202,7 +202,7 @@ fun CustomTextField2(
             shapes.extraLarge,
         )
         .fillMaxWidth()
-        .height(40.dp)
+        .height(35.dp)
         .padding(horizontal = 10.dp)
         .focusRequester(focusRequester)
         .onKeyEvent {

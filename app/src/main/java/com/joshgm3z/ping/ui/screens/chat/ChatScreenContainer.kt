@@ -1,14 +1,19 @@
 package com.joshgm3z.ping.ui.screens.chat
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forum
+import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -33,6 +38,7 @@ import com.joshgm3z.ping.R
 import com.joshgm3z.ping.graph.ChatImagePreview
 import com.joshgm3z.ping.graph.Home
 import com.joshgm3z.ping.graph.UserInfo
+import com.joshgm3z.ping.ui.common.PingWallpaper
 import com.joshgm3z.ping.ui.viewmodels.ChatUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 
@@ -128,15 +134,11 @@ fun ChatScreen(
         Box(
             modifier = Modifier.weight(1f),
         ) {
-            Image(
-                painterResource(R.drawable.chat_wallpaper),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-            )
-            when {
-                chats.isNotEmpty() -> ChatList(chats)
-                else -> EmptyChat()
+            PingWallpaper {
+                when {
+                    chats.isNotEmpty() -> ChatList(chats)
+                    else -> EmptyChat()
+                }
             }
         }
         InputBox(
@@ -156,12 +158,16 @@ fun EmptyChat(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .fillMaxSize()
-            .padding(top = 150.dp),
+            .background(
+                colorScheme.surface,
+                RoundedCornerShape(20.dp)
+            )
+            .padding(20.dp)
+        ,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Icon(
-            imageVector = Icons.Default.Forum,
+            imageVector = Icons.Outlined.Forum,
             contentDescription = "empty message",
             modifier = Modifier.size(80.dp),
             tint = colorScheme.primary
@@ -169,12 +175,13 @@ fun EmptyChat(
         Text(
             text = "Say hello!",
             fontSize = 20.sp,
-            color = colorScheme.outline,
+            color = colorScheme.onSurface,
             fontWeight = FontWeight.Bold
         )
         Text(
             text = message,
-            color = colorScheme.outline
+            fontSize = 18.sp,
+            color = colorScheme.onSurface.copy(alpha = 0.5f),
         )
     }
 }
