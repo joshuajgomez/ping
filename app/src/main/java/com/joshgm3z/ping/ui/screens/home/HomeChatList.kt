@@ -149,7 +149,7 @@ fun HomeChatItem(
                 .constrainAs(image) {
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start, margin = 10.dp)
+                    start.linkTo(parent.start, margin = 15.dp)
                 },
             imageUrl = homeChat.otherGuy.imagePath
         )
@@ -160,7 +160,7 @@ fun HomeChatItem(
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier
                 .constrainAs(user) {
-                    top.linkTo(parent.top, margin = 5.dp)
+                    top.linkTo(parent.top, margin = 8.dp)
                     start.linkTo(image.end, margin = 15.dp)
                 }
                 .widthIn(max = 260.dp),
@@ -199,30 +199,29 @@ fun HomeChatItem(
             fontSize = 13.sp,
             modifier = Modifier
                 .constrainAs(time) {
-                    top.linkTo(parent.top, margin = 10.dp)
-                    end.linkTo(parent.end, margin = 10.dp)
+                    top.linkTo(user.top)
+                    end.linkTo(parent.end, margin = 15.dp)
                 },
         )
         AnimatedVisibility(
             visible = homeChat.count > 0,
             modifier = Modifier.constrainAs(count) {
-                top.linkTo(time.bottom, margin = 5.dp)
+                top.linkTo(time.bottom, margin = 3.dp)
                 end.linkTo(time.end)
             }
         ) {
             Text(
                 text = "${homeChat.count}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp,
                 color = colorScheme.primary,
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(colorScheme.primaryContainer)
-                    .padding(horizontal = 8.dp, vertical = 1.dp)
+                    .padding(horizontal = 8.dp, vertical = 0.dp)
             )
         }
         HorizontalDivider(
-            color = colorScheme.outlineVariant.copy(alpha = 0.1f),
+            color = colorScheme.outlineVariant.copy(alpha = 0.4f),
             modifier = Modifier.constrainAs(line) {
                 top.linkTo(image.bottom, margin = 10.dp)
             })

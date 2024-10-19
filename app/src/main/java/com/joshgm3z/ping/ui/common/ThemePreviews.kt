@@ -10,3 +10,6 @@ annotation class ThemePreviews
 
 @Preview(name = "Dark Mode", uiMode = UI_MODE_NIGHT_YES)
 annotation class DarkPreview
+
+@Preview(name = "Dark Mode w/ SystemUI", uiMode = UI_MODE_NIGHT_YES, showSystemUi = true)
+annotation class DarkPreviewWithSystemUi

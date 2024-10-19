@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -35,6 +36,7 @@ private fun PreviewChatImage() {
 fun ChatImage(
     modifier: Modifier = Modifier,
     imageUrl: String = "",
+    placeHolderColor: Color = colorScheme.surfaceContainerHighest,
 ) {
     var maskImage by remember { mutableStateOf(true) }
     Box(
@@ -56,7 +58,7 @@ fun ChatImage(
         AnimatedVisibility(maskImage) {
             Box(
                 Modifier
-                    .background(color = colorScheme.surfaceContainerHighest)
+                    .background(color = placeHolderColor)
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {

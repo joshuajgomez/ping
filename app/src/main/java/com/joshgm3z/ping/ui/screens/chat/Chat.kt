@@ -97,8 +97,9 @@ fun PreviewIncomingChatReply() {
 @Composable
 fun PreviewIncomingChatImage() {
     PingTheme {
-        val chat = Chat.random()
+        val chat = Chat("")
         chat.imageUrl = "im going to movie"
+        chat.isOutwards = false
         ChatItem(chat)
     }
 }
@@ -107,7 +108,7 @@ fun PreviewIncomingChatImage() {
 fun ChatItem(chat: Chat) {
     Column(
         modifier = Modifier
-            .padding(horizontal = 10.dp, vertical = 10.dp)
+            .padding(horizontal = 15.dp, vertical = 10.dp)
             .fillMaxWidth(),
         horizontalAlignment = when {
             chat.isOutwards -> Alignment.End
@@ -117,10 +118,18 @@ fun ChatItem(chat: Chat) {
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(9.dp))
-                .background(if (chat.isOutwards) Gray60 else Gray40)
+                .background(
+                    when {
+                        chat.isOutwards -> colorScheme.surfaceContainerHighest
+                        else -> colorScheme.primary
+                    }
+                )
                 .padding(horizontal = 8.dp, vertical = 8.dp)
                 .widthIn(min = 5.dp, max = 250.dp),
-            horizontalAlignment = if (chat.isOutwards) Alignment.End else Alignment.Start
+            horizontalAlignment = when {
+                chat.isOutwards -> Alignment.End
+                else -> Alignment.Start
+            }
         ) {
             ImagePreview(chat)
             ReplyPreview(chat)
@@ -134,18 +143,29 @@ fun ChatItem(chat: Chat) {
 fun ImagePreview(chat: Chat) {
     if (chat.imageUrl.isEmpty()) return
     Box {
-        ChatImage(imageUrl = chat.imageUrl)
+        ChatImage(
+            imageUrl = chat.imageUrl,
+            placeHolderColor = when {
+                chat.isOutwards -> colorScheme.surfaceContainerHighest
+                else -> colorScheme.primaryContainer.copy(alpha = 0.9f)
+            }
+        )
     }
 }
 
 @Composable
 fun Message(chat: Chat) {
-    Text(
-        text = chat.message,
-        fontSize = 18.sp,
-        color = if (chat.isOutwards) Color.LightGray else Color.DarkGray,
-        modifier = Modifier.padding(start = 2.dp, end = 2.dp, top = 5.dp)
-    )
+    if (chat.message.isNotEmpty()) {
+        Text(
+            text = chat.message,
+            fontSize = 18.sp,
+            color = when {
+                chat.isOutwards -> colorScheme.onSurface
+                else -> colorScheme.onPrimary
+            },
+            modifier = Modifier.padding(start = 2.dp, end = 2.dp, top = 5.dp)
+        )
+    }
 }
 
 @Composable
@@ -171,7 +191,10 @@ fun ReplyPreview(chat: Chat) {
             modifier = Modifier
                 .background(
                     shape = RoundedCornerShape(10.dp),
-                    color = if (chat.isOutwards) Gray70 else Gray50
+                    color = when {
+                        chat.isOutwards -> colorScheme.surfaceContainerHigh
+                        else -> colorScheme.primaryContainer.copy(alpha = 0.9f)
+                    }
                 )
                 .padding(vertical = 10.dp, horizontal = 10.dp)
         ) {
@@ -180,14 +203,17 @@ fun ReplyPreview(chat: Chat) {
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
                 color = when {
-                    chat.isOutwards -> colorScheme.primary
-                    else -> colorScheme.onPrimary
+                    chat.isOutwards -> colorScheme.onBackground
+                    else -> colorScheme.onPrimaryContainer
                 }
             )
             Text(
                 text = chat.replyToChatId,
                 fontSize = 17.sp,
-                color = if (chat.isOutwards) Gray50 else Gray30
+                color = when {
+                    chat.isOutwards -> colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    else -> colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                }
             )
         }
     }
