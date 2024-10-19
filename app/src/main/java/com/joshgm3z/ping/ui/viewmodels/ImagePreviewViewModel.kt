@@ -1,5 +1,8 @@
 package com.joshgm3z.ping.ui.viewmodels
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +14,8 @@ import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.UserRepository
 import com.joshgm3z.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,14 +32,15 @@ class ImagePreviewViewModel
     val imageUrl: String
         get() = data.imageUrl
 
-    var toName: String? = null
+    private val _toName = MutableStateFlow("")
+    val toName = _toName.asStateFlow()
 
     init {
         savedStateHandle.toRoute<ChatImagePreview>().let {
             data = it
             viewModelScope.launch {
                 userRepository.getUser(it.toUserId).let {
-                    toName = it.name
+                    _toName.value = it.name
                 }
             }
         }

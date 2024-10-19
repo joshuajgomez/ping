@@ -19,21 +19,27 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
+import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.ImagePreviewViewModel
+import com.joshgm3z.utils.Logger
+import okhttp3.internal.notifyAll
 
 @DarkPreview
 @Composable
@@ -62,24 +68,19 @@ fun ImagePreview(
         Column {
             AsyncImage(
                 model = viewModel?.imageUrl,
+                error = painterResource(R.drawable.wallpaper2),
                 contentDescription = null,
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(10.dp)),
                 contentScale = ContentScale.Crop,
             )
-            Spacer(Modifier.height(20.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Recipient(viewModel?.toName)
-                Spacer(Modifier.width(10.dp))
-                SendButton(
-                    onClick = onSendClick
-                )
-            }
+            Spacer(Modifier.height(30.dp))
+            val toName = viewModel?.toName?.collectAsState()
+            SendButton(
+                "Send to ${toName?.value ?: ""}",
+                onClick = onSendClick
+            )
         }
     }
 }
@@ -102,25 +103,14 @@ fun Recipient(name: String?) {
 
 @Composable
 private fun SendButton(
-    enabled: Boolean = true,
+    text: String,
     onClick: () -> Unit = {},
 ) {
-    IconButton(
-        enabled = enabled,
+    PingButton(
+        text,
+        icon = Icons.AutoMirrored.Default.Send,
         onClick = {
             onClick()
         },
-        modifier = Modifier.padding(end = 5.dp)
-    ) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.Send,
-            contentDescription = "send message",
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(35.dp)
-                .background(color = colorScheme.onSecondary)
-                .padding(all = 7.dp),
-            tint = colorScheme.secondary
-        )
-    }
+    )
 }
