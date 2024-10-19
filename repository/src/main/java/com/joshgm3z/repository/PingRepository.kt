@@ -1,6 +1,5 @@
 package com.joshgm3z.repository
 
-import android.net.Uri
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.firebase.FirebaseStorage
@@ -83,15 +82,20 @@ class PingRepository
         }
     }
 
-    override fun uploadNewMessage(chat: Chat) {
+    override fun uploadNewMessage(
+        chat: Chat,
+        onMessageUploaded: () -> Unit,
+    ) {
         Logger.debug("chat = [${chat}]")
         chat.status = Chat.SENT
-        firestoreDb.registerChat(chat,
-            // chat added to firestore
-            {
+        firestoreDb.registerChat(
+            chat,
+            onIdSet = {
+                // chat added to firestore
+                onMessageUploaded()
             },
-            // error adding chat
-            {
+            onError = {
+                // error adding chat
                 Logger.warn("error adding chat")
                 scope.launch {
                     chat.status = Chat.SAVED
@@ -114,6 +118,7 @@ class PingRepository
         dummy.fromUserId = chat.toUserId
         dummy.sentTime = System.currentTimeMillis()
         dummy.status = Chat.SENT
+        dummy.imageUrl = chat.imageUrl
         firestoreDb.registerChat(dummy, {}, {})
     }
 
@@ -180,20 +185,20 @@ class PingRepository
         val me = currentUserInfo.currentUser
         firestoreDb.listenForChatToOrFromUser(me.docId) {
             scope.launch {
-                it.forEach { it ->
+                it.forEach {
                     with(it) {
-                        if (toUserId == me.docId && status == Chat.SENT) {
-                            status = Chat.DELIVERED
-                            val user: User? = userDao.getUser(fromUserId)
-                            user?.let {
+                        if (toUserId == me.docId) {
+                            if (status == Chat.SENT) {
+                                status = Chat.DELIVERED
+                                val user: User = userDao.getUser(fromUserId)
                                 notificationUtil.showNotification(
                                     sentTime.toInt(),
-                                    it.name,
+                                    user.name,
                                     fromUserId,
                                     message
                                 )
+                                firestoreDb.updateChatStatus(this)
                             }
-                            firestoreDb.updateChatStatus(this)
                         } else {
                             isOutwards = true
                         }
@@ -225,8 +230,7 @@ class PingRepository
         Logger.entry()
         currentUserInfo.removeCurrentUser()
         firestoreDb.removeChatListener()
-        chatDao.clearChats()
-        userDao.clearUsers()
+        db.clearAllTables()
     }
 
     override suspend fun updateUserImageToServer(imageRes: Int) {
@@ -243,6 +247,30 @@ class PingRepository
         }
     }
 
+    override fun uploadImage(
+        chat: Chat,
+        imageUrl: String,
+        onImageSent: () -> Unit,
+        onProgress: (Int) -> Unit,
+        onError: () -> Unit,
+    ) {
+        Logger.debug("chat = [${chat}], imageUrl = [${imageUrl}]")
+        firebaseStorage.uploadImage(
+            fileName = "chat_${System.currentTimeMillis()}.jpg",
+            url = imageUrl,
+            onUploadComplete = {
+                chat.imageUrl = it
+                uploadNewMessage(chat) {
+                    onImageSent()
+                }
+            },
+            onUploadProgress = {
+                Logger.debug("$it%")
+            },
+            onUploadFailed = onError
+        )
+    }
+
     override suspend fun uploadImage(
         url: String,
         onProgress: (progress: Float) -> Unit,
@@ -251,7 +279,7 @@ class PingRepository
     ) {
         Logger.debug("uri = [${url}]")
         firebaseStorage.uploadImage(
-            fileName = "${currentUserInfo.currentUser.docId}.jpg",
+            fileName = "profile_${currentUserInfo.currentUser.docId}.jpg",
             url = url,
             onUploadComplete = {
                 if (currentUserInfo.isSignedIn) {

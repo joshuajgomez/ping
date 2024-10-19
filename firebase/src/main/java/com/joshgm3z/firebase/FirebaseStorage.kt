@@ -34,9 +34,9 @@ constructor(
     fun uploadImage(
         fileName: String,
         url: String,
-        onUploadComplete: (fileUrl: String) -> Unit,
-        onUploadProgress: (progress: Float) -> Unit,
-        onUploadFailed: () -> Unit,
+        onUploadComplete: (String) -> Unit = {},
+        onUploadProgress: (Float) -> Unit = {},
+        onUploadFailed: () -> Unit = {},
     ) {
         Logger.debug("fileName = [${fileName}], uri = [${url}]")
         val profilePicReference = storageRef.child(keyProfilePicture)

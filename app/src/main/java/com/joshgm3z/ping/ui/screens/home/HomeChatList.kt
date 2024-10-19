@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
@@ -76,6 +77,7 @@ fun PreviewHomeSentChat() {
         val homeChat = HomeChat.random()
         homeChat.lastChat.status = Chat.READ
         homeChat.lastChat.isOutwards = true
+        homeChat.lastChat.imageUrl = "true"
         HomeChatItem(homeChat)
     }
 }
@@ -86,6 +88,7 @@ fun PreviewHomeReceivedChat() {
     PingTheme {
         val homeChat = HomeChat.random()
         homeChat.lastChat.isOutwards = false
+        homeChat.lastChat.imageUrl = "true"
         HomeChatItem(homeChat)
     }
 }
@@ -171,15 +174,18 @@ fun HomeChatItem(
             modifier = Modifier.constrainAs(message) {
                 top.linkTo(user.bottom)
                 start.linkTo(user.start)
-            }) {
+            },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             AnimatedVisibility(visible = homeChat.lastChat.isOutwards) {
                 StatusIcon(
                     status = homeChat.lastChat.status,
                     modifier = Modifier
-                        .padding(end = 5.dp, top = 2.dp)
+                        .padding(end = 5.dp)
                         .size(17.dp)
                 )
             }
+            MediaIcon(homeChat)
             Text(
                 text = homeChat.lastChat.message,
                 color = colorScheme.onSurfaceVariant,
@@ -225,6 +231,20 @@ fun HomeChatItem(
             modifier = Modifier.constrainAs(line) {
                 top.linkTo(image.bottom, margin = 10.dp)
             })
+    }
+}
+
+@Composable
+fun MediaIcon(homeChat: HomeChat) {
+    if (homeChat.lastChat.imageUrl.isNotEmpty()) {
+        Icon(
+            Icons.Default.CameraAlt,
+            contentDescription = null,
+            tint = colorScheme.onSurface,
+            modifier = Modifier
+                .padding(end = 3.dp)
+                .size(17.dp)
+        )
     }
 }
 

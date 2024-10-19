@@ -64,7 +64,7 @@ class ChatViewModel
         chat.fromUserId = me!!.docId
         chat.sentTime = System.currentTimeMillis()
         viewModelScope.launch(Dispatchers.IO) {
-            chatRepository.uploadNewMessage(chat)
+            chatRepository.uploadNewMessage(chat){}
         }
     }
 

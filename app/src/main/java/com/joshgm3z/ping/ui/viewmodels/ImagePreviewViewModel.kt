@@ -1,12 +1,8 @@
 package com.joshgm3z.ping.ui.viewmodels
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import androidx.navigation.toRoute
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.graph.ChatImagePreview
@@ -19,6 +15,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed class ImagePreviewUiState {
+    data object Initial : ImagePreviewUiState()
+
+    data class Ready(
+        val imageUrl: String,
+        val toName: String
+    ) : ImagePreviewUiState()
+
+    data class Sending(
+        val imageUrl: String,
+    ) : ImagePreviewUiState()
+
+    data object Sent : ImagePreviewUiState()
+}
+
 @HiltViewModel
 class ImagePreviewViewModel
 @Inject constructor(
@@ -29,18 +40,20 @@ class ImagePreviewViewModel
 
     private val data: ChatImagePreview
 
-    val imageUrl: String
-        get() = data.imageUrl
-
-    private val _toName = MutableStateFlow("")
-    val toName = _toName.asStateFlow()
+    private val _uiState = MutableStateFlow<ImagePreviewUiState>(
+        ImagePreviewUiState.Initial
+    )
+    val uiState = _uiState.asStateFlow()
 
     init {
         savedStateHandle.toRoute<ChatImagePreview>().let {
             data = it
             viewModelScope.launch {
                 userRepository.getUser(it.toUserId).let {
-                    _toName.value = it.name
+                    _uiState.value = ImagePreviewUiState.Ready(
+                        data.imageUrl,
+                        it.name
+                    )
                 }
             }
         }
@@ -53,10 +66,27 @@ class ImagePreviewViewModel
         val chat = Chat(message = message)
         chat.toUserId = data.toUserId
         chat.fromUserId = data.myUserId
-        chat.imageUrl = data.imageUrl
         chat.sentTime = System.currentTimeMillis()
+        _uiState.value = ImagePreviewUiState.Sending(
+            data.imageUrl
+        )
         viewModelScope.launch {
-            chatRepository.uploadNewMessage(chat)
+            chatRepository.uploadImage(
+                chat,
+                data.imageUrl,
+                onImageSent = {
+                    Logger.debug("onImageSent")
+                    _uiState.value = ImagePreviewUiState.Sent
+                },
+                onProgress = {
+                    _uiState.value = ImagePreviewUiState.Sending(
+                        data.imageUrl
+                    )
+                },
+                onError = {
+                    Logger.debug("onError")
+                },
+            )
         }
     }
 

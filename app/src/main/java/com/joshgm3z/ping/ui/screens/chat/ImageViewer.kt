@@ -1,6 +1,8 @@
 package com.joshgm3z.ping.ui.screens.chat
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -124,13 +127,37 @@ fun BottomIcon(
 }
 
 @Composable
-fun ImageBox(chat: Chat, modifier: Modifier) {
-    AsyncImage(
-        chat.imageUrl,
-        contentDescription = null,
-        error = painterResource(R.drawable.wallpaper2),
-        modifier = Modifier.fillMaxSize(),
-    )
+fun ImageBox(
+    chat: Chat,
+    modifier: Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        AsyncImage(
+            chat.imageUrl,
+            contentDescription = null,
+            error = painterResource(R.drawable.default_user),
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+        )
+        Column(
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            if (chat.message.isNotEmpty()) {
+                Text(
+                    text = chat.message,
+                    fontSize = 20.sp,
+                    color = colorScheme.onSurface,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(colorScheme.surface.copy(alpha = 0.5f))
+                        .padding(20.dp)
+                )
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
