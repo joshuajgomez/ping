@@ -55,7 +55,7 @@ fun InputBox(
         Icon(
             imageVector = Icons.Outlined.CameraAlt,
             contentDescription = "open camera",
-            tint = colorScheme.onSurface.copy(alpha = 0.5f),
+            tint = colorScheme.primary,
             modifier = Modifier
                 .padding(3.dp)
                 .size(40.dp)
@@ -105,9 +105,9 @@ fun SendButton(
             modifier = Modifier
                 .clip(CircleShape)
                 .size(35.dp)
-                .background(color = colorScheme.onSecondary)
+                .background(color = colorScheme.onPrimary)
                 .padding(all = 7.dp),
-            tint = colorScheme.secondary
+            tint = colorScheme.primary
         )
     }
 }

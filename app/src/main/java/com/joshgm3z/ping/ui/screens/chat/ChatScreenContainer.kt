@@ -1,6 +1,8 @@
 package com.joshgm3z.ping.ui.screens.chat
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +29,7 @@ import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.randomUser
+import com.joshgm3z.ping.R
 import com.joshgm3z.ping.graph.ChatImagePreview
 import com.joshgm3z.ping.graph.Home
 import com.joshgm3z.ping.graph.UserInfo
@@ -117,15 +122,22 @@ fun ChatScreen(
     Column {
         ChatAppBar(
             user = user,
-            onUserInfoClick = onUserInfoClick
-        ) { onBackClick() }
-        if (chats.isNotEmpty()) {
-            ChatList(
-                modifier = Modifier.weight(1f),
-                chats = chats,
+            onUserInfoClick = onUserInfoClick,
+            onBackClick = onBackClick
+        )
+        Box(
+            modifier = Modifier.weight(1f),
+        ) {
+            Image(
+                painterResource(R.drawable.chat_wallpaper),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
             )
-        } else {
-            EmptyChat(modifier = Modifier.weight(1f))
+            when {
+                chats.isNotEmpty() -> ChatList(chats)
+                else -> EmptyChat()
+            }
         }
         InputBox(
             onSendClick = { onSendClick(it) },
@@ -137,7 +149,10 @@ fun ChatScreen(
 }
 
 @Composable
-fun EmptyChat(modifier: Modifier = Modifier, message: String = "No messages in this chat") {
+fun EmptyChat(
+    modifier: Modifier = Modifier,
+    message: String = "No messages in this chat"
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier

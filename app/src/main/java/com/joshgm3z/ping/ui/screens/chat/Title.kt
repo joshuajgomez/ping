@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.ui.screens.chat
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,41 +46,49 @@ fun ChatAppBar(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onUserInfoClick() }
+        modifier = modifier.fillMaxWidth()
     ) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-            contentDescription = "go to home",
-            tint = colorScheme.onSurface,
+        IconButton(
+            onBackClick,
             modifier = Modifier
-                .size(60.dp)
-                .padding(10.dp)
-                .clip(CircleShape)
-                .padding(5.dp)
-                .clickable { onBackClick() }
-        )
-        UserImage(
-            modifier = Modifier
-                .size(40.dp),
-            imageUrl = user.imagePath
-        )
-        Spacer(modifier = Modifier.width(15.dp))
-        Text(
-            text = user.name,
-            fontSize = 22.sp,
-            color = colorScheme.onSurface,
-            modifier = Modifier.widthIn(80.dp)
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            imageVector = Icons.Default.MoreVert,
-            contentDescription = "more options",
-            tint = colorScheme.onSurface,
-            modifier = Modifier
-                .size(60.dp)
-                .padding(15.dp)
-                .clickable {})
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                contentDescription = "go to home",
+                tint = colorScheme.onSurface,
+                modifier = Modifier
+                    .size(80.dp)
+                    .padding(5.dp)
+            )
+        }
+        Row(
+            modifier
+                .clickable { onUserInfoClick() }
+                .weight(1f),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            UserImage(
+                modifier = Modifier
+                    .size(30.dp),
+                imageUrl = user.imagePath
+            )
+            Spacer(modifier = Modifier.width(15.dp))
+            Text(
+                text = user.name,
+                fontSize = 22.sp,
+                color = colorScheme.onSurface,
+                modifier = Modifier.widthIn(80.dp)
+            )
+        }
+        IconButton({}) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = "more options",
+                tint = colorScheme.onSurface,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(60.dp)
+            )
+        }
     }
 }

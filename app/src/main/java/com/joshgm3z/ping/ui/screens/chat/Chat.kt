@@ -29,11 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.joshgm3z.ping.ui.theme.Gray30
-import com.joshgm3z.ping.ui.theme.Gray40
-import com.joshgm3z.ping.ui.theme.Gray50
-import com.joshgm3z.ping.ui.theme.Gray60
-import com.joshgm3z.ping.ui.theme.Gray70
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.model.Chat
@@ -41,10 +36,11 @@ import com.joshgm3z.ping.utils.getPrettyTime
 
 @Composable
 fun ChatList(
-    modifier: Modifier = Modifier,
     chats: List<Chat> = emptyList(),
 ) {
-    LazyColumn(reverseLayout = true, modifier = modifier) {
+    LazyColumn(
+        reverseLayout = true,
+    ) {
         items(items = chats) {
             ChatItem(chat = it)
         }
