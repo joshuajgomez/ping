@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.getChatList
@@ -66,13 +65,14 @@ private fun PreviewChatScreenLoading() {
 
 @Composable
 fun ChatScreenContainer(
-    navController: NavHostController,
+    goHome: () -> Unit = {},
     chatViewModel: ChatViewModel = hiltViewModel(),
-    openPreview: (imageUrl: String, name: String) -> Unit = { imageUrl, name ->
-        navController.navigate(
-            ChatImagePreview(imageUrl, name)
-        )
-    },
+    onUserInfoClick: (String) -> Unit = {},
+    openPreview: (
+        imageUrl: String,
+        myUserId: String,
+        toUserId: String,
+    ) -> Unit = { _, _, _ -> },
 ) {
     val uiState = chatViewModel.uiState.collectAsState()
     when (uiState.value) {
@@ -81,20 +81,25 @@ fun ChatScreenContainer(
         }
 
         is ChatUiState.Ready -> {
-            val user: User = (uiState.value as ChatUiState.Ready).you
-            val chats: List<Chat> = (uiState.value as ChatUiState.Ready).chats
+            val ready = uiState.value as ChatUiState.Ready
+            val user: User = ready.you
+            val chats: List<Chat> = ready.chats
             ChatScreen(
                 chats = chats,
                 user = user,
                 onSendClick = { chatViewModel.onSendButtonClick(it) },
-                onUserInfoClick = {
-                    navController.navigate(UserInfo(user.docId))
-                },
+                onUserInfoClick = { onUserInfoClick(user.docId) },
                 onBackClick = {
                     chatViewModel.onScreenExit()
-                    navController.navigate(Home)
+                    goHome()
                 },
-                openPreview = openPreview
+                openPreview = {
+                    openPreview(
+                        it,
+                        ready.me.docId,
+                        ready.you.docId
+                    )
+                }
             )
         }
     }
@@ -107,7 +112,7 @@ fun ChatScreen(
     onSendClick: (message: String) -> Unit = {},
     onUserInfoClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    openPreview: (imageUrl: String, name: String) -> Unit = { _, _ -> }
+    openPreview: (imageUrl: String) -> Unit = { }
 ) {
     Column {
         ChatAppBar(
@@ -125,7 +130,7 @@ fun ChatScreen(
         InputBox(
             onSendClick = { onSendClick(it) },
             openPreview = {
-                openPreview(it, user.name)
+                openPreview(it)
             }
         )
     }

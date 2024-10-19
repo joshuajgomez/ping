@@ -140,7 +140,7 @@ fun ChatItem(chat: Chat) {
 }
 
 @Composable
-fun ImagePreview(chat: Chat) {
+private fun ImagePreview(chat: Chat) {
     if (chat.imageUrl.isEmpty()) return
     Box {
         ChatImage(

@@ -2,8 +2,11 @@ package com.joshgm3z.ping.ui.screens.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowLeft
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -13,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -34,12 +38,9 @@ private fun PreviewSignOutSetting() {
 
 @Composable
 fun SignOutSetting(
-    navController: NavController = rememberNavController(),
     userViewModel: UserViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onLoggedOut: () -> Unit = {
-        navController.navigate(GoodBye)
-    },
+    onLoggedOut: () -> Unit = {},
 ) {
     var showLoading by remember { mutableStateOf(false) }
     SettingContainer(
@@ -56,16 +57,24 @@ fun SignOutSetting(
                 fontSize = 20.sp,
                 color = colorScheme.onSurface
             )
-            PingButton(
-                "Yes, sign out",
-                icon = Icons.AutoMirrored.Default.ExitToApp,
-                containerColor = colorScheme.onError,
-                isShowLoading = showLoading,
-                onClick = {
-                    showLoading = true
-                    userViewModel.onSignOutClicked(onLoggedOut)
-                }
-            )
+            Column {
+                PingButton(
+                    "Yes, sign out",
+                    icon = Icons.AutoMirrored.Default.ExitToApp,
+                    containerColor = colorScheme.onError,
+                    isShowLoading = showLoading,
+                    onClick = {
+                        showLoading = true
+                        userViewModel.onSignOutClicked(onLoggedOut)
+                    }
+                )
+                Spacer(Modifier.height(20.dp))
+                PingButton(
+                    "No, keep me signed in",
+                    icon = Icons.AutoMirrored.Default.ArrowLeft,
+                    onClick = onBackClick
+                )
+            }
         }
     }
 }

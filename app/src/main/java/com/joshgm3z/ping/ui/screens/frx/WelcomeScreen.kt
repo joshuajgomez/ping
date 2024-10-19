@@ -13,9 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.joshgm3z.ping.graph.Home
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.theme.Green40
@@ -31,11 +28,8 @@ fun PreviewWelcomeScreen() {
 
 @Composable
 fun WelcomeScreen(
-    navController: NavHostController = rememberNavController(),
     name: String = "Alien",
-    onClick: () -> Unit = {
-        navController.navigate(Home)
-    }
+    onClick: () -> Unit = {}
 ) {
     Column(
         verticalArrangement = Arrangement.SpaceBetween,

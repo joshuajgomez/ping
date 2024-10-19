@@ -19,8 +19,11 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.randomUser
+import com.joshgm3z.ping.graph.ChatImagePreview
+import com.joshgm3z.ping.graph.UserInfo
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getIfNotPreview
@@ -34,6 +37,12 @@ fun PreviewUserInfo() {
         UserInfo()
     }
 }
+
+fun NavController.navigateToUserInfo(
+    userId: String,
+) = navigate(
+    UserInfo(userId)
+)
 
 @Composable
 fun UserInfo(

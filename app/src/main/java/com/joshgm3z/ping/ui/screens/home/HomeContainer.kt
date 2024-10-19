@@ -29,7 +29,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.joshgm3z.ping.graph.ChatScreen
-import com.joshgm3z.ping.graph.SettingRoute
+import com.joshgm3z.ping.graph.Home
 import com.joshgm3z.ping.ui.screens.search.UserContainer
 import com.joshgm3z.ping.ui.screens.search.UserList
 import com.joshgm3z.ping.ui.screens.settings.MainSettingsScreen

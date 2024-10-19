@@ -33,7 +33,7 @@ import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
+import com.joshgm3z.ping.ui.viewmodels.ImagePreviewViewModel
 
 @DarkPreview
 @Composable
@@ -46,14 +46,12 @@ private fun PreviewImagePreview() {
 @Composable
 fun ImagePreview(
     navController: NavController = rememberNavController(),
-    chatViewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() },
-    name: String = "alien",
-    imageUrl: String = "",
+    viewModel: ImagePreviewViewModel? = getIfNotPreview { hiltViewModel() },
     onBackClick: () -> Unit = {
         navController.popBackStack()
     },
     onSendClick: () -> Unit = {
-        chatViewModel?.onSendButtonClick(imageUrl = imageUrl)
+        viewModel?.onSendButtonClick()
         navController.popBackStack()
     }
 ) {
@@ -63,7 +61,7 @@ fun ImagePreview(
     ) {
         Column {
             AsyncImage(
-                model = imageUrl,
+                model = viewModel?.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .weight(1f)
@@ -76,7 +74,7 @@ fun ImagePreview(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Recipient(name)
+                Recipient(viewModel?.toName)
                 Spacer(Modifier.width(10.dp))
                 SendButton(
                     onClick = onSendClick
@@ -87,7 +85,8 @@ fun ImagePreview(
 }
 
 @Composable
-fun Recipient(name: String) {
+fun Recipient(name: String?) {
+    if (name.isNullOrEmpty()) return
     Text(
         name,
         fontSize = 20.sp,

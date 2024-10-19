@@ -1,15 +1,16 @@
 package com.joshgm3z.ping.graph
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.chat.ImagePreview
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
+import com.joshgm3z.ping.ui.screens.settings.navigateToUserInfo
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -33,11 +34,28 @@ data class Loading(val message: String)
 @Serializable
 data object Home
 
+fun NavController.navigateToHome(
+) = navigate(Home)
+
 @Serializable
 data class ChatScreen(val userId: String)
 
 @Serializable
-data class ChatImagePreview(val imageUrl: String, val name: String)
+data class ChatImagePreview(
+    val imageUrl: String,
+    val myUserId: String,
+    val toUserId: String,
+)
+
+fun NavController.navigateToImagePreview(
+    imageUrl: String,
+    myUserId: String,
+    toUserId: String,
+) = navigate(
+    ChatImagePreview(
+        imageUrl, myUserId, toUserId
+    )
+)
 
 @Serializable
 data class PingDialog(val title: String, val message: String)
@@ -69,6 +87,10 @@ data object SignOut
 @Serializable
 data object GoodBye
 
+fun NavController.navigateToGoodBye() = navigate(GoodBye)
+
+fun NavController.goBack() = popBackStack()
+
 @Composable
 fun PingNavHost(startRoute: Any) {
     val navController = rememberNavController()
@@ -94,15 +116,15 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
 
 fun NavGraphBuilder.chatGraph(navController: NavHostController) {
     composable<ChatScreen> {
-        ChatScreenContainer(navController = navController)
+        ChatScreenContainer(
+            goHome = navController::navigateToHome,
+            openPreview = navController::navigateToImagePreview,
+            onUserInfoClick = navController::navigateToUserInfo
+        )
     }
     composable<ChatImagePreview> {
-        val imageUrl: String = it.toRoute<ChatImagePreview>().imageUrl
-        val name: String = it.toRoute<ChatImagePreview>().name
         ImagePreview(
             navController,
-            name = name,
-            imageUrl = imageUrl
         )
     }
 }

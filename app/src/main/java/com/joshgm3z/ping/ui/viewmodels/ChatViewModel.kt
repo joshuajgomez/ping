@@ -22,7 +22,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class ChatUiState {
-    data class Ready(val you: User, val chats: List<Chat>) : ChatUiState()
+    data class Ready(
+        val me: User,
+        val you: User,
+        val chats: List<Chat>
+    ) : ChatUiState()
+
     data class Loading(val message: String) : ChatUiState()
 }
 
@@ -41,7 +46,9 @@ class ChatViewModel
     val uiState: StateFlow<ChatUiState> = _uiState
 
     private lateinit var otherGuy: User
-    private var me: User? = null
+
+    private val me: User
+        get() = currentUserInfo.currentUser
 
     init {
         val userId = savedStateHandle.toRoute<ChatScreen>().userId
@@ -50,13 +57,11 @@ class ChatViewModel
 
     fun onSendButtonClick(
         message: String = "",
-        imageUrl: String = ""
     ) {
         Logger.debug("message = [${message}]")
         val chat = Chat(message = message)
         chat.toUserId = otherGuy.docId
         chat.fromUserId = me!!.docId
-        chat.imageUrl = imageUrl
         chat.sentTime = System.currentTimeMillis()
         viewModelScope.launch(Dispatchers.IO) {
             chatRepository.uploadNewMessage(chat)
@@ -71,13 +76,12 @@ class ChatViewModel
         chatObserverJob?.cancel()
         chatObserverJob = viewModelScope.launch {
             otherGuy = userRepository.getUser(userId)
-            me = currentUserInfo.currentUser
             Logger.debug("setUser otherGuy = [${otherGuy}]")
             chatRepository.observeChatsForUserLocal(userId = otherGuy.docId).cancellable()
                 .collect {
                     Logger.debug("collect.user = [${otherGuy}], chats = [$it]")
-                    val chats = dataUtil.markOutwardChats(me!!.docId, ArrayList(it))
-                    _uiState.value = ChatUiState.Ready(otherGuy, chats)
+                    val chats = dataUtil.markOutwardChats(me.docId, ArrayList(it))
+                    _uiState.value = ChatUiState.Ready(me, otherGuy, chats)
                     chatRepository.updateChatStatusToServer(Chat.READ, chats)
                 }
         }
