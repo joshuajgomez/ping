@@ -1,6 +1,7 @@
 package com.joshgm3z.ping.ui.screens.frx
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -38,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.joshgm3z.ping.R
 import com.joshgm3z.ping.graph.SignUp
 import com.joshgm3z.ping.graph.Welcome
 import com.joshgm3z.ping.ui.common.CustomTextField3
@@ -80,107 +85,132 @@ fun SignInInput(
             modifier = Modifier
                 .padding(
                     horizontal = 20.dp,
-                    vertical = 70.dp
+                    vertical = 50.dp
                 )
         ) {
+            Logo()
 
-            Text(
-                "Welcome to",
-                color = colorScheme.onSurface,
-                fontSize = 40.sp,
+            Box(modifier = Modifier.weight(1f))
+
+            SignInContent(
+                signInViewModel = signInViewModel,
+                onSignInComplete = onSignInComplete,
+                goToSignUp = goToSignUp,
             )
-            Text(
-                "ping!",
-                color = Green40,
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Italic,
-                fontSize = 60.sp
+        }
+    }
+}
+
+@Composable
+fun Logo(modifier: Modifier = Modifier.padding(top = 80.dp)) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .height(200.dp)
+            .fillMaxWidth()
+    ) {
+        Text(
+            "welcome to",
+            color = colorScheme.onSurface,
+            fontSize = 60.sp,
+            fontStyle = FontStyle.Italic,
+            fontWeight = FontWeight.ExtraLight
+        )
+        Text(
+            "ping",
+            color = Green40,
+            fontSize = 100.sp,
+            fontWeight = FontWeight.ExtraBold
+        )
+    }
+}
+
+@Composable
+fun SignInContent(
+    signInViewModel: SignInViewModel?,
+    onSignInComplete: (String) -> Unit = {},
+    goToSignUp: (String) -> Unit = {},
+) {
+    Text(
+        text = "Sign in",
+        color = colorScheme.onSurface,
+        fontSize = 30.sp,
+    )
+    var name by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf("") }
+
+    Spacer(Modifier.height(20.dp))
+    Column(
+        modifier = Modifier
+            .clip(RoundedCornerShape(10.dp))
+            .background(
+                color = colorScheme.surfaceContainerHigh
             )
+    ) {
+        CustomTextField3(
+            text = name,
+            icon = Icons.Default.AlternateEmail,
+            hintText = "enter your name",
+            onTextChanged = {
+                name = it
+                error = ""
+            })
+        HorizontalDivider(thickness = 1.dp)
+        CustomTextField3(
+            text = password,
+            icon = Icons.Default.Lock,
+            hintText = "enter password",
+            onTextChanged = {
+                password = it
+                error = ""
+            })
+    }
 
-            Spacer(Modifier.height(100.dp))
+    Spacer(Modifier.height(10.dp))
+    ErrorText(error)
 
-            Text(
-                text = "Sign in",
-                color = colorScheme.onSurface,
-                fontSize = 30.sp,
-            )
-            var name by remember { mutableStateOf("") }
-            var password by remember { mutableStateOf("") }
-            var error by remember { mutableStateOf("") }
-
-            Spacer(Modifier.height(20.dp))
-            Column(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(
-                        color = colorScheme.surfaceContainerHighest
-                    )
-            ) {
-                CustomTextField3(
-                    text = name,
-                    icon = Icons.Default.AlternateEmail,
-                    hintText = "enter your name",
-                    onTextChanged = {
-                        name = it
-                        error = ""
-                    })
-                HorizontalDivider(thickness = 1.dp)
-                CustomTextField3(
-                    text = password,
-                    icon = Icons.Default.Lock,
-                    hintText = "enter password",
-                    onTextChanged = {
-                        password = it
-                        error = ""
-                    })
-            }
-
-            Spacer(Modifier.height(10.dp))
-            ErrorText(error)
-
-            Spacer(Modifier.height(30.dp))
-            var showLoading by remember { mutableStateOf(false) }
-            SignInButton(
-                showLoading,
-                onClick = {
-                    when {
-                        name.isNotEmpty() -> {
-                            error = ""
-                            showLoading = true
-                            signInViewModel?.onSignInClick(
-                                name,
-                                onSignInComplete = onSignInComplete,
-                                onNewUser = {
-                                    showLoading = false
-                                    error = "User not found"
-                                },
-                                onError = {
-                                    error = it
-                                }
-                            )
+    Spacer(Modifier.height(30.dp))
+    var showLoading by remember { mutableStateOf(false) }
+    SignInButton(
+        showLoading,
+        onClick = {
+            when {
+                name.isNotEmpty() -> {
+                    error = ""
+                    showLoading = true
+                    signInViewModel?.onSignInClick(
+                        name,
+                        onSignInComplete = onSignInComplete,
+                        onNewUser = {
+                            showLoading = false
+                            error = "User not found"
+                        },
+                        onError = {
+                            error = it
                         }
-
-                        name.length <= 3 -> error = "Should be more that 3 letters"
-                        else -> error = "Name cannot be empty"
-                    }
-                },
-            )
-            Spacer(Modifier.height(20.dp))
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TextButton(
-                    onClick = { goToSignUp(name) },
-                ) {
-                    Text(
-                        text = "New user? Sign up",
-                        textDecoration = TextDecoration.Underline,
-                        fontSize = 16.sp,
-                        color = Green40
                     )
                 }
+
+                name.length <= 3 -> error = "Should be more that 3 letters"
+                else -> error = "Name cannot be empty"
             }
+        },
+    )
+    Spacer(Modifier.height(20.dp))
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TextButton(
+            onClick = { goToSignUp(name) },
+        ) {
+            Text(
+                text = "New user? Sign up",
+                textDecoration = TextDecoration.Underline,
+                fontSize = 16.sp,
+                color = Green40
+            )
         }
     }
 }
@@ -211,16 +241,11 @@ fun ErrorText(error: String) {
 @Composable
 fun Wallpaper() {
     Box(modifier = Modifier.fillMaxSize()) {
-        /*Image(
-            painter = painterResource(R.drawable.wallpaper2),
+        Image(
+            painter = painterResource(R.drawable.chat_wallpaper),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
-        Box(
-            modifier = Modifier
-                .background(Color.Black.copy(alpha = 0.6f))
-                .fillMaxSize()
-        ) {}*/
     }
 }
