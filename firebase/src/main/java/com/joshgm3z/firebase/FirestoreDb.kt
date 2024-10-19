@@ -45,24 +45,39 @@ constructor(
             }
     }
 
-    fun checkUser(name: String, onCheckComplete: (user: User?) -> Unit) {
+    fun checkUser(
+        name: String,
+        onCheckComplete: (user: User) -> Unit,
+        onNotFound: () -> Unit,
+        onCheckError: () -> Unit,
+    ) {
         firebaseLogger.debug("checking user for sign in: $name")
         Logger.debug("name = [${name}]")
         firestore.collection(keyCollectionUserList)
             .get()
             .addOnSuccessListener { result ->
-                var user: User? = null
-                if (!result.isEmpty)
-                    user = FirestoreConverter.findUserFromDocument(name, result)
-                onCheckComplete(user)
+                if (!result.isEmpty) {
+                    val user = FirestoreConverter.findUserFromDocument(name, result)
+                    if (user != null) {
+                        onCheckComplete(user)
+                    } else {
+                        onNotFound()
+                    }
+                } else {
+                    onNotFound()
+                }
             }
             .addOnFailureListener {
                 Logger.error(it.message.toString())
-                onCheckComplete(null)
+                onCheckError()
             }
     }
 
-    fun createUser(user: User, onUserCreated: (user: User?, message: String) -> Unit) {
+    fun createUser(
+        user: User,
+        onUserCreated: (user: User) -> Unit,
+        onError: (message: String) -> Unit,
+    ) {
         Logger.debug("user = [${user}]")
         val userDoc = FirestoreConverter.getDocumentFromUser(user)
         firestore.collection(keyCollectionUserList)
@@ -71,11 +86,11 @@ constructor(
                 Logger.debug("user created: ${user.name} with id: ${it.id}")
                 firebaseLogger.debug("user created: ${user.name} with id: ${it.id}")
                 user.docId = it.id
-                onUserCreated(user, "")
+                onUserCreated(user)
             }
             .addOnFailureListener {
                 Logger.error("unable to create user: ${it.message}")
-                onUserCreated(null, it.message.toString())
+                onError(it.message.toString())
             }
     }
 

@@ -8,11 +8,17 @@ interface UserRepository {
 
     fun syncUserListWithServer(onUserListUpdated: () -> Unit)
 
-    fun checkUserInServer(name: String, onCheckComplete: (user: User?) -> Unit)
+    fun checkUserInServer(
+        name: String,
+        onCheckComplete: (user: User) -> Unit,
+        onNotFound: () -> Unit,
+        onCheckError: () -> Unit,
+    )
 
     fun createUserInServer(
         user: User,
-        registerComplete: (isSuccess: Boolean, message: String) -> Unit,
+        registerComplete: (name: String) -> Unit,
+        onError: (message: String) -> Unit,
     )
 
     suspend fun getUser(userId: String): User

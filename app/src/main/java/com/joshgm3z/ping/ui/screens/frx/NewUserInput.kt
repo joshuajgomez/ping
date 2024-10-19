@@ -1,9 +1,7 @@
 package com.joshgm3z.ping.ui.screens.frx
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,10 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EditNote
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -31,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -46,19 +41,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.joshgm3z.data.util.randomAbout
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.graph.Frx
-import com.joshgm3z.ping.graph.Home
 import com.joshgm3z.ping.graph.Welcome
-import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.common.CustomTextField3
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
+import com.joshgm3z.ping.ui.viewmodels.SignUpViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import kotlinx.coroutines.launch
+import kotlin.math.sign
 
 @Preview
 @Composable
@@ -72,17 +66,10 @@ fun PreviewNewUserInput() {
 fun NewUserInput(
     navController: NavController = rememberNavController(),
     inputName: String = "",
-    signInViewModel: SignInViewModel? = getIfNotPreview { hiltViewModel() },
-    userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
-    homeViewModel: HomeViewModel? = getIfNotPreview { hiltViewModel() },
-    onSignUpClick: (name: String, imagePath: String, about: String) -> Unit = { name, imagePath, about ->
-        signInViewModel?.onSignUpClick(name, imagePath, about) {
-            userViewModel?.refreshUserList()
-            homeViewModel?.startListeningToChats()
-            signInViewModel.viewModelScope.launch {
-                navController.navigate(Welcome(it))
-            }
-        }
+    signUpViewModel: SignUpViewModel? = getIfNotPreview { hiltViewModel() },
+    onSignUpComplete: (name: String) -> Unit = {
+        signUpViewModel?.refreshUserList()
+        navController.navigate(Welcome(it))
     }
 ) {
     Box(
@@ -182,7 +169,13 @@ fun NewUserInput(
                     when {
                         name.isNotEmpty() -> {
                             showLoading = true
-                            onSignUpClick(name, imagePath, about)
+                            signUpViewModel?.onSignUpClick(
+                                name,
+                                imagePath,
+                                about,
+                                onSignUpComplete = onSignUpComplete,
+                                onSignUpError = { error = it },
+                            )
                         }
 
                         name.length <= 3 -> error = "Should be more that 3 letters"

@@ -116,35 +116,46 @@ class PingRepository
         firestoreDb.registerChat(dummy, {}, {})
     }
 
-    override fun checkUserInServer(name: String, onCheckComplete: (user: User?) -> Unit) {
+    override fun checkUserInServer(
+        name: String,
+        onCheckComplete: (user: User) -> Unit,
+        onNotFound: () -> Unit,
+        onCheckError: () -> Unit,
+    ) {
         Logger.info("name=$name")
-        firestoreDb.checkUser(name) {
-            scope.launch {
-                if (it != null) {
+        firestoreDb.checkUser(
+            name,
+            onCheckComplete = {
+                scope.launch {
                     currentUserInfo.currentUser = it
                     observerChatsForMeFromServer()
                 }
-            }
-            onCheckComplete(it)
-        }
+                onCheckComplete(it)
+            },
+            onNotFound = onNotFound,
+            onCheckError = onCheckError,
+        )
+
     }
 
     override fun createUserInServer(
         user: User,
-        registerComplete: (isSuccess: Boolean, message: String) -> Unit,
+        registerComplete: (name: String) -> Unit,
+        onError: (message: String) -> Unit,
     ) {
         Logger.entry
-        firestoreDb.createUser(user) { _user, message ->
-            if (_user != null) {
+        firestoreDb.createUser(
+            user,
+            onUserCreated = {
                 scope.launch {
-                    currentUserInfo.currentUser = _user
+                    currentUserInfo.currentUser = it
                     observerChatsForMeFromServer()
-                    registerComplete(true, message)
+                    registerComplete(it.name)
                 }
-            } else {
-                registerComplete(false, message)
-            }
-        }
+            },
+            onError = onError
+        )
+
     }
 
     override suspend fun getUser(userId: String): User =

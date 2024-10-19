@@ -13,6 +13,15 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
+import javax.inject.Qualifier
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class MainThread
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class IoThread
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -20,8 +29,13 @@ class AppModule {
     @Provides
     fun provideContext(@ApplicationContext context: Context) = context
 
+    @MainThread
+    @Provides
+    fun provideMainScope(): CoroutineScope = CoroutineScope(Dispatchers.Main)
+
     @Provides
     fun provideScope(): CoroutineScope = CoroutineScope(Dispatchers.IO)
+
 }
 
 @HiltAndroidApp

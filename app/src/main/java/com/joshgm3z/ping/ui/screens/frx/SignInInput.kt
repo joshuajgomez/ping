@@ -153,6 +153,9 @@ fun SignInInput(
                                 onNewUser = {
                                     showLoading = false
                                     error = "User not found"
+                                },
+                                onError = {
+                                    error = it
                                 }
                             )
                         }
