@@ -122,25 +122,3 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
         HomeScreenContainer(navController = navController)
     }
 }
-
-fun NavGraphBuilder.chatGraph(navController: NavHostController) {
-    composable<ChatScreen> {
-        ChatScreenContainer(
-            goHome = navController::navigateToHome,
-            openPreview = navController::navigateToImagePreview,
-            onUserInfoClick = navController::navigateToUserInfo
-        )
-    }
-    composable<ChatImagePreview> {
-        ImagePreview(
-            navController,
-        )
-    }
-}
-
-
-
-
-
-
-

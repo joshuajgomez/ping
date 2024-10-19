@@ -1,6 +1,7 @@
 package com.joshgm3z.ping.ui.screens.chat
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,13 +39,19 @@ import com.joshgm3z.ping.utils.getPrettyTime
 @Composable
 fun ChatList(
     chats: List<Chat> = emptyList(),
+    onImageClick: (String) -> Unit,
 ) {
     LazyColumn(
         reverseLayout = true,
         modifier = Modifier.fillMaxSize(),
     ) {
         items(items = chats) {
-            ChatItem(chat = it)
+            ChatItem(
+                chat = it,
+                onImageClick = {
+                    onImageClick(it.docId)
+                }
+            )
         }
     }
 }
@@ -103,7 +110,10 @@ fun PreviewIncomingChatImage() {
 }
 
 @Composable
-fun ChatItem(chat: Chat) {
+fun ChatItem(
+    chat: Chat,
+    onImageClick: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 15.dp, vertical = 10.dp)
@@ -129,7 +139,7 @@ fun ChatItem(chat: Chat) {
                 else -> Alignment.Start
             }
         ) {
-            ImagePreview(chat)
+            ImagePreview(chat, onImageClick)
             ReplyPreview(chat)
             Message(chat)
         }
@@ -138,9 +148,12 @@ fun ChatItem(chat: Chat) {
 }
 
 @Composable
-private fun ImagePreview(chat: Chat) {
+private fun ImagePreview(
+    chat: Chat,
+    onImageClick: () -> Unit,
+) {
     if (chat.imageUrl.isEmpty()) return
-    Box {
+    Box(Modifier.clickable { onImageClick() }) {
         ChatImage(
             imageUrl = chat.imageUrl,
             placeHolderColor = when {

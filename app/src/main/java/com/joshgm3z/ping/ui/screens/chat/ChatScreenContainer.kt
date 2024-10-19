@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -84,6 +85,7 @@ fun ChatScreenContainer(
         myUserId: String,
         toUserId: String,
     ) -> Unit = { _, _, _ -> },
+    onImageClick: (String) -> Unit = {}
 ) {
     val uiState = chatViewModel.uiState.collectAsState()
     when (uiState.value) {
@@ -110,7 +112,8 @@ fun ChatScreenContainer(
                         ready.me.docId,
                         ready.you.docId
                     )
-                }
+                },
+                onImageClick = onImageClick,
             )
         }
     }
@@ -123,7 +126,8 @@ fun ChatScreen(
     onSendClick: (message: String) -> Unit = {},
     onUserInfoClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    openPreview: (imageUrl: String) -> Unit = { }
+    openPreview: (imageUrl: String) -> Unit = { },
+    onImageClick: (chatId: String) -> Unit = { },
 ) {
     Column {
         ChatAppBar(
@@ -136,7 +140,7 @@ fun ChatScreen(
         ) {
             PingWallpaper {
                 when {
-                    chats.isNotEmpty() -> ChatList(chats)
+                    chats.isNotEmpty() -> ChatList(chats, onImageClick)
                     else -> EmptyChat()
                 }
             }
@@ -153,7 +157,7 @@ fun ChatScreen(
 @Composable
 fun EmptyChat(
     modifier: Modifier = Modifier,
-    message: String = "No messages in this chat"
+    message: String = "No messages in this chat. Start a conversation"
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -162,9 +166,9 @@ fun EmptyChat(
                 colorScheme.surface,
                 RoundedCornerShape(20.dp)
             )
-            .padding(20.dp)
-        ,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+            .padding(30.dp)
+            .width(250.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Icon(
             imageVector = Icons.Outlined.Forum,
@@ -182,6 +186,7 @@ fun EmptyChat(
             text = message,
             fontSize = 18.sp,
             color = colorScheme.onSurface.copy(alpha = 0.5f),
+            textAlign = TextAlign.Center
         )
     }
 }

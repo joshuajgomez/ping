@@ -34,6 +34,9 @@ interface ChatDao {
 
     @Query("delete from Chat")
     fun clearChats()
+
+    @Query("select * from Chat where docId = :chatId")
+    fun getChat(chatId: String): Flow<List<Chat>>
 }
 
 @Dao

@@ -18,9 +18,7 @@ data class Chat(
     var replyToChatId: String = ""
     var status: Long = SAVED
     var imageUrl: String = ""
-
-    @Ignore
-    var isOutwards: Boolean = true
+    var isOutwards: Boolean = false
 
     companion object {
         fun random(message: String = randomMessage()): Chat {

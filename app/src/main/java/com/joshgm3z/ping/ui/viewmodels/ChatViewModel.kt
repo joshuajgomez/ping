@@ -80,9 +80,9 @@ class ChatViewModel
             chatRepository.observeChatsForUserLocal(userId = otherGuy.docId).cancellable()
                 .collect {
                     Logger.debug("collect.user = [${otherGuy}], chats = [$it]")
-                    val chats = dataUtil.markOutwardChats(me.docId, ArrayList(it))
-                    _uiState.value = ChatUiState.Ready(me, otherGuy, chats)
-                    chatRepository.updateChatStatusToServer(Chat.READ, chats)
+//                    val chats = dataUtil.markOutwardChats(me.docId, ArrayList(it))
+                    _uiState.value = ChatUiState.Ready(me, otherGuy, it)
+                    chatRepository.updateChatStatusToServer(Chat.READ, it)
                 }
         }
     }

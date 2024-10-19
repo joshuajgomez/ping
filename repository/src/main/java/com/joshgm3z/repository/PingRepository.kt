@@ -20,6 +20,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -179,18 +180,22 @@ class PingRepository
         val me = currentUserInfo.currentUser
         firestoreDb.listenForChatToOrFromUser(me.docId) {
             scope.launch {
-                it.forEach {
+                it.forEach { it ->
                     with(it) {
                         if (toUserId == me.docId && status == Chat.SENT) {
                             status = Chat.DELIVERED
-                            val user = userDao.getUser(fromUserId)
-                            notificationUtil.showNotification(
-                                sentTime.toInt(),
-                                user.name,
-                                fromUserId,
-                                message
-                            )
+                            val user: User? = userDao.getUser(fromUserId)
+                            user?.let {
+                                notificationUtil.showNotification(
+                                    sentTime.toInt(),
+                                    it.name,
+                                    fromUserId,
+                                    message
+                                )
+                            }
                             firestoreDb.updateChatStatus(this)
+                        } else {
+                            isOutwards = true
                         }
                         chatDao.insert(this)
                     }
@@ -212,6 +217,9 @@ class PingRepository
                 }
             }
         }
+
+    override suspend fun getChat(chatId: String): Chat =
+        chatDao.getChat(chatId).first().first()
 
     override suspend fun signOutUser() {
         Logger.entry()
