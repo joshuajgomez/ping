@@ -46,8 +46,10 @@ import androidx.navigation.compose.rememberNavController
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.graph.Frx
 import com.joshgm3z.ping.graph.Welcome
+import com.joshgm3z.ping.graph.goBack
 import com.joshgm3z.ping.ui.common.CustomTextField3
 import com.joshgm3z.ping.ui.common.getIfNotPreview
+import com.joshgm3z.ping.ui.common.navigateToLoading
 import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
@@ -76,7 +78,13 @@ fun NewUserInput(
     },
     goToSignIn: () -> Unit = {
         navController.navigate(Frx)
-    }
+    },
+    showLoading: (Boolean) -> Unit = {
+        when {
+            it -> navController.navigateToLoading("Signing up")
+            else -> navController.goBack()
+        }
+    },
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -97,6 +105,7 @@ fun NewUserInput(
                 signUpViewModel,
                 onSignUpComplete = onSignUpComplete,
                 goToSignIn = goToSignIn,
+                showLoading = showLoading,
             )
         }
     }
@@ -108,6 +117,7 @@ fun SignUpContent(
     signUpViewModel: SignUpViewModel?,
     onSignUpComplete: (String) -> Unit = {},
     goToSignIn: () -> Unit,
+    showLoading: (Boolean) -> Unit,
 ) {
     Text(
         text = "Sign up",
@@ -170,20 +180,24 @@ fun SignUpContent(
     ErrorText(error)
 
     Spacer(Modifier.height(30.dp))
-    var showLoading by remember { mutableStateOf(false) }
+    var isShowLoading by remember { mutableStateOf(false) }
     SignInButton(
-        showLoading,
-        text = if (showLoading) "Signing up" else "Sign up",
+        isShowLoading,
+        text = if (isShowLoading) "Signing up" else "Sign up",
         onClick = {
             when {
                 name.isNotEmpty() -> {
-                    showLoading = true
+                    isShowLoading = true
+                    showLoading(true)
                     signUpViewModel?.onSignUpClick(
                         name,
                         imagePath,
                         about,
                         onSignUpComplete = onSignUpComplete,
-                        onSignUpError = { error = it },
+                        onSignUpError = {
+                            error = it
+                            showLoading(false)
+                        },
                     )
                 }
 

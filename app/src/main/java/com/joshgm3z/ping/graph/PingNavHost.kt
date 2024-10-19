@@ -7,6 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.chat.ImagePreview
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
@@ -100,11 +102,18 @@ fun PingNavHost(startRoute: Any) {
         route = Parent::class
     ) {
         frxGraph(navController)
-        composable<Loading> { }
+        loadingGraph(navController)
         homeGraph(navController)
         chatGraph(navController)
         settingGraph(navController)
         dialogGraph(navController)
+    }
+}
+
+fun NavGraphBuilder.loadingGraph(navController: NavHostController) {
+    composable<Loading> {
+        val message = it.toRoute<Loading>().message
+        LoadingContainer(message)
     }
 }
 
