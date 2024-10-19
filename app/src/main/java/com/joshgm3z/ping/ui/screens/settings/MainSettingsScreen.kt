@@ -61,7 +61,7 @@ fun MainSettingsScreen(
     modifier: Modifier = Modifier,
     navController: NavController = rememberNavController(),
 ) {
-    val settingRouteList = listOf(
+    val settingRouteList1 = listOf(
         Setting(
             "Profile",
             "Edit profile details"
@@ -80,9 +80,11 @@ fun MainSettingsScreen(
         ) {
             navController.navigate(Notifications)
         },
+    )
+
+    val settingRouteList2 = listOf(
         Setting(
             "Sign out",
-            "Sign out from ping profile",
             icon = Icons.Default.Output
         ) {
             navController.navigate(SignOut)
@@ -98,7 +100,9 @@ fun MainSettingsScreen(
             navController.navigate(Profile)
         }
         Spacer(Modifier.height(20.dp))
-        SettingListCard(settingRouteList)
+        SettingListCard(settingRouteList1)
+        Spacer(Modifier.height(20.dp))
+        SettingListCard(settingRouteList2)
     }
 }
 

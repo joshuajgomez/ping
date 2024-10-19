@@ -2,10 +2,12 @@ package com.joshgm3z.ping.ui.screens.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,6 +34,7 @@ import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.theme.Green50
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.theme.Red10
+import com.joshgm3z.ping.ui.theme.Red20
 
 @DarkPreview
 @Composable
@@ -46,11 +49,11 @@ private fun PreviewSettingListCard() {
 }
 
 data class Setting(
-    val title: String = "Do something",
-    val subTitle: String = "Why we are doing this thing",
+    val title: String = "",
+    val subTitle: String = "",
     val icon: ImageVector? = null,
     val enabled: Boolean = true,
-    val color: Color? = null,
+    val textColor: Color? = null,
     val action: () -> Unit = {},
 ) {
     companion object {
@@ -58,8 +61,9 @@ data class Setting(
             Setting(),
             Setting(icon = Icons.Default.CameraAlt, title = "Open camera"),
             Setting(icon = Icons.Default.ModeFanOff, title = "Turn off fan"),
-            Setting(color = Green50),
-            Setting(color = Red10),
+            Setting(textColor = Green50),
+            Setting(textColor = Red20),
+            Setting(icon = Icons.Default.ModeFanOff, textColor = Red20, subTitle = ""),
             Setting(enabled = false),
         )
     }
@@ -88,6 +92,7 @@ private fun SettingItem(
     setting: Setting,
 ) {
     val color = when {
+        setting.textColor != null -> setting.textColor
         setting.enabled -> colorScheme.onSurface
         else -> colorScheme.onSurface.copy(alpha = 0.3f)
     }
@@ -95,16 +100,11 @@ private fun SettingItem(
         setting.enabled -> colorScheme.onSurface.copy(alpha = 0.7f)
         else -> colorScheme.onSurface.copy(alpha = 0.1f)
     }
-    val bgColor = when {
-        setting.color != null && setting.enabled -> setting.color
-        else -> Color.Transparent
-    }
     Box(
         modifier = Modifier
             .clickable(setting.enabled) { setting.action() }
             .fillMaxWidth()
-            .height(75.dp)
-            .background(bgColor)
+            .padding(vertical = 7.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -119,19 +119,21 @@ private fun SettingItem(
                     contentDescription = null,
                     tint = color
                 )
-                Spacer(Modifier.width(10.dp))
+                Spacer(Modifier.width(20.dp))
             }
             Column(
-                Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(setting.title, fontSize = 18.sp, color = color)
-                Spacer(Modifier.height(5.dp))
-                Text(
-                    setting.subTitle,
-                    fontSize = 15.sp,
-                    color = subColor
-                )
+                if (setting.subTitle.isNotEmpty()) {
+                    Spacer(Modifier.height(5.dp))
+                    Text(
+                        setting.subTitle,
+                        fontSize = 15.sp,
+                        color = subColor
+                    )
+                }
             }
         }
     }

@@ -36,6 +36,7 @@ import com.joshgm3z.ping.ui.screens.settings.SettingListCard
 import com.joshgm3z.ping.ui.theme.Green50
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.theme.Red10
+import com.joshgm3z.ping.ui.theme.Red20
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
@@ -95,7 +96,7 @@ fun ImagePicker(
                 Setting(
                     "Remove picture", "Remove your picture from ping profile",
                     Icons.Default.DeleteForever,
-                    color = Red10,
+                    textColor = Red20,
                 ) {
                     imageUrl = ""
                 },
@@ -151,7 +152,7 @@ fun saveButtonSetting(
             "Saved",
             "Save your picture to your profile",
             icon = Icons.Default.CheckCircle,
-            color = Green50,
+            textColor = Green50,
         )
     }
 
