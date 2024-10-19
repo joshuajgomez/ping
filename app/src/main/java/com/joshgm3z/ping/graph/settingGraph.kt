@@ -14,7 +14,8 @@ import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
 
 fun NavGraphBuilder.settingGraph(
     navController: NavHostController,
-    onBackClick: () -> Unit = { navController.goBack() }
+    onBackClick: () -> Unit = { navController.goBack() },
+    onLoggedOut: () -> Unit = { navController.navigate(Frx) },
 ) {
     navigation<SettingRoute>(startDestination = Profile) {
         composable<Profile> {
@@ -47,7 +48,7 @@ fun NavGraphBuilder.settingGraph(
         composable<SignOut> {
             SignOutSetting(
                 onBackClick = onBackClick,
-                onLoggedOut = {}
+                onLoggedOut = onLoggedOut,
             )
         }
     }

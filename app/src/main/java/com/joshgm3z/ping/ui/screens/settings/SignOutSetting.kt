@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowLeft
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -71,7 +72,7 @@ fun SignOutSetting(
                 Spacer(Modifier.height(20.dp))
                 PingButton(
                     "No, keep me signed in",
-                    icon = Icons.AutoMirrored.Default.ArrowLeft,
+                    icon = Icons.AutoMirrored.Default.ArrowBack,
                     onClick = onBackClick
                 )
             }
