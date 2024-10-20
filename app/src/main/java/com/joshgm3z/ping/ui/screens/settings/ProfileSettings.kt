@@ -49,7 +49,7 @@ fun ProfileSettings(
         )
         val list = listOf(
             Setting("Name", user.name),
-            Setting("About", user.about),
+            Setting("About", user.about.ifEmpty { "Write something about yourself" }),
             Setting("Joined on", getPrettyTime(user.dateOfJoining)),
         )
         Spacer(Modifier.height(20.dp))
@@ -74,7 +74,7 @@ fun ImageSetting(
                 .padding(15.dp)
         ) {
             UserImage(
-                imageUrl = user.imagePath,
+                user = user,
                 modifier = Modifier.size(80.dp)
             )
             Spacer(Modifier.width(15.dp))

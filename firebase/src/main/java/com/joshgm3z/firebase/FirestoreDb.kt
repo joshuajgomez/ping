@@ -145,12 +145,38 @@ constructor(
             }
     }
 
-    fun updateUserImage(user: User, onUpdateComplete: (user: User) -> Unit) {
+    fun updateUserImage(
+        user: User,
+        onUpdateComplete: (user: User) -> Unit,
+        onUpdateError: (String) -> Unit,
+    ) {
         firestore.collection(keyCollectionUserList)
             .document(user.docId)
             .update(FirestoreConverter.keyImagePath, user.imagePath)
             .addOnSuccessListener {
                 onUpdateComplete(user)
+            }
+            .addOnFailureListener {
+                onUpdateError(it.message.toString())
+            }
+    }
+
+    fun updateUserIcon(
+        user: User,
+        onUpdateComplete: () -> Unit,
+        onUpdateError: (String) -> Unit,
+    ) {
+        Logger.debug("user = [${user}]]")
+        firestore.collection(keyCollectionUserList)
+            .document(user.docId)
+            .update(FirestoreConverter.keyProfileIcon, user.profileIcon)
+            .addOnSuccessListener {
+                Logger.debug("success $user")
+                onUpdateComplete()
+            }
+            .addOnFailureListener {
+                Logger.debug("failure $user")
+                onUpdateError(it.message.toString())
             }
     }
 

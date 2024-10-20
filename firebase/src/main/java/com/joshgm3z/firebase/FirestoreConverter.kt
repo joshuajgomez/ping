@@ -15,6 +15,7 @@ class FirestoreConverter {
 
         private const val keyName = "name"
         const val keyImagePath = "imagePath"
+        const val keyProfileIcon = "profileIcon"
         const val keyAbout = "about"
         const val keyDateOfJoining = "dateOfJoining"
 
@@ -54,6 +55,7 @@ class FirestoreConverter {
                         imagePath = document[keyImagePath].toString()
                         about = document[keyAbout].toString()
                         document[keyDateOfJoining]?.let { dateOfJoining = it as Long }
+                        document[keyProfileIcon]?.let { profileIcon = Integer.parseInt(it.toString()) }
                         return this
                     }
                 }
@@ -67,6 +69,7 @@ class FirestoreConverter {
                 keyImagePath to user.imagePath,
                 keyAbout to user.about,
                 keyDateOfJoining to user.dateOfJoining,
+                keyProfileIcon to user.profileIcon,
             )
         }
 
@@ -78,6 +81,7 @@ class FirestoreConverter {
                     imagePath = document[keyImagePath].toString()
                     about = document[keyAbout]?.toString() ?: ""
                     document[keyDateOfJoining]?.let { dateOfJoining = it as Long }
+                    document[keyProfileIcon]?.let { profileIcon = Integer.parseInt(it.toString()) }
                     userList.add(this)
                 }
             }

@@ -10,12 +10,12 @@ interface ChatRepository {
         onMessageUploaded: () -> Unit
     )
 
-    fun uploadImage(
+    fun uploadChatImage(
         chat: Chat,
         imageUrl: String,
         onImageSent: () -> Unit,
         onProgress: (Int) -> Unit,
-        onError: () -> Unit,
+        onError: (String) -> Unit,
     )
 
     fun observeChatsForUserLocal(userId: String): Flow<List<Chat>>

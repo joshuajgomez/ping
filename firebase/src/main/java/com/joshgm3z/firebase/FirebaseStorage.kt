@@ -36,7 +36,7 @@ constructor(
         url: String,
         onUploadComplete: (String) -> Unit = {},
         onUploadProgress: (Float) -> Unit = {},
-        onUploadFailed: () -> Unit = {},
+        onUploadFailed: (String) -> Unit = {},
     ) {
         Logger.debug("fileName = [${fileName}], uri = [${url}]")
         val profilePicReference = storageRef.child(keyProfilePicture)
@@ -55,7 +55,7 @@ constructor(
             }
             .addOnFailureListener {
                 Logger.error("upload failed: ${it.message}")
-                onUploadFailed()
+                onUploadFailed(it.message.toString())
             }
     }
 

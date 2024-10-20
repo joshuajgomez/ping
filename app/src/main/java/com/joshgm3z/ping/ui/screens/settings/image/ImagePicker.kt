@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
@@ -27,17 +28,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getCameraLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.Setting
+import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.screens.settings.SettingListCard
 import com.joshgm3z.ping.ui.theme.Green50
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.theme.Red10
 import com.joshgm3z.ping.ui.theme.Red20
-import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import com.joshgm3z.ping.ui.viewmodels.IconPickerViewModel
 import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
 
@@ -45,39 +47,52 @@ import com.joshgm3z.utils.Logger
 @Composable
 fun PreviewImagePicker() {
     PingTheme {
-        ImagePicker()
+        ImagePickerContainer()
     }
 }
 
 @Composable
-fun ImagePicker(
+fun ImagePickerContainer(
     closePicker: () -> Unit = {},
-    userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
+    openIconPicker: () -> Unit = {},
+    viewModel: IconPickerViewModel? = getIfNotPreview { hiltViewModel() },
 ) {
-    var imageUrl by remember { mutableStateOf(userViewModel?.me?.imagePath) }
+    SettingContainer("Choose picture", onCloseClick = closePicker) {
+        ImagePicker(closePicker, openIconPicker, viewModel)
+    }
+}
+
+@Composable
+private fun ImagePicker(
+    closePicker: () -> Unit = {},
+    openIconPicker: () -> Unit = {},
+    viewModel: IconPickerViewModel? = getIfNotPreview { hiltViewModel() },
+) {
+    val defaultUser = viewModel?.me ?: randomUser()
+    val user by remember { mutableStateOf(defaultUser) }
+    Logger.debug("user=$user")
+
     var buttonState: ButtonState by remember { mutableStateOf(ButtonState.Disabled) }
 
-    Logger.debug("imageUrl=$imageUrl")
-
     val galleryLauncher = getGalleryLauncher {
-        imageUrl = it.toString()
+        user.imagePath = it.toString()
         buttonState = ButtonState.Idle
     }
     val cameraUri = getIfNotPreview { FileUtil.getUri(LocalContext.current) }
     val cameraLauncher = getCameraLauncher {
-        imageUrl = cameraUri.toString()
+        user.imagePath = cameraUri.toString()
         buttonState = ButtonState.Idle
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 30.dp)
+            .padding(vertical = 10.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             UserImage(
-                Modifier.size(220.dp),
-                imageUrl ?: ""
+                Modifier.size(200.dp),
+                user
             )
             Spacer(Modifier.height(30.dp))
             val settingList = mutableListOf(
@@ -93,6 +108,12 @@ fun ImagePicker(
                 ) {
                     cameraLauncher.launch(cameraUri!!)
                 },
+                Setting(
+                    "Choose an icon", "Choose an icon for your profile",
+                    Icons.Default.EmojiEmotions
+                ) {
+                    openIconPicker()
+                },
             )
             SettingListCard(settingList)
 
@@ -102,11 +123,11 @@ fun ImagePicker(
                     icon = Icons.Default.DeleteForever,
                     textColor = Red20,
                 ) {
-                    imageUrl = ""
+                    user.imagePath = ""
                 },
                 saveButtonSetting(buttonState) {
-                    userViewModel?.saveImage(
-                        imageUrl!!,
+                    viewModel?.saveImage(
+                        user.imagePath,
                         onProgress = {
                             buttonState = when (it) {
                                 100f -> ButtonState.Success

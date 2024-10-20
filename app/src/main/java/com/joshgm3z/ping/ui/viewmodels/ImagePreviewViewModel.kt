@@ -71,7 +71,7 @@ class ImagePreviewViewModel
             data.imageUrl
         )
         viewModelScope.launch {
-            chatRepository.uploadImage(
+            chatRepository.uploadChatImage(
                 chat,
                 data.imageUrl,
                 onImageSent = {

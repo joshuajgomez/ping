@@ -1,5 +1,6 @@
 package com.joshgm3z.repository
 
+import androidx.annotation.MainThread
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.firebase.FirebaseStorage
@@ -42,6 +43,7 @@ abstract class RepositoryProvider {
 class PingRepository
 @Inject constructor(
     private val scope: CoroutineScope,
+    @MainThread private val mainScope: CoroutineScope,
     private val db: PingDb,
     private val firestoreDb: FirestoreDb,
     private val firebaseStorage: FirebaseStorage,
@@ -236,26 +238,12 @@ class PingRepository
         db.clearAllTables()
     }
 
-    override suspend fun updateUserImageToServer(imageRes: Int) {
-        if (currentUserInfo.isSignedIn) {
-            val me = currentUserInfo.currentUser
-            me.imagePath = imageRes.toString()
-            firestoreDb.updateUserImage(me) {
-                scope.launch {
-                    currentUserInfo.currentUser = it
-                }
-            }
-        } else {
-            Logger.error("current user is null")
-        }
-    }
-
-    override fun uploadImage(
+    override fun uploadChatImage(
         chat: Chat,
         imageUrl: String,
         onImageSent: () -> Unit,
         onProgress: (Int) -> Unit,
-        onError: () -> Unit,
+        onError: (String) -> Unit,
     ) {
         Logger.debug("chat = [${chat}], imageUrl = [${imageUrl}]")
         firebaseStorage.uploadImage(
@@ -278,7 +266,7 @@ class PingRepository
         url: String,
         onProgress: (progress: Float) -> Unit,
         onImageSaved: () -> Unit,
-        onFailure: () -> Unit,
+        onFailure: (String) -> Unit,
     ) {
         Logger.debug("uri = [${url}]")
         firebaseStorage.uploadImage(
@@ -288,14 +276,18 @@ class PingRepository
                 if (currentUserInfo.isSignedIn) {
                     val me = currentUserInfo.currentUser
                     me.imagePath = it
-                    firestoreDb.updateUserImage(me) {
-                        scope.launch {
-                            currentUserInfo.currentUser = it
-                            scope.launch(Dispatchers.Main) {
-                                onImageSaved()
+                    firestoreDb.updateUserImage(
+                        me,
+                        onUpdateComplete = {
+                            scope.launch {
+                                currentUserInfo.currentUser = it
+                                mainScope.launch {
+                                    onImageSaved()
+                                }
                             }
-                        }
-                    }
+                        },
+                        onUpdateError = onFailure
+                    )
                 } else {
                     Logger.error("current user is null")
                 }
@@ -304,10 +296,29 @@ class PingRepository
                 Logger.debug("$it%")
                 onProgress(it)
             },
-            onUploadFailed = {
-                Logger.error("upload failed")
-                onFailure()
-            }
+            onUploadFailed = onFailure
+        )
+    }
+
+    override suspend fun uploadIcon(
+        icon: Int,
+        onImageSaved: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Logger.debug("icon = [${icon}]")
+        val me = currentUserInfo.currentUser
+        me.profileIcon = icon
+        firestoreDb.updateUserIcon(
+            me,
+            onUpdateComplete = {
+                scope.launch {
+                    currentUserInfo.currentUser = me
+                    scope.launch(Dispatchers.Main) {
+                        onImageSaved()
+                    }
+                }
+            },
+            onUpdateError = onFailure
         )
     }
 

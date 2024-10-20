@@ -5,11 +5,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import androidx.navigation.toRoute
 import com.joshgm3z.ping.ui.screens.settings.ProfileSettings
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.screens.settings.SignOutSetting
 import com.joshgm3z.ping.ui.screens.settings.UserInfo
+import com.joshgm3z.ping.ui.screens.settings.image.IconPicker
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
 
 fun NavGraphBuilder.settingGraph(
@@ -23,7 +23,15 @@ fun NavGraphBuilder.settingGraph(
                 openImagePicker = { navController.navigate(ImagePicker) })
         }
         composable<ImagePicker>(enterTransition = slideIn) {
-            ImagePickerContainer(onGoBackClick = onBackClick)
+            ImagePickerContainer(
+                closePicker = onBackClick,
+                openIconPicker = { navController.navigate(IconPicker) }
+            )
+        }
+        composable<IconPicker>(enterTransition = slideIn) {
+            IconPicker(
+                goBack = onBackClick,
+            )
         }
         composable<UserInfo>(enterTransition = slideIn) {
             UserInfo(onGoBackClick = onBackClick)

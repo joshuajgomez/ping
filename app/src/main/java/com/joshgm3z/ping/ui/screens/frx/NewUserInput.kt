@@ -48,6 +48,7 @@ import com.joshgm3z.ping.graph.Frx
 import com.joshgm3z.ping.graph.Welcome
 import com.joshgm3z.ping.graph.goBack
 import com.joshgm3z.ping.ui.common.CustomTextField3
+import com.joshgm3z.ping.ui.common.ErrorText
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.common.navigateToLoading
 import com.joshgm3z.ping.ui.theme.Green40
@@ -222,11 +223,6 @@ fun SignUpContent(
             )
         }
     }
-}
-
-@Composable
-fun ErrorText() {
-    Text("error", color = colorScheme.error)
 }
 
 @Composable

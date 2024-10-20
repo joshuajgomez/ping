@@ -109,7 +109,7 @@ fun UserInfoContent(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             UserImage(
-                imageUrl = user.imagePath,
+                user = user,
                 modifier = Modifier.size(150.dp)
             )
             Spacer(Modifier.height(20.dp))

@@ -10,6 +10,7 @@ data class User(var name: String = "") {
     @PrimaryKey
     var docId: String = ""
     var imagePath: String = ""
+    var profileIcon: Int = -1
     var about: String = randomAbout()
     var dateOfJoining: Long = 0
 
@@ -25,7 +26,14 @@ data class User(var name: String = "") {
     }
 
     override fun toString(): String {
-        return "User(name='$name', docId='$docId', imagePath=$imagePath, about=$about, dateOfJoining=$dateOfJoining)"
+        return "User(" +
+                "name='$name', " +
+                "docId='$docId', " +
+                "imagePath=$imagePath, " +
+                "about=$about, " +
+                "dateOfJoining=$dateOfJoining, " +
+                "profileIcon=$profileIcon, " +
+                ")"
     }
 
 }

@@ -67,12 +67,6 @@ class UserViewModel
         }
     }
 
-    fun onImageConfirmed(imageRes: Int) {
-        viewModelScope.launch {
-            userRepository.updateUserImageToServer(imageRes)
-        }
-    }
-
     fun onSignOutClicked(onSignOutComplete: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             userRepository.signOutUser()
@@ -81,27 +75,6 @@ class UserViewModel
                 onSignOutComplete()
             }
         }
-    }
-
-    fun saveImage(
-        imageUrl: String,
-        onImageSaved: () -> Unit,
-        onProgress: (progress: Float) -> Unit,
-        onFailure: () -> Unit,
-    ) {
-        Logger.debug("imageUrl = [${imageUrl}]")
-        viewModelScope.launch {
-            userRepository.uploadImage(
-                imageUrl,
-                onProgress,
-                onImageSaved,
-                onFailure
-            )
-        }
-    }
-
-    fun getUser(userId: String) = flow {
-        emit(userRepository.getUser(userId))
     }
 
 }

@@ -38,7 +38,6 @@ class ChatViewModel
     private val chatRepository: ChatRepository,
     private val userRepository: UserRepository,
     private val currentUserInfo: CurrentUserInfo,
-    private val dataUtil: DataUtil,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<ChatUiState> =
@@ -61,10 +60,10 @@ class ChatViewModel
         Logger.debug("message = [${message}]")
         val chat = Chat(message = message)
         chat.toUserId = otherGuy.docId
-        chat.fromUserId = me!!.docId
+        chat.fromUserId = me.docId
         chat.sentTime = System.currentTimeMillis()
         viewModelScope.launch(Dispatchers.IO) {
-            chatRepository.uploadNewMessage(chat){}
+            chatRepository.uploadNewMessage(chat) {}
         }
     }
 
@@ -80,7 +79,6 @@ class ChatViewModel
             chatRepository.observeChatsForUserLocal(userId = otherGuy.docId).cancellable()
                 .collect {
                     Logger.debug("collect.user = [${otherGuy}], chats = [$it]")
-//                    val chats = dataUtil.markOutwardChats(me.docId, ArrayList(it))
                     _uiState.value = ChatUiState.Ready(me, otherGuy, it)
                     chatRepository.updateChatStatusToServer(Chat.READ, it)
                 }

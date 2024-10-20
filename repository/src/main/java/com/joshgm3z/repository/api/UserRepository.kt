@@ -28,12 +28,16 @@ interface UserRepository {
 
     suspend fun signOutUser()
 
-    suspend fun updateUserImageToServer(imageRes: Int)
-
     suspend fun uploadImage(
         url: String,
         onProgress: (progress: Float) -> Unit,
         onImageSaved: () -> Unit,
-        onFailure: () -> Unit,
+        onFailure: (String) -> Unit,
+    )
+
+    suspend fun uploadIcon(
+        icon: Int,
+        onImageSaved: () -> Unit,
+        onFailure: (String) -> Unit,
     )
 }

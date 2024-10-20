@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.ui.screens.settings
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,7 +32,6 @@ import androidx.compose.ui.unit.sp
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.theme.Green50
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.theme.Red10
 import com.joshgm3z.ping.ui.theme.Red20
 
 @DarkPreview
@@ -41,7 +39,7 @@ import com.joshgm3z.ping.ui.theme.Red20
 private fun PreviewSettingListCard() {
     PingTheme {
         Box(
-            modifier = Modifier.padding(vertical = 15.dp),
+            modifier = Modifier.padding(15.dp),
         ) {
             SettingListCard(Setting.samples)
         }
@@ -58,7 +56,7 @@ data class Setting(
 ) {
     companion object {
         val samples = listOf(
-            Setting(),
+            Setting(title = "Setting title", subTitle = "Setting sub title"),
             Setting(icon = Icons.Default.CameraAlt, title = "Open camera"),
             Setting(icon = Icons.Default.ModeFanOff, title = "Turn off fan"),
             Setting(textColor = Green50),
@@ -78,9 +76,9 @@ fun SettingListCard(
             containerColor = colorScheme.surfaceContainerHigh.copy(alpha = 0.7f)
         ),
     ) {
-        LazyColumn {
-            itemsIndexed(settingList) { index, item ->
-                SettingItem(item)
+        Column {
+            settingList.forEachIndexed { index, setting ->
+                SettingItem(setting)
                 if (index < settingList.lastIndex) HorizontalDivider(thickness = 0.5.dp)
             }
         }
@@ -104,13 +102,12 @@ private fun SettingItem(
         modifier = Modifier
             .clickable(setting.enabled) { setting.action() }
             .fillMaxWidth()
-            .padding(vertical = 7.dp)
+            .padding(vertical = 10.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(
                 horizontal = 20.dp,
-                vertical = 10.dp
             )
         ) {
             setting.icon?.let {
@@ -122,12 +119,12 @@ private fun SettingItem(
                 Spacer(Modifier.width(20.dp))
             }
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(setting.title, fontSize = 18.sp, color = color)
                 if (setting.subTitle.isNotEmpty()) {
-                    Spacer(Modifier.height(5.dp))
+                    Spacer(Modifier.height(3.dp))
                     Text(
                         setting.subTitle,
                         fontSize = 15.sp,

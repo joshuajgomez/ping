@@ -23,6 +23,7 @@ constructor(
     private val keyUserName = stringPreferencesKey("userName")
     private val keyUserDocId = stringPreferencesKey("userDocId")
     private val keyUserImagePath = stringPreferencesKey("userImagePath")
+    private val keyUserProfileIcon = stringPreferencesKey("userProfileIcon")
     private val keyUserAbout = stringPreferencesKey("userAbout")
     private val keyUserDateOfJoining = stringPreferencesKey("userDateOfJoining")
 
@@ -36,6 +37,7 @@ constructor(
             mutablePreferences[keyUserImagePath] = user.imagePath
             mutablePreferences[keyUserAbout] = user.about
             mutablePreferences[keyUserDateOfJoining] = user.dateOfJoining.toString()
+            mutablePreferences[keyUserProfileIcon] = user.profileIcon.toString()
         }
     }
 
@@ -52,6 +54,7 @@ constructor(
         user.imagePath = preferences[keyUserImagePath].toString()
         user.about = preferences[keyUserAbout].toString()
         user.dateOfJoining = preferences[keyUserDateOfJoining]?.toLong() ?: 0
+        user.profileIcon = preferences[keyUserProfileIcon]?.toInt() ?: 0
         return@runBlocking user
     }
 
