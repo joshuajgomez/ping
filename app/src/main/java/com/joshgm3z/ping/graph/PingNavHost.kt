@@ -13,6 +13,7 @@ import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.chat.ImagePreview
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
 import com.joshgm3z.ping.ui.screens.settings.navigateToUserInfo
+import com.joshgm3z.ping.ui.viewmodels.EditType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -85,6 +86,9 @@ data class UserInfo(val userId: String)
 
 @Serializable
 data object Credits
+
+@Serializable
+data class EditScreen(val type: EditType)
 
 @Serializable
 data object SignOut

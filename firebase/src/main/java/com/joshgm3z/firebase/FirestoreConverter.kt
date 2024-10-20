@@ -1,87 +1,102 @@
 package com.joshgm3z.firebase
 
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
+import com.joshgm3z.utils.const.FirestoreKey
 
 class FirestoreConverter {
     companion object {
-        private const val keySentTime = "sentTime"
-        const val keyFromUserId = "fromUserId"
-        const val keyToUserId = "toUserId"
-        private const val keyMessage = "message"
-        private const val keyImageUrl = "imageUrl"
-        const val keyStatus = "status"
-
-        private const val keyName = "name"
-        const val keyImagePath = "imagePath"
-        const val keyProfileIcon = "profileIcon"
-        const val keyAbout = "about"
-        const val keyDateOfJoining = "dateOfJoining"
 
         fun getDocumentFromChat(chat: Chat): HashMap<String, Any> {
             return hashMapOf(
-                keySentTime to chat.sentTime,
-                keyFromUserId to chat.fromUserId,
-                keyToUserId to chat.toUserId,
-                keyMessage to chat.message,
-                keyImageUrl to chat.imageUrl,
-                keyStatus to chat.status,
+                FirestoreKey.Chat.sentTime to chat.sentTime,
+                FirestoreKey.Chat.fromUserId to chat.fromUserId,
+                FirestoreKey.Chat.toUserId to chat.toUserId,
+                FirestoreKey.Chat.message to chat.message,
+                FirestoreKey.Chat.imageUrl to chat.imageUrl,
+                FirestoreKey.Chat.status to chat.status,
             )
         }
 
         fun getChatListFromDocument(result: QuerySnapshot): ArrayList<Chat> {
             val chatList = ArrayList<Chat>()
-            for (document in result) {
-                Chat(message = document[keyMessage].toString()).apply {
-                    docId = document.id
-                    sentTime = document[keySentTime] as Long
-                    fromUserId = document[keyFromUserId].toString()
-                    toUserId = document[keyToUserId].toString()
-                    status = document[keyStatus] as Long
-                    imageUrl = document[keyImageUrl].toString()
-                    chatList.add(this)
+            result.forEach {
+                with(it) {
+                    Chat(message = get(FirestoreKey.Chat.message).toString()).apply {
+                        docId = id
+                        sentTime = get(FirestoreKey.Chat.sentTime) as Long
+                        fromUserId = get(FirestoreKey.Chat.fromUserId).toString()
+                        toUserId = get(FirestoreKey.Chat.toUserId).toString()
+                        status = get(FirestoreKey.Chat.status) as Long
+                        imageUrl = get(FirestoreKey.Chat.imageUrl).toString()
+                        chatList.add(this)
+                    }
                 }
             }
             return chatList
         }
 
+        fun getUserFromDocument(result: DocumentSnapshot): User = with(result) {
+            User().apply {
+                docId = id
+                name = get(FirestoreKey.User.name).toString()
+                imagePath = get(FirestoreKey.User.imagePath).toString()
+                about = get(FirestoreKey.User.about).toString()
+                get(FirestoreKey.User.dateOfJoining)?.let { dateOfJoining = it as Long }
+                get(FirestoreKey.User.profileIcon)?.let {
+                    profileIcon = Integer.parseInt(it.toString())
+                }
+            }
+        }
+
+
         fun findUserFromDocument(userName: String, result: QuerySnapshot): User? {
-            for (document in result) {
-                if (document[keyName] == userName) {
+            val document = result.firstOrNull {
+                it.get(FirestoreKey.User.name) == userName
+            }
+            return when {
+                document == null -> null
+                else -> {
                     User().apply {
                         docId = document.id
-                        name = document[keyName].toString()
-                        imagePath = document[keyImagePath].toString()
-                        about = document[keyAbout].toString()
-                        document[keyDateOfJoining]?.let { dateOfJoining = it as Long }
-                        document[keyProfileIcon]?.let { profileIcon = Integer.parseInt(it.toString()) }
-                        return this
+                        name = document.get(FirestoreKey.User.name).toString()
+                        imagePath = document.get(FirestoreKey.User.imagePath).toString()
+                        about = document.get(FirestoreKey.User.about).toString()
+                        document.get(FirestoreKey.User.dateOfJoining)?.let {
+                            dateOfJoining = it as Long
+                        }
+                        document.get(FirestoreKey.User.profileIcon)?.let {
+                            profileIcon = Integer.parseInt(it.toString())
+                        }
                     }
                 }
             }
-            return null
         }
 
         fun getDocumentFromUser(user: User): HashMap<String, Any> {
             return hashMapOf(
-                keyName to user.name,
-                keyImagePath to user.imagePath,
-                keyAbout to user.about,
-                keyDateOfJoining to user.dateOfJoining,
-                keyProfileIcon to user.profileIcon,
+                FirestoreKey.User.name to user.name,
+                FirestoreKey.User.imagePath to user.imagePath,
+                FirestoreKey.User.about to user.about,
+                FirestoreKey.User.dateOfJoining to user.dateOfJoining,
+                FirestoreKey.User.profileIcon to user.profileIcon,
             )
         }
 
         fun getUserListFromDocument(result: QuerySnapshot): ArrayList<User> {
             val userList = ArrayList<User>()
             for (document in result) {
-                User(name = document[keyName].toString()).apply {
+                User(name = document[FirestoreKey.User.name].toString()).apply {
                     docId = document.id
-                    imagePath = document[keyImagePath].toString()
-                    about = document[keyAbout]?.toString() ?: ""
-                    document[keyDateOfJoining]?.let { dateOfJoining = it as Long }
-                    document[keyProfileIcon]?.let { profileIcon = Integer.parseInt(it.toString()) }
+                    imagePath = document.get(FirestoreKey.User.imagePath).toString()
+                    about = document.get(FirestoreKey.User.about)?.toString() ?: ""
+                    document.get(FirestoreKey.User.dateOfJoining)
+                        ?.let { dateOfJoining = it as Long }
+                    document.get(FirestoreKey.User.profileIcon)?.let {
+                        profileIcon = Integer.parseInt(it.toString())
+                    }
                     userList.add(this)
                 }
             }

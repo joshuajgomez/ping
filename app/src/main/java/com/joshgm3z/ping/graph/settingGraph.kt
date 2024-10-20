@@ -5,12 +5,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.joshgm3z.ping.ui.screens.settings.EditScreen
 import com.joshgm3z.ping.ui.screens.settings.ProfileSettings
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.screens.settings.SignOutSetting
 import com.joshgm3z.ping.ui.screens.settings.UserInfo
 import com.joshgm3z.ping.ui.screens.settings.image.IconPicker
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
+import com.joshgm3z.ping.ui.screens.settings.navigateToEditScreen
 
 fun NavGraphBuilder.settingGraph(
     navController: NavHostController,
@@ -20,7 +22,9 @@ fun NavGraphBuilder.settingGraph(
         composable<Profile>(enterTransition = slideIn) {
             ProfileSettings(
                 onGoBackClick = onBackClick,
-                openImagePicker = { navController.navigate(ImagePicker) })
+                openImagePicker = { navController.navigate(ImagePicker) },
+                openEditScreen = navController::navigateToEditScreen,
+            )
         }
         composable<ImagePicker>(enterTransition = slideIn) {
             ImagePickerContainer(
@@ -50,6 +54,9 @@ fun NavGraphBuilder.settingGraph(
             SettingContainer("Credits", onCloseClick = onBackClick) {
                 Text("Who do you think made all this ?")
             }
+        }
+        composable<EditScreen>(enterTransition = slideIn) {
+            EditScreen(goBack = onBackClick)
         }
         composable<SignOut>(enterTransition = slideIn) {
             SignOutSetting(

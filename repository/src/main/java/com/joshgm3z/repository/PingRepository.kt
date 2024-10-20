@@ -13,6 +13,7 @@ import com.joshgm3z.repository.room.PingDb
 import com.joshgm3z.repository.room.UserDao
 import com.joshgm3z.utils.Logger
 import com.joshgm3z.utils.NotificationUtil
+import com.joshgm3z.utils.const.FirestoreKey
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -273,23 +274,13 @@ class PingRepository
             fileName = "profile_${currentUserInfo.currentUser.docId}.jpg",
             url = url,
             onUploadComplete = {
-                if (currentUserInfo.isSignedIn) {
-                    val me = currentUserInfo.currentUser
-                    me.imagePath = it
-                    firestoreDb.updateUserImage(
-                        me,
-                        onUpdateComplete = {
-                            scope.launch {
-                                currentUserInfo.currentUser = it
-                                mainScope.launch {
-                                    onImageSaved()
-                                }
-                            }
-                        },
-                        onUpdateError = onFailure
+                scope.launch {
+                    updateUserInfo(
+                        key = FirestoreKey.User.imagePath,
+                        value = it,
+                        onUpdated = onImageSaved,
+                        onError = onFailure
                     )
-                } else {
-                    Logger.error("current user is null")
                 }
             },
             onUploadProgress = {
@@ -300,25 +291,24 @@ class PingRepository
         )
     }
 
-    override suspend fun uploadIcon(
-        icon: Int,
-        onImageSaved: () -> Unit,
-        onFailure: (String) -> Unit,
+    override suspend fun updateUserInfo(
+        key: String,
+        value: String,
+        onUpdated: () -> Unit,
+        onError: (String) -> Unit,
     ) {
-        Logger.debug("icon = [${icon}]")
-        val me = currentUserInfo.currentUser
-        me.profileIcon = icon
-        firestoreDb.updateUserIcon(
-            me,
+        Logger.debug("key = [${key}], value = [${value}]")
+        firestoreDb.updateUserInfo(
+            userId = currentUserInfo.currentUser.docId,
+            key = key,
+            value = value,
             onUpdateComplete = {
-                scope.launch {
-                    currentUserInfo.currentUser = me
-                    scope.launch(Dispatchers.Main) {
-                        onImageSaved()
-                    }
+                currentUserInfo.currentUser = it
+                mainScope.launch {
+                    onUpdated()
                 }
             },
-            onUpdateError = onFailure
+            onUpdateError = onError
         )
     }
 

@@ -9,6 +9,7 @@ import com.google.firebase.firestore.firestore
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.utils.Logger
+import com.joshgm3z.utils.const.FirestoreKey
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -114,8 +115,8 @@ constructor(
         onChatReceived = chatListener
         listenerRegistration = firestore.collection(keyCollectionChatList).where(
             Filter.or(
-                Filter.equalTo(FirestoreConverter.keyToUserId, userId),
-                Filter.equalTo(FirestoreConverter.keyFromUserId, userId),
+                Filter.equalTo(FirestoreKey.Chat.toUserId, userId),
+                Filter.equalTo(FirestoreKey.Chat.fromUserId, userId),
             )
         ).addSnapshotListener(eventListener)
     }
@@ -138,46 +139,37 @@ constructor(
         Logger.debug("chat = [$chat]")
         firestore.collection(keyCollectionChatList)
             .document(chat.docId)
-            .update(FirestoreConverter.keyStatus, chat.status)
+            .update(FirestoreKey.Chat.status, chat.status)
             .addOnSuccessListener {}
             .addOnFailureListener {
                 Logger.warn("error updating chat status: $chat")
             }
     }
 
-    fun updateUserImage(
-        user: User,
-        onUpdateComplete: (user: User) -> Unit,
+    fun updateUserInfo(
+        userId: String,
+        key: String,
+        value: String,
+        onUpdateComplete: (User) -> Unit,
         onUpdateError: (String) -> Unit,
     ) {
-        firestore.collection(keyCollectionUserList)
-            .document(user.docId)
-            .update(FirestoreConverter.keyImagePath, user.imagePath)
+        Logger.debug("userId = [${userId}], key = [${key}], value = [${value}]")
+        val doc = firestore.collection(keyCollectionUserList).document(userId)
+        doc.update(key, value)
             .addOnSuccessListener {
-                onUpdateComplete(user)
-            }
-            .addOnFailureListener {
+                Logger.debug("success1")
+                doc.get().addOnSuccessListener {
+                    val user = FirestoreConverter.getUserFromDocument(it)
+                    Logger.debug("success $user")
+                    onUpdateComplete(user)
+                }.addOnFailureListener {
+                    Logger.error("failure ${it.message}")
+                    onUpdateError(it.message.toString())
+                }
+            }.addOnFailureListener {
+                Logger.error("failure ${it.message}")
                 onUpdateError(it.message.toString())
+
             }
     }
-
-    fun updateUserIcon(
-        user: User,
-        onUpdateComplete: () -> Unit,
-        onUpdateError: (String) -> Unit,
-    ) {
-        Logger.debug("user = [${user}]]")
-        firestore.collection(keyCollectionUserList)
-            .document(user.docId)
-            .update(FirestoreConverter.keyProfileIcon, user.profileIcon)
-            .addOnSuccessListener {
-                Logger.debug("success $user")
-                onUpdateComplete()
-            }
-            .addOnFailureListener {
-                Logger.debug("failure $user")
-                onUpdateError(it.message.toString())
-            }
-    }
-
 }

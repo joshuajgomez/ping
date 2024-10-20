@@ -1,6 +1,5 @@
 package com.joshgm3z.repository.api
 
-import android.net.Uri
 import com.joshgm3z.data.model.User
 import kotlinx.coroutines.flow.Flow
 
@@ -35,9 +34,10 @@ interface UserRepository {
         onFailure: (String) -> Unit,
     )
 
-    suspend fun uploadIcon(
-        icon: Int,
-        onImageSaved: () -> Unit,
-        onFailure: (String) -> Unit,
+    suspend fun updateUserInfo(
+        key: String,
+        value: String,
+        onUpdated: () -> Unit,
+        onError: (String) -> Unit,
     )
 }

@@ -78,7 +78,7 @@ fun SettingContainer(
         Column(
             modifier
                 .padding(it)
-                .padding(horizontal = 10.dp)
+                .padding(horizontal = 20.dp)
         ) {
             content()
         }

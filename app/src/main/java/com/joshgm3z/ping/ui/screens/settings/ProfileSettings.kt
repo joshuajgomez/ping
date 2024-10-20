@@ -28,6 +28,7 @@ import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.Green50
 import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.ping.ui.viewmodels.EditType
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.ping.utils.getPrettyTime
 
@@ -43,6 +44,7 @@ fun PreviewProfileSettings() {
 fun ProfileSettings(
     userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
     openImagePicker: () -> Unit = {},
+    openEditScreen: (EditType) -> Unit = {},
     onGoBackClick: () -> Unit = {}
 ) {
     val user: User = userViewModel?.me ?: randomUser()
@@ -56,15 +58,18 @@ fun ProfileSettings(
                 "Add bio",
                 icon = Icons.Default.Add,
                 textColor = Green40
-            )
+            ) { openEditScreen(EditType.Bio) }
 
             else -> Setting(
                 "Bio",
                 user.about,
-            )
+            ) { openEditScreen(EditType.Bio) }
         }
         val list = listOf(
-            Setting("Name", user.name),
+            Setting(
+                "Name",
+                user.name
+            ) { openEditScreen(EditType.Name) },
             aboutSetting,
             Setting("Joined on", getPrettyTime(user.dateOfJoining)),
         )

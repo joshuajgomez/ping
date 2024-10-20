@@ -11,7 +11,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -41,11 +40,19 @@ import androidx.compose.ui.unit.sp
 import com.joshgm3z.ping.ui.theme.Gray60
 import com.joshgm3z.ping.ui.theme.PingTheme
 
-@Preview
+@DarkPreview
 @Composable
 fun PreviewTextField() {
     PingTheme {
         CustomTextField()
+    }
+}
+
+@DarkPreview
+@Composable
+fun PreviewTextFieldDisabled() {
+    PingTheme {
+        CustomTextField(enabled = false)
     }
 }
 
@@ -55,6 +62,7 @@ fun CustomTextField(
     text: String = "",
     hintText: String = "Type something",
     isSingleLine: Boolean = true,
+    enabled: Boolean = true,
     isFocusNeeded: Boolean = true,
     onTextChanged: (text: String) -> Unit = {},
     onEnterPressed: () -> Unit = {},
@@ -62,6 +70,7 @@ fun CustomTextField(
     val focusRequester = remember { FocusRequester() }
     TextField(
         textStyle = TextStyle.Default.copy(fontSize = 20.sp),
+        enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
             .height(57.dp)

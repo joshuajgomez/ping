@@ -6,6 +6,7 @@ import com.joshgm3z.data.model.User
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.api.UserRepository
 import com.joshgm3z.utils.Logger
+import com.joshgm3z.utils.const.FirestoreKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,10 +27,11 @@ class IconPickerViewModel
         onFailure: (String) -> Unit
     ) {
         viewModelScope.launch {
-            userRepository.uploadIcon(
-                imageRes,
-                onImageSaved = onImageSaved,
-                onFailure = onFailure,
+            userRepository.updateUserInfo(
+                FirestoreKey.User.profileIcon,
+                imageRes.toString(),
+                onUpdated = onImageSaved,
+                onError = onFailure,
             )
         }
     }
