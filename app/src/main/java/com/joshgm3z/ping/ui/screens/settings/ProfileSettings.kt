@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -23,6 +25,8 @@ import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getIfNotPreview
+import com.joshgm3z.ping.ui.theme.Green40
+import com.joshgm3z.ping.ui.theme.Green50
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.ping.utils.getPrettyTime
@@ -47,9 +51,21 @@ fun ProfileSettings(
             user,
             openImagePicker
         )
+        val aboutSetting = when {
+            user.about.isEmpty() -> Setting(
+                "Add bio",
+                icon = Icons.Default.Add,
+                textColor = Green40
+            )
+
+            else -> Setting(
+                "Bio",
+                user.about,
+            )
+        }
         val list = listOf(
             Setting("Name", user.name),
-            Setting("About", user.about.ifEmpty { "Write something about yourself" }),
+            aboutSetting,
             Setting("Joined on", getPrettyTime(user.dateOfJoining)),
         )
         Spacer(Modifier.height(20.dp))
