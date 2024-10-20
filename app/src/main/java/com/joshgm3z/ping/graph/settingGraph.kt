@@ -17,34 +17,34 @@ fun NavGraphBuilder.settingGraph(
     onBackClick: () -> Unit = { navController.goBack() },
 ) {
     navigation<SettingRoute>(startDestination = Profile) {
-        composable<Profile> {
+        composable<Profile>(enterTransition = slideIn) {
             ProfileSettings(
                 onGoBackClick = onBackClick,
                 openImagePicker = { navController.navigate(ImagePicker) })
         }
-        composable<ImagePicker> {
+        composable<ImagePicker>(enterTransition = slideIn) {
             ImagePickerContainer(onGoBackClick = onBackClick)
         }
-        composable<UserInfo> {
+        composable<UserInfo>(enterTransition = slideIn) {
             val userId = it.toRoute<UserInfo>().userId
             UserInfo(userId, onGoBackClick = onBackClick)
         }
-        composable<Chat> {
+        composable<Chat>(enterTransition = slideIn) {
             SettingContainer("Chat Settings", onCloseClick = onBackClick) {
                 Text("Sample setting")
             }
         }
-        composable<Notifications> {
+        composable<Notifications>(enterTransition = slideIn) {
             SettingContainer("Notifications", onCloseClick = onBackClick) {
                 Text("Sample setting")
             }
         }
-        composable<Credits> {
+        composable<Credits>(enterTransition = slideIn) {
             SettingContainer("Credits", onCloseClick = onBackClick) {
                 Text("Who do you think made all this ?")
             }
         }
-        composable<SignOut> {
+        composable<SignOut>(enterTransition = slideIn) {
             SignOutSetting(
                 onBackClick = onBackClick,
                 onLoggedOut = navController::navigateToGoodBye,

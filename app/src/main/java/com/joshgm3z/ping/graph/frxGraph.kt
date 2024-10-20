@@ -15,18 +15,18 @@ fun NavGraphBuilder.frxGraph(navController: NavHostController) {
         composable<SignIn> {
             SignInInput(navController)
         }
-        composable<SignUp> {
+        composable<SignUp>(enterTransition = slideIn) {
             val name = it.toRoute<SignUp>().name
             NewUserInput(navController, name)
         }
-        composable<Welcome> {
+        composable<Welcome>(enterTransition = slideIn) {
             val name = it.toRoute<Welcome>().name
             WelcomeScreen(
                 name,
                 onClick = navController::navigateToHome
             )
         }
-        composable<GoodBye> {
+        composable<GoodBye>(enterTransition = slideIn) {
             GoodByeScreen(navController)
         }
     }
