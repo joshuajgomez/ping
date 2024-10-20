@@ -73,7 +73,8 @@ private fun TabScreen(
     onSaveClick: (icon: Int) -> Unit = {},
     goBack: () -> Unit = {},
 ) {
-    var tabIndex by remember { mutableIntStateOf(defaultTab) }
+    ImagePicker(closePicker = goBack)
+    /*var tabIndex by remember { mutableIntStateOf(defaultTab) }
 
     val tabs = listOf(Icons.Default.Image, Icons.Default.EmojiEmotions)
 
@@ -96,7 +97,7 @@ private fun TabScreen(
             0 -> ImagePicker(closePicker = goBack)
             1 -> IconPicker(onSaveClick = onSaveClick)
         }
-    }
+    }*/
 }
 
 

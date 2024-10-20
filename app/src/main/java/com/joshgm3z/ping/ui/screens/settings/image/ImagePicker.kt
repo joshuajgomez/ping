@@ -88,37 +88,44 @@ fun ImagePicker(
                     galleryLauncher.launch("image/*")
                 },
                 Setting(
-                    "Take a picture", "Open device camera to take a new photo",
+                    "Take a picture", "Open device camera for a selfie",
                     Icons.Default.CameraAlt
                 ) {
                     cameraLauncher.launch(cameraUri!!)
                 },
+            )
+            SettingListCard(settingList)
+
+            val settingList2 = mutableListOf(
                 Setting(
-                    "Remove picture", "Remove your picture from ping profile",
-                    Icons.Default.DeleteForever,
+                    "Remove picture",
+                    icon = Icons.Default.DeleteForever,
                     textColor = Red20,
                 ) {
                     imageUrl = ""
                 },
+                saveButtonSetting(buttonState) {
+                    userViewModel?.saveImage(
+                        imageUrl!!,
+                        onProgress = {
+                            buttonState = when (it) {
+                                100f -> ButtonState.Success
+                                else -> ButtonState.Saving(it)
+                            }
+                        },
+                        onImageSaved = {
+                            closePicker()
+                        },
+                        onFailure = {
+                            buttonState = ButtonState.Idle
+                        },
+                    )
+                }
             )
-            settingList += saveButtonSetting(buttonState) {
-                userViewModel?.saveImage(
-                    imageUrl!!,
-                    onProgress = {
-                        buttonState = when (it) {
-                            100f -> ButtonState.Success
-                            else -> ButtonState.Saving(it)
-                        }
-                    },
-                    onImageSaved = {
-                        closePicker()
-                    },
-                    onFailure = {
-                        buttonState = ButtonState.Idle
-                    },
-                )
-            }
-            SettingListCard(settingList)
+
+            Spacer(Modifier.height(20.dp))
+            SettingListCard(settingList2)
+
         }
     }
 }
@@ -130,7 +137,6 @@ fun saveButtonSetting(
     when (buttonState) {
         is ButtonState.Disabled -> Setting(
             "Save picture",
-            "Save your picture to your profile",
             icon = Icons.Default.Save,
             enabled = false
         )
