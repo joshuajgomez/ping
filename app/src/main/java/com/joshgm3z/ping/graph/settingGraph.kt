@@ -26,8 +26,7 @@ fun NavGraphBuilder.settingGraph(
             ImagePickerContainer(onGoBackClick = onBackClick)
         }
         composable<UserInfo>(enterTransition = slideIn) {
-            val userId = it.toRoute<UserInfo>().userId
-            UserInfo(userId, onGoBackClick = onBackClick)
+            UserInfo(onGoBackClick = onBackClick)
         }
         composable<Chat>(enterTransition = slideIn) {
             SettingContainer("Chat Settings", onCloseClick = onBackClick) {

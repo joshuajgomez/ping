@@ -1,6 +1,6 @@
 package com.joshgm3z.ping.ui.screens.settings
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,10 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -23,7 +21,6 @@ import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -33,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
@@ -46,20 +42,28 @@ import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.R
-import com.joshgm3z.ping.graph.ChatImagePreview
 import com.joshgm3z.ping.graph.UserInfo
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.theme.Red20
-import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import com.joshgm3z.ping.ui.viewmodels.UserInfoUiState
+import com.joshgm3z.ping.ui.viewmodels.UserInfoViewModel
 
 @DarkPreview
 @Composable
-fun PreviewUserInfo() {
+private fun PreviewMediaCard() {
     PingTheme {
-        UserInfo()
+        MediaCard(mediaChats = emptyList()) {}
+    }
+}
+
+@DarkPreview
+@Composable
+private fun PreviewUserInfo() {
+    PingTheme {
+        UserInfoContent(mediaChats = getChatList())
     }
 }
 
@@ -71,23 +75,39 @@ fun NavController.navigateToUserInfo(
 
 @Composable
 fun UserInfo(
-    userId: String = "",
-    userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
-    onGoBackClick: () -> Unit = {}
+    viewModel: UserInfoViewModel? = getIfNotPreview { hiltViewModel() },
+    onGoBackClick: () -> Unit = {},
+    openImageViewer: (chat: Chat) -> Unit = {},
 ) {
-    val user: User? =
-        when {
-            LocalInspectionMode.current -> randomUser()
-            else -> userViewModel?.getUser(userId)?.collectAsState(null)?.value
-        }
-    user ?: return
+    val uiState = viewModel?.uiState?.collectAsState()
+    with(uiState?.value) {
+        when (this) {
+            is UserInfoUiState.Ready -> UserInfoContent(
+                user,
+                mediaChats,
+                onGoBackClick,
+                openImageViewer
+            )
 
+            else -> {}
+        }
+    }
+
+
+}
+
+@Composable
+fun UserInfoContent(
+    user: User = randomUser(),
+    mediaChats: List<Chat> = getChatList(),
+    onGoBackClick: () -> Unit = {},
+    openImageViewer: (chat: Chat) -> Unit = {},
+) {
     SettingContainer(
         "Contact info",
         onCloseClick = onGoBackClick
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(Modifier.height(20.dp))
             UserImage(
                 imageUrl = user.imagePath,
                 modifier = Modifier.size(150.dp)
@@ -107,7 +127,7 @@ fun UserInfo(
 
             Spacer(Modifier.height(30.dp))
 
-            MediaCard()
+            MediaCard(mediaChats, openImageViewer)
             Spacer(Modifier.height(20.dp))
 
             val settingList = listOf(
@@ -138,7 +158,10 @@ fun UserInfo(
 }
 
 @Composable
-fun MediaCard(chatList: List<Chat> = getChatList()) {
+fun MediaCard(
+    mediaChats: List<Chat>,
+    openImageViewer: (chat: Chat) -> Unit,
+) {
     ElevatedCard(
         colors = CardDefaults.elevatedCardColors().copy(
             containerColor = colorScheme.surfaceContainerHigh.copy(alpha = 0.7f)
@@ -166,11 +189,19 @@ fun MediaCard(chatList: List<Chat> = getChatList()) {
                 )
             }
             Spacer(Modifier.height(10.dp))
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                items(chatList) {
-                    MediaItem(it)
+            if (mediaChats.isEmpty()) {
+                Text(
+                    "No media in chat",
+                    color = colorScheme.onSurface.copy(alpha = 0.5f),
+                    modifier = Modifier.padding(horizontal = 5.dp)
+                )
+            } else {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    items(mediaChats) {
+                        MediaItem(it) { openImageViewer(it) }
+                    }
                 }
             }
         }
@@ -178,8 +209,11 @@ fun MediaCard(chatList: List<Chat> = getChatList()) {
 }
 
 @Composable
-fun MediaItem(chat: Chat) {
-    Box {
+fun MediaItem(
+    chat: Chat,
+    openImageViewer: () -> Unit,
+) {
+    Box(Modifier.clickable { openImageViewer() }) {
         AsyncImage(
             chat.imageUrl,
             error = painterResource(R.drawable.default_user),

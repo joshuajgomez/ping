@@ -48,6 +48,9 @@ interface UserDao {
     @Query("select * from User where docId = :userId")
     suspend fun getUser(userId: String): User
 
+    @Query("select * from User where docId = :userId")
+    fun getUserFlow(userId: String): Flow<User>
+
     @Query("select * from User")
     suspend fun getAll(): List<User>
 

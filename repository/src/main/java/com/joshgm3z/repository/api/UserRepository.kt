@@ -2,6 +2,7 @@ package com.joshgm3z.repository.api
 
 import android.net.Uri
 import com.joshgm3z.data.model.User
+import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
     suspend fun getUsers(): List<User>
@@ -22,6 +23,8 @@ interface UserRepository {
     )
 
     suspend fun getUser(userId: String): User
+
+    fun getUserFlow(userId: String): Flow<User>
 
     suspend fun signOutUser()
 

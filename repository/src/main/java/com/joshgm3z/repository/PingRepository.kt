@@ -167,6 +167,9 @@ class PingRepository
     override suspend fun getUser(userId: String): User =
         userDao.getUser(userId)
 
+    override fun getUserFlow(userId: String): Flow<User> =
+        userDao.getUserFlow(userId)
+
     override fun observeChatsForUserLocal(userId: String): Flow<List<Chat>> {
         return chatDao.getChatsOfUserTimeDesc(userId)
     }
