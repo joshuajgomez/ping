@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.screens.chat.StatusIcon
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeUiState
@@ -45,6 +46,7 @@ import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
+import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.utils.getPrettyTime
 
 @DarkPreview
@@ -95,12 +97,12 @@ fun PreviewHomeReceivedChat() {
 
 @Composable
 fun HomeChatListContainer(
-    homeViewModel: HomeViewModel,
+    homeViewModel: HomeViewModel? = getIfNotPreview { hiltViewModel() },
     onChatClick: (homeChat: HomeChat) -> Unit = {},
     onGoToUsersClicked: () -> Unit = {},
 ) {
-    val uiState = homeViewModel.uiState.collectAsState()
-    when (uiState.value) {
+    val uiState = homeViewModel?.uiState?.collectAsState()
+    when (uiState?.value) {
         is HomeUiState.Ready -> {
             HomeChatList(
                 homeChats = (uiState.value as HomeUiState.Ready).homeChats,

@@ -27,15 +27,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import com.joshgm3z.ping.graph.ChatScreen
-import com.joshgm3z.ping.graph.Home
 import com.joshgm3z.ping.ui.screens.search.UserContainer
 import com.joshgm3z.ping.ui.screens.search.UserList
 import com.joshgm3z.ping.ui.screens.settings.MainSettingsScreen
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -96,17 +94,16 @@ fun PreviewHomeScreenUsers() {
 
 @Serializable
 sealed class HomeRoute(
-    val title: String,
     @Transient val icon: ImageVector = Icons.Rounded.QuestionMark,
 ) {
     @Serializable
-    data object ChatList : HomeRoute("Chats", Icons.Rounded.ChatBubble)
+    data object ChatList : HomeRoute(Icons.Rounded.ChatBubble)
 
     @Serializable
-    data object UserList : HomeRoute("Users", Icons.Rounded.Group)
+    data object UserList : HomeRoute(Icons.Rounded.Group)
 
     @Serializable
-    data object SettingsList : HomeRoute("Settings", Icons.Rounded.Settings)
+    data object SettingsList : HomeRoute(Icons.Rounded.Settings)
 }
 
 val homeNavItems = listOf(
@@ -118,14 +115,13 @@ val homeNavItems = listOf(
 @Composable
 fun HomeScreenContainer(
     navController: NavController = rememberNavController(),
-    homeViewModel: HomeViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel(),
 ) {
     val homeNavController = rememberNavController()
+    val appTitleFlow = MutableStateFlow("Ping")
     Scaffold(
         topBar = {
-            val title = homeViewModel.appTitle.collectAsState()
-            HomeAppBarContainer(title.value)
+            val title = appTitleFlow.collectAsState().value
+            HomeAppBarContainer(title)
         },
         bottomBar = {
             PingBottomAppBar(homeNavController)
@@ -137,9 +133,8 @@ fun HomeScreenContainer(
             modifier = Modifier.padding(paddingValues)
         ) {
             composable<HomeRoute.ChatList> {
-                homeViewModel.setAppTitle(it.toRoute<HomeRoute.ChatList>().title)
+                appTitleFlow.value = "Chats"
                 HomeChatListContainer(
-                    homeViewModel = homeViewModel,
                     onChatClick = { chat ->
                         navController.navigate(ChatScreen(chat.otherGuy.docId))
                     },
@@ -161,15 +156,14 @@ fun HomeScreenContainer(
                 )
             }
             composable<HomeRoute.UserList> {
-                homeViewModel.setAppTitle(it.toRoute<HomeRoute.UserList>().title)
+                appTitleFlow.value = "Users"
                 UserContainer(
-                    userViewModel = userViewModel,
                     onUserClick = { user ->
                         navController.navigate(ChatScreen(user.docId))
                     })
             }
             composable<HomeRoute.SettingsList> {
-                homeViewModel.setAppTitle(it.toRoute<HomeRoute.SettingsList>().title)
+                appTitleFlow.value = "Settings"
                 MainSettingsScreen(navController = navController)
             }
         }

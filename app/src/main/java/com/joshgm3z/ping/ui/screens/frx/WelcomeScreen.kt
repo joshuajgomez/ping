@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,10 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.PingButton
+import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.ping.ui.viewmodels.WelcomeViewModel
 
 @DarkPreview
 @Composable
@@ -29,8 +32,10 @@ fun PreviewWelcomeScreen() {
 @Composable
 fun WelcomeScreen(
     name: String = "Alien",
-    onClick: () -> Unit = {}
+    viewModel: WelcomeViewModel? = getIfNotPreview { hiltViewModel() },
+    onUserSyncComplete: () -> Unit = {},
 ) {
+    viewModel?.downloadUserList(onUserSyncComplete)
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
@@ -55,10 +60,14 @@ fun WelcomeScreen(
                 fontSize = 50.sp,
                 lineHeight = 60.sp,
             )
+            Spacer(Modifier.height(60.dp))
+            Text(
+                text = "Please wait",
+                color = colorScheme.primary,
+                fontSize = 30.sp,
+            )
+            Spacer(Modifier.height(30.dp))
+            CircularProgressIndicator()
         }
-        PingButton(
-            "Start pinging",
-            onClick = onClick
-        )
     }
 }

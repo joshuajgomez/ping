@@ -20,7 +20,7 @@ import com.joshgm3z.ping.ui.screens.settings.navigateToUserInfo
 fun NavGraphBuilder.chatGraph(navController: NavHostController) {
     composable<ChatScreen>(enterTransition = slideIn, exitTransition = slideOut) {
         ChatScreenContainer(
-            goHome = navController::navigateToHome,
+            goHome = navController::goBack,
             openPreview = navController::navigateToImagePreview,
             onUserInfoClick = navController::navigateToUserInfo,
             onImageClick = navController::navigateToImageViewer

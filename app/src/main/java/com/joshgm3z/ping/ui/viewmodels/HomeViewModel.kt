@@ -10,13 +10,14 @@ import com.joshgm3z.repository.api.UserRepository
 import com.joshgm3z.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class HomeUiState {
     data class Ready(val homeChats: List<HomeChat>) : HomeUiState()
-    data class Empty(val message: String) : HomeUiState()
+    data class Empty(val message: String = "Looking for chats") : HomeUiState()
 }
 
 @HiltViewModel
@@ -29,37 +30,35 @@ constructor(
     private val dataUtil: DataUtil,
 ) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<HomeUiState> =
-        MutableStateFlow(HomeUiState.Ready(emptyList()))
-    val uiState: StateFlow<HomeUiState> = _uiState
-
-    var appTitle: MutableStateFlow<String> = MutableStateFlow("Ping")
+    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Empty())
+    val uiState = _uiState.asStateFlow()
 
     init {
         startListeningToChats()
     }
 
-    fun startListeningToChats() {
+    private fun startListeningToChats() {
         if (!currentUserInfo.isSignedIn) {
             Logger.warn("user not signed in")
             return
         }
         viewModelScope.launch {
             val me = currentUserInfo.currentUser
+            Logger.debug("me $me")
             val users = userRepository.getUsers()
-            chatRepository.observeChatsForUserHomeLocal(me.docId).collect {
-                Logger.debug("home chat list update")
+            chatRepository.observeChatsForUserHomeLocal(me.docId).collectLatest {
+                Logger.debug("all chat list update ${it.size}")
                 if (it.isNotEmpty() && users.isEmpty()) {
                     Logger.warn("users list not fetched")
                     _uiState.value = HomeUiState.Empty("Fetching users")
+                } else {
+                    Logger.warn("users list available ${users.size}")
                 }
                 val homeChats = dataUtil.buildHomeChats(me.docId, it, users)
+                Logger.debug("home chat list update ${homeChats.size}")
                 _uiState.value = HomeUiState.Ready(homeChats)
             }
         }
     }
 
-    fun setAppTitle(title: String) {
-        appTitle.value = title
-    }
 }

@@ -74,7 +74,6 @@ fun NewUserInput(
     inputName: String = "",
     signUpViewModel: SignUpViewModel? = getIfNotPreview { hiltViewModel() },
     onSignUpComplete: (name: String) -> Unit = {
-        signUpViewModel?.refreshUserList()
         navController.navigate(Welcome(it))
     },
     goToSignIn: () -> Unit = {

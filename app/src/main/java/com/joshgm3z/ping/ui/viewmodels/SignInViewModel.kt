@@ -20,10 +20,7 @@ constructor(
     ) {
         userRepository.checkUserInServer(
             name,
-            onCheckComplete = {
-                // user found, proceed to home screen
-                onSignInComplete(name)
-            },
+            onCheckComplete = { onSignInComplete(name) },
             onNotFound = { onNewUser(name) },
             onCheckError = { onError("Unable to connect to server") },
         )

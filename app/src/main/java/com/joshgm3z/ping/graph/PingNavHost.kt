@@ -37,8 +37,7 @@ data class Loading(val message: String)
 @Serializable
 data object Home
 
-fun NavController.navigateToHome(
-) = navigate(Home)
+fun NavController.navigateToHome() = navigate(Home)
 
 @Serializable
 data class ChatScreen(val userId: String)

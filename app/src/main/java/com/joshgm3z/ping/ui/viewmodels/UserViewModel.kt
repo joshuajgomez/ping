@@ -46,7 +46,7 @@ class UserViewModel
         refreshUserList()
     }
 
-    fun refreshUserList() {
+    private fun refreshUserList() {
         if (!currentUserInfo.isSignedIn) {
             Logger.warn("user not signed in")
             return

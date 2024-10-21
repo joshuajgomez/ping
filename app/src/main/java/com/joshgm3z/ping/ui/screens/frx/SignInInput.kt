@@ -60,11 +60,7 @@ fun PreviewFullSignInInput() {
 fun SignInInput(
     navController: NavHostController = rememberNavController(),
     signInViewModel: SignInViewModel? = getIfNotPreview { hiltViewModel() },
-    userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
-    homeViewModel: HomeViewModel? = getIfNotPreview { hiltViewModel() },
     onSignInComplete: (name: String) -> Unit = {
-        userViewModel?.refreshUserList()
-        homeViewModel?.startListeningToChats()
         navController.navigate(Welcome(it))
     },
     goToSignUp: (name: String) -> Unit = {

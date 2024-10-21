@@ -1,6 +1,5 @@
 package com.joshgm3z.repository
 
-import androidx.annotation.MainThread
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.firebase.FirebaseStorage
@@ -12,6 +11,7 @@ import com.joshgm3z.repository.room.ChatDao
 import com.joshgm3z.repository.room.PingDb
 import com.joshgm3z.repository.room.UserDao
 import com.joshgm3z.utils.Logger
+import com.joshgm3z.utils.MainThreadScope
 import com.joshgm3z.utils.NotificationUtil
 import com.joshgm3z.utils.const.FirestoreKey
 import dagger.Binds
@@ -19,7 +19,6 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -44,7 +43,7 @@ abstract class RepositoryProvider {
 class PingRepository
 @Inject constructor(
     private val scope: CoroutineScope,
-    @MainThread private val mainScope: CoroutineScope,
+    @MainThreadScope private val mainScope: CoroutineScope,
     private val db: PingDb,
     private val firestoreDb: FirestoreDb,
     private val firebaseStorage: FirebaseStorage,
@@ -75,7 +74,11 @@ class PingRepository
                     if (currentUserInfo.isSignedIn) {
                         val currentUser = currentUserInfo.currentUser
                         userDao.insertAll(it, currentUser.docId)
-                        onUserListUpdated()
+                        observerChatsForMeFromServer()
+                        mainScope.launch {
+                            Logger.debug("user list updated")
+                            onUserListUpdated()
+                        }
                     } else {
                         Logger.warn("current user is null")
                     }
@@ -137,9 +140,10 @@ class PingRepository
             onCheckComplete = {
                 scope.launch {
                     currentUserInfo.currentUser = it
-                    observerChatsForMeFromServer()
+                    mainScope.launch {
+                        onCheckComplete(it)
+                    }
                 }
-                onCheckComplete(it)
             },
             onNotFound = onNotFound,
             onCheckError = onCheckError,
@@ -158,7 +162,6 @@ class PingRepository
             onUserCreated = {
                 scope.launch {
                     currentUserInfo.currentUser = it
-                    observerChatsForMeFromServer()
                     registerComplete(it.name)
                 }
             },
@@ -193,10 +196,10 @@ class PingRepository
             scope.launch {
                 it.forEach {
                     with(it) {
+                        val user: User = userDao.getUser(fromUserId) ?: return@with
                         if (toUserId == me.docId) {
                             if (status == Chat.SENT) {
                                 status = Chat.DELIVERED
-                                val user: User = userDao.getUser(fromUserId)
                                 notificationUtil.showNotification(
                                     sentTime.toInt(),
                                     user.name,

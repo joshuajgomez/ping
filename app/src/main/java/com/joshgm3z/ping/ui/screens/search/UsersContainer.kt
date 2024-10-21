@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.CustomTextField
@@ -43,6 +44,7 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.data.util.randomUsers
 import com.joshgm3z.ping.ui.common.UserImage
+import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
 import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
@@ -114,18 +116,20 @@ fun EmptyScreen(message: String = "You are first!") {
 @Composable
 fun UserContainer(
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel,
+    userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
     onUserClick: (user: User) -> Unit,
 ) {
     Column(modifier = modifier) {
         SearchBar()
-        val uiState = userViewModel.uiState.collectAsState()
-        when (uiState.value) {
+        val uiState = userViewModel?.uiState?.collectAsState()
+        when (uiState?.value) {
             is UsersUiState.Ready -> UserList(
                 users = (uiState.value as UsersUiState.Ready).users
             ) {
                 onUserClick(it)
             }
+
+            else -> {}
         }
     }
 }
