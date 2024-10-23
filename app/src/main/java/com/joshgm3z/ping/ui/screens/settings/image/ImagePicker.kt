@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getCameraLauncher
@@ -39,7 +38,7 @@ import com.joshgm3z.ping.ui.screens.settings.SettingListCard
 import com.joshgm3z.ping.ui.theme.Green50
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.theme.Red20
-import com.joshgm3z.ping.ui.viewmodels.IconPickerViewModel
+import com.joshgm3z.ping.ui.viewmodels.ImagePickerViewModel
 import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
 
@@ -53,34 +52,40 @@ fun PreviewImagePicker() {
 
 @Composable
 fun ImagePickerContainer(
+    selectedIcon: String? = null,
     closePicker: () -> Unit = {},
     openIconPicker: () -> Unit = {},
-    viewModel: IconPickerViewModel? = getIfNotPreview { hiltViewModel() },
 ) {
     SettingContainer("Choose picture", onCloseClick = closePicker) {
-        ImagePicker(closePicker, openIconPicker, viewModel)
+        ImagePicker(selectedIcon, closePicker, openIconPicker)
     }
 }
 
 @Composable
 private fun ImagePicker(
+    selectedIcon: String?,
     closePicker: () -> Unit = {},
     openIconPicker: () -> Unit = {},
-    viewModel: IconPickerViewModel? = getIfNotPreview { hiltViewModel() },
+    viewModel: ImagePickerViewModel? = getIfNotPreview { hiltViewModel() },
 ) {
-    val defaultUser = viewModel?.me ?: randomUser()
-    val user by remember { mutableStateOf(defaultUser) }
-    Logger.debug("user=$user")
+    var imageUrl by remember {
+        mutableStateOf(
+            selectedIcon
+                ?: viewModel?.me?.imagePath
+                ?: ""
+        )
+    }
+    Logger.debug("image=${imageUrl}")
 
     var buttonState: ButtonState by remember { mutableStateOf(ButtonState.Disabled) }
 
     val galleryLauncher = getGalleryLauncher {
-        user.imagePath = it.toString()
+        imageUrl = it.toString()
         buttonState = ButtonState.Idle
     }
     val cameraUri = getIfNotPreview { FileUtil.getUri(LocalContext.current) }
     val cameraLauncher = getCameraLauncher {
-        user.imagePath = cameraUri.toString()
+        imageUrl = cameraUri.toString()
         buttonState = ButtonState.Idle
     }
 
@@ -92,7 +97,7 @@ private fun ImagePicker(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             UserImage(
                 Modifier.size(200.dp),
-                user
+                imageUrl
             )
             Spacer(Modifier.height(30.dp))
             val settingList = mutableListOf(
@@ -123,11 +128,11 @@ private fun ImagePicker(
                     icon = Icons.Default.DeleteForever,
                     textColor = Red20,
                 ) {
-                    user.imagePath = ""
+                    imageUrl = ""
                 },
                 saveButtonSetting(buttonState) {
                     viewModel?.saveImage(
-                        user.imagePath,
+                        imageUrl,
                         onProgress = {
                             buttonState = when (it) {
                                 100f -> ButtonState.Success

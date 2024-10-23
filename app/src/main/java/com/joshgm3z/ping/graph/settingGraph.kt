@@ -1,6 +1,7 @@
 package com.joshgm3z.ping.graph
 
 import androidx.compose.material3.Text
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -26,15 +27,28 @@ fun NavGraphBuilder.settingGraph(
                 openEditScreen = navController::navigateToEditScreen,
             )
         }
+        val keySelectedProfileIcon = "KEY_SELECTED_PROFILE_ICON"
         composable<ImagePicker>(enterTransition = slideIn) {
+            val selectedIcon = it.savedStateHandle.getLiveData<String>(
+                keySelectedProfileIcon
+            ).observeAsState().value
             ImagePickerContainer(
+                selectedIcon = selectedIcon,
                 closePicker = onBackClick,
-                openIconPicker = { navController.navigate(IconPicker) }
+                openIconPicker = {
+                    it.savedStateHandle.remove<String>(keySelectedProfileIcon)
+                    navController.navigate(IconPicker)
+                }
             )
         }
         composable<IconPicker>(enterTransition = slideIn) {
             IconPicker(
                 goBack = onBackClick,
+                onIconPicked = {
+                    navController.previousBackStackEntry?.savedStateHandle
+                        ?.set(keySelectedProfileIcon, it)
+                    onBackClick()
+                }
             )
         }
         composable<UserInfo>(enterTransition = slideIn) {

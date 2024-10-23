@@ -156,7 +156,7 @@ fun HomeChatItem(
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start, margin = 15.dp)
                 },
-            user = homeChat.otherGuy
+            imageUrl = homeChat.otherGuy.imagePath
         )
         Text(
             text = homeChat.otherGuy.name,

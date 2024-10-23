@@ -95,7 +95,7 @@ fun ImageSetting(
                 .padding(15.dp)
         ) {
             UserImage(
-                user = user,
+                imageUrl = user.imagePath,
                 modifier = Modifier.size(80.dp)
             )
             Spacer(Modifier.width(15.dp))

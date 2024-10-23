@@ -70,7 +70,7 @@ fun ChatAppBar(
             UserImage(
                 modifier = Modifier
                     .size(30.dp),
-                user = user
+                imageUrl = user.imagePath
             )
             Spacer(modifier = Modifier.width(15.dp))
             Text(

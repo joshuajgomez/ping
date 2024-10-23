@@ -125,7 +125,7 @@ fun ProfileView(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             UserImage(
-                user = user,
+                imageUrl = user.imagePath,
                 modifier = Modifier
                     .size(130.dp)
                     .clip(CircleShape),

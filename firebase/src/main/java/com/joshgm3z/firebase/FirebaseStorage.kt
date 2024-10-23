@@ -6,9 +6,13 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import com.joshgm3z.utils.Logger
-import java.io.File
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,10 +20,12 @@ import javax.inject.Singleton
 class FirebaseStorage
 @Inject
 constructor(
-    context: Context
+    context: Context,
+    private val scope: CoroutineScope,
 ) {
 
     private val keyProfilePicture = "profile_pictures"
+    private val keyProfileIcons = "profile_icons"
 
     private val storage = Firebase.storage
 
@@ -56,6 +62,34 @@ constructor(
             .addOnFailureListener {
                 Logger.error("upload failed: ${it.message}")
                 onUploadFailed(it.message.toString())
+            }
+    }
+
+    fun fetchProfileIcons(
+        onFetched: (List<String>) -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        Logger.entry
+        storageRef.child(keyProfileIcons)
+            .listAll()
+            .addOnSuccessListener { it ->
+                Logger.debug("images = ${it.items.size}")
+                val imageUrls = mutableListOf<String>()
+                val latch = CountDownLatch(it.items.size)
+                it.items.forEach {
+                    it.downloadUrl.addOnSuccessListener { uri ->
+                        imageUrls.add(uri.toString())
+                        latch.countDown()
+                    }
+                }
+                scope.launch {
+                    latch.await(5, TimeUnit.SECONDS)
+                    onFetched(imageUrls)
+                }
+            }
+            .addOnFailureListener {
+                Logger.error(it.message.toString())
+                onError(it.message.toString())
             }
     }
 

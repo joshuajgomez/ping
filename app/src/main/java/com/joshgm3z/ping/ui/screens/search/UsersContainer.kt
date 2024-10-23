@@ -175,7 +175,7 @@ fun SearchItem(
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 },
-            user = user
+            imageUrl = user.imagePath
         )
         Text(
             text = user.name,
