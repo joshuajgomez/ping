@@ -4,27 +4,36 @@ import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.PhotoLibrary
-import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,9 +44,10 @@ import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.Setting
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.screens.settings.SettingListCard
-import com.joshgm3z.ping.ui.theme.Green50
+import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.theme.Red20
+import com.joshgm3z.ping.ui.viewmodels.ImagePickerUiState
 import com.joshgm3z.ping.ui.viewmodels.ImagePickerViewModel
 import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
@@ -52,41 +62,44 @@ fun PreviewImagePicker() {
 
 @Composable
 fun ImagePickerContainer(
-    selectedIcon: String? = null,
     closePicker: () -> Unit = {},
     openIconPicker: () -> Unit = {},
 ) {
     SettingContainer("Choose picture", onCloseClick = closePicker) {
-        ImagePicker(selectedIcon, closePicker, openIconPicker)
+        ImagePicker(openIconPicker)
     }
 }
 
 @Composable
 private fun ImagePicker(
-    selectedIcon: String?,
-    closePicker: () -> Unit = {},
     openIconPicker: () -> Unit = {},
     viewModel: ImagePickerViewModel? = getIfNotPreview { hiltViewModel() },
 ) {
-    var imageUrl by remember {
-        mutableStateOf(
-            selectedIcon
-                ?: viewModel?.me?.imagePath
-                ?: ""
-        )
-    }
-    Logger.debug("image=${imageUrl}")
+    val uiState = viewModel?.uiState?.collectAsState()
+    ImagePickerContent(
+        uiState?.value ?: ImagePickerUiState(""),
+        saveImage = {
+            viewModel?.saveImage(it)
+        },
+        openIconPicker = openIconPicker,
+        removeImage = { viewModel?.removeImage() }
+    )
+}
 
-    var buttonState: ButtonState by remember { mutableStateOf(ButtonState.Disabled) }
-
+@Composable
+fun ImagePickerContent(
+    uiState: ImagePickerUiState,
+    saveImage: (String) -> Unit,
+    removeImage: () -> Unit,
+    openIconPicker: () -> Unit,
+) {
+    Logger.debug("uiState = $uiState")
     val galleryLauncher = getGalleryLauncher {
-        imageUrl = it.toString()
-        buttonState = ButtonState.Idle
+        saveImage(it.toString())
     }
     val cameraUri = getIfNotPreview { FileUtil.getUri(LocalContext.current) }
     val cameraLauncher = getCameraLauncher {
-        imageUrl = cameraUri.toString()
-        buttonState = ButtonState.Idle
+        saveImage(cameraUri.toString())
     }
 
     Column(
@@ -95,10 +108,23 @@ private fun ImagePicker(
             .padding(vertical = 10.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            UserImage(
-                Modifier.size(200.dp),
-                imageUrl
-            )
+            Box(
+                modifier = Modifier.size(200.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                UserImage(
+                    imageUrl = uiState.imageUrl
+                )
+                if (uiState.loading) {
+                    Box(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(color = Color.Black.copy(alpha = 0.5f))
+                            .fillMaxSize()
+                    )
+                    CircularProgressIndicator()
+                }
+            }
             Spacer(Modifier.height(30.dp))
             val settingList = mutableListOf(
                 Setting(
@@ -127,67 +153,34 @@ private fun ImagePicker(
                     "Remove picture",
                     icon = Icons.Default.DeleteForever,
                     textColor = Red20,
-                ) {
-                    imageUrl = ""
-                },
-                saveButtonSetting(buttonState) {
-                    viewModel?.saveImage(
-                        imageUrl,
-                        onProgress = {
-                            buttonState = when (it) {
-                                100f -> ButtonState.Success
-                                else -> ButtonState.Saving(it)
-                            }
-                        },
-                        onImageSaved = {
-                            closePicker()
-                        },
-                        onFailure = {
-                            buttonState = ButtonState.Idle
-                        },
-                    )
-                }
+                    action = removeImage
+                ),
             )
 
             Spacer(Modifier.height(20.dp))
             SettingListCard(settingList2)
 
+            Spacer(Modifier.height(20.dp))
+            InfoText(uiState.notify)
         }
     }
 }
 
-fun saveButtonSetting(
-    buttonState: ButtonState,
-    onSaveClick: () -> Unit
-): Setting =
-    when (buttonState) {
-        is ButtonState.Disabled -> Setting(
-            "Save picture",
-            icon = Icons.Default.Save,
-            enabled = false
-        )
-
-        is ButtonState.Idle -> Setting(
-            "Save picture",
-            "Save your picture to your profile",
-            icon = Icons.Default.Save,
-            action = onSaveClick
-        )
-
-        is ButtonState.Saving -> Setting(
-            "Saving...",
-            "Save your picture to your profile",
-            icon = Icons.Default.CloudUpload,
-        )
-
-        is ButtonState.Success -> Setting(
-            "Saved",
-            "Save your picture to your profile",
-            icon = Icons.Default.CheckCircle,
-            textColor = Green50,
-        )
+@Composable
+fun InfoText(message: String) {
+    AnimatedVisibility(message.isNotEmpty()) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .background(Green40, shape = RoundedCornerShape(10.dp))
+                .padding(horizontal = 20.dp, vertical = 10.dp)
+        ) {
+            Icon(Icons.Default.CheckCircle, contentDescription = null)
+            Spacer(Modifier.width(15.dp))
+            Text(message, color = colorScheme.onSurface)
+        }
     }
-
+}
 
 @Composable
 fun getGalleryLauncher(
@@ -207,26 +200,3 @@ fun getGalleryLauncher(
             }
         }
     )
-
-//@DarkPreview
-@Composable
-fun PreviewPickerButtons() {
-    PingTheme {
-        PickerButtons()
-    }
-}
-
-@Composable
-fun PickerButtons(
-    onOpenCameraClick: () -> Unit = {},
-    onOpenGalleryClick: () -> Unit = {},
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(50.dp)
-    ) {
-        BrowseButton(onOpenGalleryClick)
-        Spacer(Modifier.height(30.dp))
-        OpenCamera(onOpenCameraClick)
-    }
-}

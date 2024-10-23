@@ -14,6 +14,7 @@ import com.joshgm3z.ping.ui.screens.settings.UserInfo
 import com.joshgm3z.ping.ui.screens.settings.image.IconPicker
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
 import com.joshgm3z.ping.ui.screens.settings.navigateToEditScreen
+import com.joshgm3z.ping.ui.viewmodels.keySelectedProfileIcon
 
 fun NavGraphBuilder.settingGraph(
     navController: NavHostController,
@@ -27,13 +28,8 @@ fun NavGraphBuilder.settingGraph(
                 openEditScreen = navController::navigateToEditScreen,
             )
         }
-        val keySelectedProfileIcon = "KEY_SELECTED_PROFILE_ICON"
         composable<ImagePicker>(enterTransition = slideIn) {
-            val selectedIcon = it.savedStateHandle.getLiveData<String>(
-                keySelectedProfileIcon
-            ).observeAsState().value
             ImagePickerContainer(
-                selectedIcon = selectedIcon,
                 closePicker = onBackClick,
                 openIconPicker = {
                     it.savedStateHandle.remove<String>(keySelectedProfileIcon)
