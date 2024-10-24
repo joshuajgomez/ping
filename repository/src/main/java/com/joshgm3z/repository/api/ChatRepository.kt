@@ -1,26 +1,22 @@
 package com.joshgm3z.repository.api
 
 import com.joshgm3z.data.model.Chat
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository {
 
-    fun uploadNewMessage(
+    fun uploadChat(
         chat: Chat,
-        onMessageUploaded: () -> Unit
-    )
-
-    fun uploadChatImage(
-        chat: Chat,
-        imageUrl: String,
-        onImageSent: () -> Unit,
-        onProgress: (Int) -> Unit,
-        onError: (String) -> Unit,
+        onError: () -> Unit = {},
+        onUploaded: () -> Unit,
     )
 
     fun observeChatsForUserLocal(userId: String): Flow<List<Chat>>
 
     fun observeChatsForUserHomeLocal(userId: String): Flow<List<Chat>>
+
+    fun observerChatsForMeFromServer(): Job
 
     fun updateChatStatusToServer(newStatus: Long, chats: List<Chat>)
 

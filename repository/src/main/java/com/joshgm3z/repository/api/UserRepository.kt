@@ -4,6 +4,7 @@ import com.joshgm3z.data.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
+
     suspend fun getUsers(): List<User>
 
     fun syncUserListWithServer(onUserListUpdated: () -> Unit)
@@ -26,13 +27,6 @@ interface UserRepository {
     fun getUserFlow(userId: String): Flow<User>
 
     suspend fun signOutUser()
-
-    suspend fun uploadImage(
-        url: String,
-        onProgress: (progress: Float) -> Unit,
-        onImageSaved: () -> Unit,
-        onFailure: (String) -> Unit,
-    )
 
     suspend fun updateUserInfo(
         key: String,
