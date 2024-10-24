@@ -1,7 +1,7 @@
 package com.joshgm3z.ping.ui.screens.frx
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,18 +19,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.PermMedia
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -43,19 +40,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.joshgm3z.ping.R
 import com.joshgm3z.ping.graph.Frx
 import com.joshgm3z.ping.graph.Welcome
 import com.joshgm3z.ping.graph.goBack
@@ -71,13 +61,8 @@ import com.joshgm3z.ping.ui.screens.settings.Setting
 import com.joshgm3z.ping.ui.screens.settings.SettingListCard
 import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
-import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
 import com.joshgm3z.ping.ui.viewmodels.SignUpViewModel
-import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.utils.FileUtil
-import kotlinx.coroutines.launch
-import kotlin.math.sign
 
 @DarkPreview
 @Composable
@@ -130,10 +115,14 @@ fun NewUserInput(
             )
         }
         if (showDropDownMenu) {
-            PickerDropDownMenu {
-                imageUrl = it
-                showDropDownMenu = false
-            }
+            PickerDropDownMenu(
+                onImageSet = {
+                    imageUrl = it
+                    showDropDownMenu = false
+                },
+                closePicker = {
+                    showDropDownMenu = false
+                })
         }
     }
 }
@@ -256,7 +245,10 @@ fun SignUpContent(
 }
 
 @Composable
-fun PickerDropDownMenu(onImageSet: (String) -> Unit) {
+fun PickerDropDownMenu(
+    onImageSet: (String) -> Unit,
+    closePicker: () -> Unit,
+) {
     val galleryLauncher = getGalleryLauncher {
         onImageSet(it.toString())
     }
@@ -279,7 +271,8 @@ fun PickerDropDownMenu(onImageSet: (String) -> Unit) {
         Modifier
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.5f))
-            .padding(top = 150.dp),
+            .padding(top = 150.dp)
+            .clickable { closePicker() },
         contentAlignment = Alignment.Center
     ) {
         SettingListCard(
