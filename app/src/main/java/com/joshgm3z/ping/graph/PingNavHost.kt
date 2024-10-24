@@ -72,9 +72,6 @@ data object Profile
 data object ImagePicker
 
 @Serializable
-data object IconPicker
-
-@Serializable
 data object Chat
 
 @Serializable

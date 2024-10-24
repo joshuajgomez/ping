@@ -1,9 +1,5 @@
 package com.joshgm3z.ping.ui.screens.settings.image
 
-import android.net.Uri
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -29,7 +25,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,12 +64,30 @@ fun PreviewImagePicker() {
 
 @Composable
 fun ImagePickerContainer(
-    selectedImage: String? = null,
     closePicker: () -> Unit = {},
-    openIconPicker: () -> Unit = {},
 ) {
-    SettingContainer("Choose picture", onCloseClick = closePicker) {
-        ImagePicker(selectedImage, openIconPicker)
+    Box(Modifier.fillMaxSize()) {
+        var showIconPicker by remember { mutableStateOf(false) }
+        var selectedImage by remember { mutableStateOf<String?>(null) }
+        Logger.warn("selectedImage=$selectedImage")
+        SettingContainer("Choose picture", onCloseClick = closePicker) {
+            ImagePicker(
+                selectedImage,
+                openIconPicker = {
+                    showIconPicker = true
+                })
+        }
+        if (showIconPicker) {
+            IconPicker(
+                onIconPicked = {
+                    selectedImage = it
+                    showIconPicker = false
+                },
+                onCloseClick = {
+                    showIconPicker = false
+                }
+            )
+        }
     }
 }
 
@@ -78,8 +97,10 @@ private fun ImagePicker(
     openIconPicker: () -> Unit = {},
     viewModel: ImagePickerViewModel? = getIfNotPreview { hiltViewModel() },
 ) {
-    selectedImage?.let {
-        viewModel?.setSelectedImage(it)
+    LaunchedEffect(selectedImage) {
+        selectedImage?.let {
+            viewModel?.setSelectedImage(it)
+        }
     }
     val uiState = viewModel?.uiState?.collectAsState()
     ImagePickerContent(

@@ -10,7 +10,6 @@ import com.joshgm3z.ping.ui.screens.settings.ProfileSettings
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.screens.settings.SignOutSetting
 import com.joshgm3z.ping.ui.screens.settings.UserInfo
-import com.joshgm3z.ping.ui.screens.settings.image.IconPicker
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
 import com.joshgm3z.ping.ui.screens.settings.navigateToEditScreen
 import com.joshgm3z.ping.ui.viewmodels.keySelectedProfileIcon
@@ -28,25 +27,8 @@ fun NavGraphBuilder.settingGraph(
             )
         }
         composable<ImagePicker>(enterTransition = slideIn) {
-            val selectedImage = it.savedStateHandle.get<String>(keySelectedProfileIcon)
-            it.savedStateHandle.remove<String>(keySelectedProfileIcon)
             ImagePickerContainer(
-                selectedImage = selectedImage,
                 closePicker = onBackClick,
-                openIconPicker = {
-                    it.savedStateHandle.remove<String>(keySelectedProfileIcon)
-                    navController.navigate(IconPicker)
-                }
-            )
-        }
-        composable<IconPicker>(enterTransition = slideIn) {
-            IconPicker(
-                goBack = onBackClick,
-                onIconPicked = {
-                    navController.previousBackStackEntry?.savedStateHandle
-                        ?.set(keySelectedProfileIcon, it)
-                    onBackClick()
-                }
             )
         }
         composable<UserInfo>(enterTransition = slideIn) {

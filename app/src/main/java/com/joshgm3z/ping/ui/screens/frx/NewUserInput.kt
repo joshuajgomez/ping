@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,6 +60,7 @@ import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.common.navigateToLoading
 import com.joshgm3z.ping.ui.screens.settings.Setting
 import com.joshgm3z.ping.ui.screens.settings.SettingListCard
+import com.joshgm3z.ping.ui.screens.settings.image.IconPicker
 import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.SignUpViewModel
@@ -90,8 +92,9 @@ fun NewUserInput(
         }
     },
 ) {
-    var showDropDownMenu by remember { mutableStateOf(false) }
     var imageUrl by remember { mutableStateOf("") }
+    var showIconGrid by remember { mutableStateOf(false) }
+    var showDropDownMenu by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -122,10 +125,24 @@ fun NewUserInput(
                 },
                 closePicker = {
                     showDropDownMenu = false
+                    showIconGrid = false
+                },
+                showIconGrid = {
+                    showIconGrid = true
                 })
+        }
+        if (showIconGrid) {
+            IconPicker(
+                onIconPicked = {
+                    imageUrl = it
+                    showIconGrid = false
+                    showDropDownMenu = false
+                }
+            )
         }
     }
 }
+
 
 @Composable
 fun SignUpContent(
@@ -247,6 +264,7 @@ fun SignUpContent(
 @Composable
 fun PickerDropDownMenu(
     onImageSet: (String) -> Unit,
+    showIconGrid: () -> Unit,
     closePicker: () -> Unit,
 ) {
     val galleryLauncher = getGalleryLauncher {
@@ -265,7 +283,10 @@ fun PickerDropDownMenu(
             "Open gallery",
             icon = Icons.Default.PermMedia
         ) { galleryLauncher.launch("image/*") },
-        Setting("Choose an icon", icon = Icons.Default.EmojiEmotions),
+        Setting(
+            "Choose an icon",
+            icon = Icons.Default.EmojiEmotions
+        ) { showIconGrid() },
     )
     Box(
         Modifier
