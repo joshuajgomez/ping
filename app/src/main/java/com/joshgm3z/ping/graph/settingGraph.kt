@@ -1,7 +1,6 @@
 package com.joshgm3z.ping.graph
 
 import androidx.compose.material3.Text
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -29,7 +28,10 @@ fun NavGraphBuilder.settingGraph(
             )
         }
         composable<ImagePicker>(enterTransition = slideIn) {
+            val selectedImage = it.savedStateHandle.get<String>(keySelectedProfileIcon)
+            it.savedStateHandle.remove<String>(keySelectedProfileIcon)
             ImagePickerContainer(
+                selectedImage = selectedImage,
                 closePicker = onBackClick,
                 openIconPicker = {
                     it.savedStateHandle.remove<String>(keySelectedProfileIcon)

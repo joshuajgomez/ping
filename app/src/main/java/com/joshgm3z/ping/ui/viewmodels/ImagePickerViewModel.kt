@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.ui.viewmodels
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.data.model.User
@@ -30,7 +29,6 @@ const val keySelectedProfileIcon = "KEY_SELECTED_PROFILE_ICON"
 @HiltViewModel
 class ImagePickerViewModel
 @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val currentUserInfo: CurrentUserInfo,
     private val imageRepository: ImageRepository,
     private val userRepository: UserRepository,
@@ -42,12 +40,9 @@ class ImagePickerViewModel
     private val _uiState = MutableStateFlow(ImagePickerUiState(me.imagePath))
     val uiState = _uiState.asStateFlow()
 
-    init {
-        savedStateHandle.getLiveData<String>(keySelectedProfileIcon)
-            .observeForever {
-                Logger.debug("selectedIcon = [${it}]")
-                uploadImageUrl(it)
-            }
+    fun setSelectedImage(imageUrl: String) {
+        Logger.debug("imageUrl = [${imageUrl}]")
+        uploadImageUrl(imageUrl)
     }
 
     fun saveImage(

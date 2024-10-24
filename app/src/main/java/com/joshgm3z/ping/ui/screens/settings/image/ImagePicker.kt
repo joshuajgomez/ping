@@ -62,19 +62,24 @@ fun PreviewImagePicker() {
 
 @Composable
 fun ImagePickerContainer(
+    selectedImage: String? = null,
     closePicker: () -> Unit = {},
     openIconPicker: () -> Unit = {},
 ) {
     SettingContainer("Choose picture", onCloseClick = closePicker) {
-        ImagePicker(openIconPicker)
+        ImagePicker(selectedImage, openIconPicker)
     }
 }
 
 @Composable
 private fun ImagePicker(
+    selectedImage: String? = null,
     openIconPicker: () -> Unit = {},
     viewModel: ImagePickerViewModel? = getIfNotPreview { hiltViewModel() },
 ) {
+    selectedImage?.let {
+        viewModel?.setSelectedImage(it)
+    }
     val uiState = viewModel?.uiState?.collectAsState()
     ImagePickerContent(
         uiState?.value ?: ImagePickerUiState(""),
