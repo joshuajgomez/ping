@@ -40,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getCameraLauncher
+import com.joshgm3z.ping.ui.common.getGalleryLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.Setting
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
@@ -187,21 +188,3 @@ fun InfoText(message: String) {
     }
 }
 
-@Composable
-fun getGalleryLauncher(
-    onUriReady: (uri: Uri) -> Unit
-): ManagedActivityResultLauncher<String, Uri?> =
-    rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
-            /**
-             * Sample uri =
-             * content://media/picker_get_content/0/com.google.android.apps.photos.cloudpicker/
-             * media/1e3615cd-105d-4915-916f-96799581c7b8-1_all_20213
-             */
-            Logger.debug("onResult=$uri")
-            uri?.let {
-                onUriReady(it)
-            }
-        }
-    )
