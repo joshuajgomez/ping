@@ -2,17 +2,22 @@ package com.joshgm3z.ping.ui.screens.frx
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -52,7 +57,7 @@ import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 @Composable
 fun PreviewFullSignInInput() {
     PingTheme {
-        SignInInput()
+        SignInContent()
     }
 }
 
@@ -63,9 +68,6 @@ fun SignInInput(
     onSignInComplete: (name: String) -> Unit = {
         navController.navigate(Welcome(it))
     },
-    goToSignUp: (name: String) -> Unit = {
-        navController.navigate(SignUp(it))
-    }
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -86,52 +88,44 @@ fun SignInInput(
             SignInContent(
                 signInViewModel = signInViewModel,
                 onSignInComplete = onSignInComplete,
-                goToSignUp = goToSignUp,
             )
         }
     }
 }
 
 @Composable
-fun Logo(modifier: Modifier = Modifier.padding(top = 80.dp)) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .height(200.dp)
-            .fillMaxWidth()
-    ) {
-        Text(
-            "welcome to",
-            color = colorScheme.onSurface,
-            fontSize = 60.sp,
-            fontStyle = FontStyle.Italic,
-            fontWeight = FontWeight.ExtraLight
-        )
-        Text(
-            "ping",
-            color = Green40,
-            fontSize = 100.sp,
-            fontWeight = FontWeight.ExtraBold
-        )
-    }
-}
-
-@Composable
 fun SignInContent(
-    signInViewModel: SignInViewModel?,
+    signInViewModel: SignInViewModel? = getIfNotPreview { hiltViewModel() },
     onSignInComplete: (String) -> Unit = {},
-    goToSignUp: (String) -> Unit = {},
+    showLoading: (Boolean) -> Unit = {},
 ) {
-    Text(
-        text = "Sign in",
-        color = colorScheme.onSurface,
-        fontSize = 30.sp,
-    )
     var name by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
 
-    Spacer(Modifier.height(20.dp))
+    val onSignInClick: () -> Unit = {
+        when {
+            name.isNotEmpty() -> {
+                error = ""
+                showLoading(true)
+                signInViewModel?.onSignInClick(
+                    name,
+                    onSignInComplete = onSignInComplete,
+                    onNewUser = {
+                        showLoading(false)
+                        error = "User not found"
+                    },
+                    onError = {
+                        error = it
+                    }
+                )
+            }
+
+            name.length <= 3 -> error = "Should be more that 3 letters"
+            else -> error = "Name cannot be empty"
+        }
+    }
+
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(10.dp))
@@ -156,52 +150,18 @@ fun SignInContent(
                 password = it
                 error = ""
             })
-    }
-
-    Spacer(Modifier.height(10.dp))
-    ErrorText(error)
-
-    Spacer(Modifier.height(30.dp))
-    var showLoading by remember { mutableStateOf(false) }
-    SignInButton(
-        showLoading,
-        onClick = {
-            when {
-                name.isNotEmpty() -> {
-                    error = ""
-                    showLoading = true
-                    signInViewModel?.onSignInClick(
-                        name,
-                        onSignInComplete = onSignInComplete,
-                        onNewUser = {
-                            showLoading = false
-                            error = "User not found"
-                        },
-                        onError = {
-                            error = it
-                        }
-                    )
-                }
-
-                name.length <= 3 -> error = "Should be more that 3 letters"
-                else -> error = "Name cannot be empty"
-            }
-        },
-    )
-    Spacer(Modifier.height(20.dp))
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        TextButton(
-            onClick = { goToSignUp(name) },
+        ErrorText(error)
+        Button(
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth(),
+            onClick = onSignInClick,
+            colors = ButtonDefaults.buttonColors().copy(
+                containerColor = Green40,
+            ),
+            shape = RoundedCornerShape(10.dp)
         ) {
-            Text(
-                text = "New user? Sign up",
-                textDecoration = TextDecoration.Underline,
-                fontSize = 16.sp,
-                color = Green40
-            )
+            Text("Sign in", color = colorScheme.onSurface)
         }
     }
 }

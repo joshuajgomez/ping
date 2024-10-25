@@ -56,7 +56,6 @@ fun NavGraphBuilder.settingGraph(
             SignOutSetting(
                 onBackClick = onBackClick,
                 onLoggedOut = {
-                    navController.graph.clear()
                     navController.navigate(Frx)
                 },
             )

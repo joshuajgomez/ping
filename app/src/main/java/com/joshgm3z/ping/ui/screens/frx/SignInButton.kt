@@ -21,13 +21,13 @@ import com.joshgm3z.ping.ui.theme.Green40
 
 @Composable
 fun SignInButton(
+    modifier: Modifier,
     isLoading: Boolean = false,
     text: String = if (isLoading) "Signing in" else "Sign in",
     onClick: () -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(10.dp))
+        modifier = modifier
             .fillMaxWidth()
             .clickable { onClick() }
             .background(Green40),

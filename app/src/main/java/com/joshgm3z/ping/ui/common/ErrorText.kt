@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ErrorText(error: String) {
-    AnimatedVisibility(error.isNotEmpty()) {
+    AnimatedVisibility(error.isNotEmpty(), modifier = Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

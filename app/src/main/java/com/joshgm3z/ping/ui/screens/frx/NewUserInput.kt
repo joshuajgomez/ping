@@ -24,12 +24,13 @@ import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.PermMedia
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -63,7 +63,7 @@ import com.joshgm3z.utils.FileUtil
 @Composable
 fun PreviewNewUserInput() {
     PingTheme {
-        NewUserInput()
+        SignUpContent()
     }
 }
 
@@ -72,7 +72,6 @@ fun NewUserInput(
     inputName: String = "",
     signUpViewModel: SignUpViewModel? = getIfNotPreview { hiltViewModel() },
     onSignUpComplete: (name: String) -> Unit = {},
-    goToSignIn: () -> Unit = {},
     showLoading: (Boolean) -> Unit = {},
 ) {
     var imageUrl by remember { mutableStateOf("") }
@@ -95,7 +94,6 @@ fun NewUserInput(
                 inputName,
                 signUpViewModel,
                 onSignUpComplete = onSignUpComplete,
-                goToSignIn = goToSignIn,
                 showLoading = showLoading,
                 showPicker = { showDropDownMenu = true },
             )
@@ -129,27 +127,56 @@ fun NewUserInput(
 
 @Composable
 fun SignUpContent(
-    inputImage: String,
-    inputName: String,
-    signUpViewModel: SignUpViewModel?,
+    inputImage: String = "",
+    inputName: String = "",
+    signUpViewModel: SignUpViewModel? = getIfNotPreview { hiltViewModel() },
     onSignUpComplete: (String) -> Unit = {},
-    goToSignIn: () -> Unit,
-    showLoading: (Boolean) -> Unit,
-    showPicker: () -> Unit,
+    showLoading: (Boolean) -> Unit = {},
+    showPicker: () -> Unit = {},
 ) {
     Column {
-        ImageInput(inputImage, showPicker)
-        Text(
-            text = "Sign up",
-            color = colorScheme.onSurface,
-            fontSize = 30.sp,
-        )
         var name by remember { mutableStateOf(inputName) }
         var about by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var confirmPassword by remember { mutableStateOf("") }
         var error by remember { mutableStateOf("") }
+        var isShowLoading by remember { mutableStateOf(false) }
 
+        val onSignUpClick: () -> Unit = {
+            when {
+                name.isNotEmpty() -> {
+                    isShowLoading = true
+                    showLoading(true)
+                    signUpViewModel?.onSignUpClick(
+                        name,
+                        inputImage,
+                        about,
+                        onSignUpComplete = onSignUpComplete,
+                        onSignUpError = {
+                            error = it
+                            showLoading(false)
+                        },
+                    )
+                }
+
+                name.length <= 3 -> error = "Should be more that 3 letters"
+                else -> error = "Name cannot be empty"
+            }
+        }
+
+        Spacer(Modifier.height(10.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 30.dp)
+        ) {
+            ImageInput(inputImage, showPicker)
+            Spacer(Modifier.width(30.dp))
+            Text(
+                "Set a profile picture",
+                fontSize = 20.sp,
+                color = colorScheme.onSurface
+            )
+        }
         Spacer(Modifier.height(20.dp))
         Column(
             modifier = Modifier
@@ -193,54 +220,21 @@ fun SignUpContent(
                     about = it
                     error = ""
                 })
-        }
-
-        Spacer(Modifier.height(10.dp))
-        ErrorText(error)
-
-        Spacer(Modifier.height(30.dp))
-        var isShowLoading by remember { mutableStateOf(false) }
-        SignInButton(
-            isShowLoading,
-            text = if (isShowLoading) "Signing up" else "Sign up",
-            onClick = {
-                when {
-                    name.isNotEmpty() -> {
-                        isShowLoading = true
-                        showLoading(true)
-                        signUpViewModel?.onSignUpClick(
-                            name,
-                            inputImage,
-                            about,
-                            onSignUpComplete = onSignUpComplete,
-                            onSignUpError = {
-                                error = it
-                                showLoading(false)
-                            },
-                        )
-                    }
-
-                    name.length <= 3 -> error = "Should be more that 3 letters"
-                    else -> error = "Name cannot be empty"
-                }
-            },
-        )
-
-        Spacer(Modifier.height(20.dp))
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TextButton(onClick = goToSignIn) {
-                Text(
-                    text = "Have an account? Sign in",
-                    textDecoration = TextDecoration.Underline,
-                    fontSize = 16.sp,
-                    color = Green40
-                )
+            ErrorText(error)
+            Button(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+                onClick = onSignUpClick,
+                colors = ButtonDefaults.buttonColors().copy(
+                    containerColor = Green40,
+                ),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text("Create account", color = colorScheme.onSurface)
             }
         }
+
     }
 }
 
@@ -302,11 +296,10 @@ fun ImageInput(
     onInputClick: () -> Unit = {},
 ) {
     Row(
-        Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
         Box(
-            Modifier.size(150.dp),
+            Modifier.size(100.dp),
             contentAlignment = Alignment.BottomEnd
         ) {
             UserImage(imageUrl = imageUrl)
