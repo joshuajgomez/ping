@@ -31,7 +31,6 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,11 +44,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.joshgm3z.ping.graph.Frx
-import com.joshgm3z.ping.graph.Welcome
-import com.joshgm3z.ping.graph.goBack
 import com.joshgm3z.ping.ui.common.CustomTextField3
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.ErrorText
@@ -57,7 +51,6 @@ import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getCameraLauncher
 import com.joshgm3z.ping.ui.common.getGalleryLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
-import com.joshgm3z.ping.ui.common.navigateToLoading
 import com.joshgm3z.ping.ui.screens.settings.Setting
 import com.joshgm3z.ping.ui.screens.settings.SettingListCard
 import com.joshgm3z.ping.ui.screens.settings.image.IconPicker
@@ -76,21 +69,11 @@ fun PreviewNewUserInput() {
 
 @Composable
 fun NewUserInput(
-    navController: NavController = rememberNavController(),
     inputName: String = "",
     signUpViewModel: SignUpViewModel? = getIfNotPreview { hiltViewModel() },
-    onSignUpComplete: (name: String) -> Unit = {
-        navController.navigate(Welcome(it))
-    },
-    goToSignIn: () -> Unit = {
-        navController.navigate(Frx)
-    },
-    showLoading: (Boolean) -> Unit = {
-        when {
-            it -> navController.navigateToLoading("Signing up")
-            else -> navController.goBack()
-        }
-    },
+    onSignUpComplete: (name: String) -> Unit = {},
+    goToSignIn: () -> Unit = {},
+    showLoading: (Boolean) -> Unit = {},
 ) {
     var imageUrl by remember { mutableStateOf("") }
     var showIconGrid by remember { mutableStateOf(false) }

@@ -1,73 +1,46 @@
 package com.joshgm3z.ping.ui.screens.chat
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Forum
+import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.Forum
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.getChatList
-import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.randomUser
+import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.common.InfoCard
 import com.joshgm3z.ping.ui.common.PingWallpaper
-import com.joshgm3z.ping.ui.viewmodels.ChatUiState
+import com.joshgm3z.ping.ui.viewmodels.ChatListState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
-
-@Preview
-@Composable
-private fun PreviewEmptyChat() {
-    PingTheme {
-        EmptyChat()
-    }
-}
 
 @Preview
 @Composable
 private fun PreviewChatScreen() {
     PingTheme {
-        ChatScreen()
+        ChatScreen(chatListState = ChatListState.Ready(getChatList()))
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
 private fun PreviewChatScreenEmpty() {
     PingTheme {
-        ChatScreen(chats = emptyList())
+        ChatScreen(chatListState = ChatListState.Empty)
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
 private fun PreviewChatScreenLoading() {
     PingTheme {
-        LoadingContainer()
+        ChatScreen(chatListState = ChatListState.Loading)
     }
 }
 
@@ -84,46 +57,37 @@ fun ChatScreenContainer(
     onImageClick: (String) -> Unit = {}
 ) {
     val uiState = chatViewModel.uiState.collectAsState()
-    when (uiState.value) {
-        is ChatUiState.Loading -> {
-            LoadingContainer(message = (uiState.value as ChatUiState.Loading).message)
-        }
-
-        is ChatUiState.Ready -> {
-            val ready = uiState.value as ChatUiState.Ready
-            val user: User = ready.you
-            val chats: List<Chat> = ready.chats
-            ChatScreen(
-                chats = chats,
-                user = user,
-                onSendClick = { chatViewModel.onSendButtonClick(it) },
-                onUserInfoClick = { onUserInfoClick(user.docId) },
-                onBackClick = {
-                    chatViewModel.onScreenExit()
-                    goHome()
-                },
-                openPreview = {
-                    openPreview(
-                        it,
-                        ready.me.docId,
-                        ready.you.docId
-                    )
-                },
-                onImageClick = onImageClick,
-            )
-        }
+    with(uiState.value) {
+        ChatScreen(
+            chatListState = chatListState,
+            user = you ?: randomUser(),
+            onSendClick = { chatViewModel.onSendButtonClick(it) },
+            onUserInfoClick = { onUserInfoClick(you?.docId ?: "") },
+            onBackClick = {
+                chatViewModel.onScreenExit()
+                goHome()
+            },
+            openPreview = {
+                openPreview(
+                    it,
+                    me.docId,
+                    you?.docId ?: ""
+                )
+            },
+            onImageClick = onImageClick,
+        )
     }
 }
 
 @Composable
 fun ChatScreen(
-    chats: List<Chat> = getChatList(),
+    chatListState: ChatListState,
     user: User = randomUser(),
-    onSendClick: (message: String) -> Unit = {},
+    onSendClick: (String) -> Unit = {},
     onUserInfoClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    openPreview: (imageUrl: String) -> Unit = { },
-    onImageClick: (chatId: String) -> Unit = { },
+    openPreview: (String) -> Unit = { },
+    onImageClick: (String) -> Unit = { },
 ) {
     Column {
         ChatAppBar(
@@ -135,9 +99,23 @@ fun ChatScreen(
             modifier = Modifier.weight(1f),
         ) {
             PingWallpaper {
-                when {
-                    chats.isNotEmpty() -> ChatList(chats, onImageClick)
-                    else -> EmptyChat()
+                when (chatListState) {
+                    is ChatListState.Ready -> ChatList(
+                        chatListState.chats,
+                        onImageClick
+                    )
+
+                    is ChatListState.Loading -> InfoCard(
+                        "Just a second",
+                        "Fetching messages",
+                        Icons.Outlined.FileDownload
+                    )
+
+                    else -> InfoCard(
+                        "Say hello",
+                        "No messages yet",
+                        Icons.Outlined.Forum
+                    )
                 }
             }
         }
@@ -150,39 +128,3 @@ fun ChatScreen(
     }
 }
 
-@Composable
-fun EmptyChat(
-    modifier: Modifier = Modifier,
-    message: String = "No messages in this chat. Start a conversation"
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .background(
-                colorScheme.surface,
-                RoundedCornerShape(20.dp)
-            )
-            .padding(30.dp)
-            .width(250.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.Forum,
-            contentDescription = "empty message",
-            modifier = Modifier.size(80.dp),
-            tint = colorScheme.primary
-        )
-        Text(
-            text = "Say hello!",
-            fontSize = 20.sp,
-            color = colorScheme.onSurface,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = message,
-            fontSize = 18.sp,
-            color = colorScheme.onSurface.copy(alpha = 0.5f),
-            textAlign = TextAlign.Center
-        )
-    }
-}

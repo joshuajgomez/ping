@@ -8,21 +8,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.outlined.CardTravel
+import androidx.compose.material.icons.outlined.DoorFront
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import com.joshgm3z.ping.ui.viewmodels.SignOutUiState
+import com.joshgm3z.ping.ui.viewmodels.SignOutViewModel
 
 @DarkPreview
 @Composable
@@ -34,42 +35,53 @@ private fun PreviewSignOutSetting() {
 
 @Composable
 fun SignOutSetting(
-    userViewModel: UserViewModel = hiltViewModel(),
+    viewModel: SignOutViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onLoggedOut: () -> Unit = {},
 ) {
-    var showLoading by remember { mutableStateOf(false) }
-    SettingContainer(
-        title = "Sign out",
-        onCloseClick = onBackClick,
-        isCloseEnabled = !showLoading
-    ) {
-        Column(
-            verticalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxSize()
+    val uiState = viewModel.uiState.collectAsState()
+    when (uiState.value) {
+        is SignOutUiState.Loading -> LoadingContainer(
+            "Signing out",
+            "Please wait for a sec",
+            Icons.Outlined.DoorFront
+        )
+
+        is SignOutUiState.SignedOut -> LoadingContainer(
+            "Good bye",
+            "Keep in touch",
+            Icons.Outlined.CardTravel
+        )
+
+        is SignOutUiState.Initial -> SettingContainer(
+            title = "Sign out",
+            onCloseClick = onBackClick,
         ) {
-            Text(
-                "Do you really want to sign out of ping?",
-                fontSize = 20.sp,
-                color = colorScheme.onSurface
-            )
-            Column {
-                PingButton(
-                    "Yes, sign out",
-                    icon = Icons.AutoMirrored.Default.ExitToApp,
-                    containerColor = colorScheme.onError,
-                    isShowLoading = showLoading,
-                    onClick = {
-                        showLoading = true
-                        userViewModel.onSignOutClicked(onLoggedOut)
-                    }
+            Column(
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(
+                    "Do you really want to sign out of ping?",
+                    fontSize = 20.sp,
+                    color = colorScheme.onSurface
                 )
-                Spacer(Modifier.height(20.dp))
-                PingButton(
-                    "No, keep me signed in",
-                    icon = Icons.AutoMirrored.Default.ArrowBack,
-                    onClick = onBackClick
-                )
+                Column {
+                    PingButton(
+                        "Yes, sign out",
+                        icon = Icons.AutoMirrored.Default.ExitToApp,
+                        containerColor = colorScheme.onError,
+                        onClick = {
+                            viewModel.onSignOutClicked(onLoggedOut)
+                        }
+                    )
+                    Spacer(Modifier.height(20.dp))
+                    PingButton(
+                        "No, keep me signed in",
+                        icon = Icons.AutoMirrored.Default.ArrowBack,
+                        onClick = onBackClick
+                    )
+                }
             }
         }
     }

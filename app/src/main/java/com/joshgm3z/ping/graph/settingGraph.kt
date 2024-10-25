@@ -55,7 +55,10 @@ fun NavGraphBuilder.settingGraph(
         composable<SignOut>(enterTransition = slideIn) {
             SignOutSetting(
                 onBackClick = onBackClick,
-                onLoggedOut = navController::navigateToGoodBye,
+                onLoggedOut = {
+                    navController.graph.clear()
+                    navController.navigate(Frx)
+                },
             )
         }
     }

@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import com.joshgm3z.ping.ui.common.navigateToLoading
 import com.joshgm3z.ping.ui.screens.frx.NewUserInput
 import com.joshgm3z.ping.ui.screens.frx.SignInInput
 import com.joshgm3z.ping.ui.screens.frx.WelcomeScreen
@@ -15,18 +16,32 @@ fun NavGraphBuilder.frxGraph(navController: NavHostController) {
         composable<SignIn> {
             SignInInput(navController)
         }
-        composable<SignUp>(enterTransition = slideIn) {
+        composable<SignUp>(enterTransition = slideIn) { it ->
             val name = it.toRoute<SignUp>().name
-            NewUserInput(navController, name)
+            NewUserInput(
+                name,
+                goToSignIn = {
+                    navController.graph.clear()
+                    navController.navigate(Frx)
+                },
+                onSignUpComplete = {
+                    navController.navigate(Welcome(it))
+                },
+                showLoading = {
+                    when {
+                        it -> navController.navigateToLoading("Signing up")
+                        else -> navController.goBack()
+                    }
+                })
         }
-        composable<Welcome>(enterTransition = slideIn) {
+        composable<Welcome> {
             val name = it.toRoute<Welcome>().name
             WelcomeScreen(
                 name,
                 onUserSyncComplete = navController::navigateToHome
             )
         }
-        composable<GoodBye>(enterTransition = slideIn) {
+        composable<GoodBye> {
             GoodByeScreen(navController)
         }
     }

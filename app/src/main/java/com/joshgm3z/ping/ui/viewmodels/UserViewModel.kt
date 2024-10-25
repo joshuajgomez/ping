@@ -1,26 +1,16 @@
 package com.joshgm3z.ping.ui.viewmodels
 
-import android.net.Uri
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshgm3z.ping.R
 import com.joshgm3z.data.model.User
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.api.UserRepository
-import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
 
 sealed class UsersUiState {
     data class Ready(val users: List<User>) : UsersUiState()
@@ -66,15 +56,4 @@ class UserViewModel
             }
         }
     }
-
-    fun onSignOutClicked(onSignOutComplete: () -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
-            userRepository.signOutUser()
-            delay(3.seconds)
-            viewModelScope.launch {
-                onSignOutComplete()
-            }
-        }
-    }
-
 }
