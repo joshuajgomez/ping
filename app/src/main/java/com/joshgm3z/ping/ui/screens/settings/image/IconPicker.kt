@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
@@ -47,7 +46,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
@@ -89,7 +87,11 @@ fun IconPicker(
     onCloseClick: () -> Unit = {},
 ) {
     Box(
-        Modifier.fillMaxSize(),
+        Modifier
+            .padding(top = 100.dp)
+            .background(Color.Black.copy(0.5f))
+            .fillMaxSize()
+            .clickable { onCloseClick() },
         contentAlignment = Alignment.Center
     ) {
         with(viewModel?.uiState?.collectAsState()?.value) {
@@ -110,13 +112,13 @@ fun IconPickerContent(
 ) {
     Column(
         modifier = Modifier
-            .padding(horizontal = 20.dp)
+            .padding(20.dp)
             .fillMaxWidth()
             .background(
                 colorScheme.surface,
                 shape = RoundedCornerShape(20.dp)
             )
-            .padding(20.dp),
+            .padding(10.dp),
     ) {
         Row(
             Modifier
@@ -222,18 +224,24 @@ private fun IconItem(
             modifier = Modifier
                 .padding(vertical = 5.dp, horizontal = 5.dp)
                 .clip(CircleShape)
-                .clickable { onIconClick() },
+                .clickable { onIconClick() }
+                .border(
+                    when {
+                        isSelected -> 10.dp
+                        else -> 0.dp
+                    },
+                    shape = CircleShape,
+                    color = Green40
+                ),
         )
-        if (isSelected) {
+        if (!isSelected) {
             Row(
-                modifier = Modifier
-                    .border(
-                        10.dp,
-                        shape = CircleShape,
-                        color = Green40
+                Modifier
+                    .size(110.dp)
+                    .background(
+                        Color.Black.copy(alpha = 0.5f),
+                        shape = CircleShape
                     )
-                    .padding(50.dp),
-                horizontalArrangement = Arrangement.Center,
             ) {}
         }
     }

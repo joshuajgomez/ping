@@ -2,6 +2,8 @@ package com.joshgm3z.ping.ui.screens.frx
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -82,7 +84,7 @@ fun FrxContainer(
                         showLoading = { showLoading = it },
                         onSignInComplete = onSignInComplete
                     )
-                    AnimatedVisibility(!isSignIn) {
+                    if (!isSignIn) {
                         HorizontalDivider()
                     }
                     SignUpCard(
@@ -103,6 +105,10 @@ fun FrxContainer(
                         imageUrl = it
                         showIconGrid = false
                         showDropDownMenu = false
+                    },
+                    onCloseClick = {
+                        showDropDownMenu = false
+                        showIconGrid = false
                     }
                 )
 
@@ -181,11 +187,15 @@ private fun SignUpCard(
 
 @Composable
 fun FrxItem(title: String, enabled: Boolean, onClick: () -> Unit = {}) {
+    val interactionSource = remember { MutableInteractionSource() }
     Row(
         Modifier
             .clip(RoundedCornerShape(10.dp))
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable(
+                indication = null,
+                interactionSource = interactionSource
+            ) { onClick() }
             .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
