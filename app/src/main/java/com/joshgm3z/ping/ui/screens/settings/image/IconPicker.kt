@@ -20,8 +20,11 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,15 +49,36 @@ import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.common.getIfNotPreview
+import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.IconPickerUiState
 import com.joshgm3z.ping.ui.viewmodels.IconPickerViewModel
 
 @DarkPreview
 @Composable
+private fun PreviewIconPicker2() {
+    PingTheme {
+        IconPickerContent(
+            IconPickerUiState.Ready(
+                "ss", listOf(
+                    "", "", "",
+                    "", "ss", "",
+                    "", "",
+                )
+            )
+        )
+    }
+}
+
+@DarkPreview
+@Composable
 private fun PreviewIconPicker() {
     PingTheme {
-        IconPicker()
+        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            IconPickerContent(IconPickerUiState.Fetching)
+            IconPickerContent(IconPickerUiState.Empty)
+            IconPickerContent(IconPickerUiState.Error("Unable to reach server"))
+        }
     }
 }
 
@@ -65,70 +89,34 @@ fun IconPicker(
     onCloseClick: () -> Unit = {},
 ) {
     Box(
-        Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f)),
+        Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
-                .padding(horizontal = 20.dp)
-                .fillMaxWidth()
-                .height(520.dp)
-                .background(
-                    colorScheme.surface,
-                    shape = RoundedCornerShape(20.dp)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            with(
-                viewModel?.uiState
-                    ?.collectAsState()
-                    ?.value
-            ) {
-                when (this) {
-                    is IconPickerUiState.Fetching -> CircularProgressIndicator()
-                    is IconPickerUiState.Ready -> IconPickerContent(
-                        currentImageUrl,
-                        imageUrls,
-                        onIconPicked,
-                        onCloseClick
-                    )
-
-                    else -> IconPickerError()
-                }
+        with(viewModel?.uiState?.collectAsState()?.value) {
+            when {
+                this != null -> IconPickerContent(
+                    this, onIconPicked, onCloseClick
+                )
             }
         }
     }
 }
 
 @Composable
-fun IconPickerError() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(
-            Icons.Default.Error,
-            contentDescription = null,
-            modifier = Modifier.size(40.dp),
-            tint = colorScheme.onSurface
-        )
-        Spacer(Modifier.height(20.dp))
-        Text(
-            "No icons found",
-            color = colorScheme.onSurface
-        )
-    }
-}
-
-@Composable
 fun IconPickerContent(
-    currentImageUrl: String = "",
-    imageUrls: List<String> = listOf(),
+    uiState: IconPickerUiState,
     onSaveClick: (String) -> Unit = {},
     onCloseClick: () -> Unit = {},
 ) {
-    var selectedImage by remember { mutableStateOf(currentImageUrl) }
     Column(
-        modifier = Modifier.padding(20.dp)
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .fillMaxWidth()
+            .background(
+                colorScheme.surface,
+                shape = RoundedCornerShape(20.dp)
+            )
+            .padding(20.dp),
     ) {
         Row(
             Modifier
@@ -151,6 +139,31 @@ fun IconPickerContent(
                 )
             }
         }
+
+        with(uiState) {
+            when (this) {
+                is IconPickerUiState.Fetching -> LoadingInfo()
+                is IconPickerUiState.Error -> IconPickerError("Unable to reach server")
+                is IconPickerUiState.Empty -> IconPickerError("No icons found")
+                is IconPickerUiState.Ready -> IconGridContainer(
+                    currentImageUrl,
+                    imageUrls,
+                    onSaveClick
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun IconGridContainer(
+    currentImageUrl: String,
+    imageUrls: List<String>,
+    onSaveClick: (String) -> Unit
+) {
+    var selectedImage by remember { mutableStateOf(currentImageUrl) }
+    Column(
+    ) {
         Spacer(Modifier.height(10.dp))
         IconGrid(
             onImageClick = {
@@ -159,10 +172,18 @@ fun IconPickerContent(
             selectedImage,
             imageUrls
         )
-        Spacer(Modifier.height(20.dp))
-        PingButton("Choose", onClick = {
-            onSaveClick(selectedImage)
-        })
+        Spacer(Modifier.height(10.dp))
+        Button(
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth(),
+            onClick = { onSaveClick(selectedImage) },
+            colors = ButtonDefaults.buttonColors().copy(
+                containerColor = Green40,
+            ),
+        ) {
+            Text("Choose", color = colorScheme.onSurface)
+        }
     }
 }
 
@@ -173,7 +194,7 @@ fun IconGrid(
     imageUrls: List<String>,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(110.dp),
+        columns = GridCells.Adaptive(100.dp),
     ) {
         items(items = imageUrls) {
             IconItem(
@@ -191,16 +212,71 @@ private fun IconItem(
     onIconClick: () -> Unit = {},
     isSelected: Boolean = true,
 ) {
-    AsyncImage(
-        model = imageUrl,
-        error = painterResource(R.drawable.default_user2),
-        contentDescription = null,
+    Box(
+        contentAlignment = Alignment.Center,
+    ) {
+        AsyncImage(
+            model = imageUrl,
+            error = painterResource(R.drawable.default_user2),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(vertical = 5.dp, horizontal = 5.dp)
+                .clip(CircleShape)
+                .clickable { onIconClick() },
+        )
+        if (isSelected) {
+            Row(
+                modifier = Modifier
+                    .border(
+                        10.dp,
+                        shape = CircleShape,
+                        color = Green40
+                    )
+                    .padding(50.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {}
+        }
+    }
+}
+
+@Composable
+fun IconPickerError(error: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(vertical = 5.dp, horizontal = 2.dp)
-            .clip(CircleShape)
-            .border(
-                width = if (isSelected) 10.dp else 0.dp, color = Color.Red, shape = CircleShape
-            )
-            .clickable { onIconClick() },
-    )
+            .fillMaxWidth()
+            .padding(vertical = 30.dp)
+            .height(80.dp)
+    ) {
+        Icon(
+            Icons.Default.Error,
+            contentDescription = null,
+            modifier = Modifier.size(40.dp),
+            tint = colorScheme.error
+        )
+        Spacer(Modifier.height(20.dp))
+        Text(
+            error,
+            color = colorScheme.error
+        )
+    }
+}
+
+@Composable
+fun LoadingInfo() {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 30.dp)
+            .height(80.dp)
+    ) {
+        CircularProgressIndicator(modifier = Modifier.size(20.dp))
+        Spacer(Modifier.width(20.dp))
+        Text(
+            "Fetching icons",
+            color = colorScheme.onSurface
+        )
+    }
 }
