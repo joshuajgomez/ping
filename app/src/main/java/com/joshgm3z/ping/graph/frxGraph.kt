@@ -5,10 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.joshgm3z.ping.ui.common.navigateToLoading
 import com.joshgm3z.ping.ui.screens.frx.FrxContainer
-import com.joshgm3z.ping.ui.screens.frx.NewUserInput
-import com.joshgm3z.ping.ui.screens.frx.SignInInput
 import com.joshgm3z.ping.ui.screens.frx.WelcomeScreen
 import com.joshgm3z.ping.ui.screens.settings.GoodByeScreen
 

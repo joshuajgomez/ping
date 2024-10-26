@@ -78,8 +78,7 @@ fun IconPicker(
                 .background(
                     colorScheme.surface,
                     shape = RoundedCornerShape(20.dp)
-                )
-            ,
+                ),
             contentAlignment = Alignment.Center
         ) {
             with(
@@ -109,11 +108,14 @@ fun IconPickerError() {
         Icon(
             Icons.Default.Error,
             contentDescription = null,
-            modifier = Modifier.size(60.dp),
+            modifier = Modifier.size(40.dp),
             tint = colorScheme.onSurface
         )
         Spacer(Modifier.height(20.dp))
-        Text("No icons found", color = colorScheme.onSurface, fontSize = 20.sp)
+        Text(
+            "No icons found",
+            color = colorScheme.onSurface
+        )
     }
 }
 

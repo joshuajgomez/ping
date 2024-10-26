@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.PermMedia
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -48,12 +49,12 @@ import com.joshgm3z.ping.ui.common.CustomTextField3
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.ErrorText
 import com.joshgm3z.ping.ui.common.UserImage
+import com.joshgm3z.ping.ui.common.dashedBorder
 import com.joshgm3z.ping.ui.common.getCameraLauncher
 import com.joshgm3z.ping.ui.common.getGalleryLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.Setting
 import com.joshgm3z.ping.ui.screens.settings.SettingListCard
-import com.joshgm3z.ping.ui.screens.settings.image.IconPicker
 import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.SignUpViewModel
@@ -66,64 +67,6 @@ fun PreviewNewUserInput() {
         SignUpContent()
     }
 }
-
-@Composable
-fun NewUserInput(
-    inputName: String = "",
-    signUpViewModel: SignUpViewModel? = getIfNotPreview { hiltViewModel() },
-    onSignUpComplete: (name: String) -> Unit = {},
-    showLoading: (Boolean) -> Unit = {},
-) {
-    var imageUrl by remember { mutableStateOf("") }
-    var showIconGrid by remember { mutableStateOf(false) }
-    var showDropDownMenu by remember { mutableStateOf(false) }
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Wallpaper()
-        Column(
-            modifier = Modifier
-                .padding(
-                    horizontal = 20.dp,
-                    vertical = 50.dp
-                )
-        ) {
-            Box(modifier = Modifier.weight(1f))
-            SignUpContent(
-                imageUrl,
-                inputName,
-                signUpViewModel,
-                onSignUpComplete = onSignUpComplete,
-                showLoading = showLoading,
-                showPicker = { showDropDownMenu = true },
-            )
-        }
-        if (showDropDownMenu) {
-            PickerDropDownMenu(
-                onImageSet = {
-                    imageUrl = it
-                    showDropDownMenu = false
-                },
-                closePicker = {
-                    showDropDownMenu = false
-                    showIconGrid = false
-                },
-                showIconGrid = {
-                    showIconGrid = true
-                })
-        }
-        if (showIconGrid) {
-            IconPicker(
-                onIconPicked = {
-                    imageUrl = it
-                    showIconGrid = false
-                    showDropDownMenu = false
-                }
-            )
-        }
-    }
-}
-
 
 @Composable
 fun SignUpContent(
@@ -167,7 +110,7 @@ fun SignUpContent(
         Spacer(Modifier.height(10.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 30.dp)
+            modifier = Modifier.padding(start = 20.dp, end = 40.dp)
         ) {
             ImageInput(inputImage, showPicker)
             Spacer(Modifier.width(30.dp))
@@ -299,15 +242,19 @@ fun ImageInput(
         horizontalArrangement = Arrangement.Center
     ) {
         Box(
-            Modifier.size(100.dp),
+            Modifier.size(80.dp),
             contentAlignment = Alignment.BottomEnd
         ) {
+            /*when {
+                imageUrl.isNotEmpty() -> UserImage(imageUrl = imageUrl)
+                else -> ImagePlaceHolder()
+            }*/
             UserImage(imageUrl = imageUrl)
             IconButton(
                 onInputClick,
                 modifier = Modifier
                     .background(Green40, shape = CircleShape)
-                    .size(40.dp)
+                    .size(30.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -316,5 +263,22 @@ fun ImageInput(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun ImagePlaceHolder() {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .dashedBorder(color = Green40),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            Icons.Outlined.Person,
+            contentDescription = "user",
+            tint = Green40,
+            modifier = Modifier.size(80.dp)
+        )
     }
 }

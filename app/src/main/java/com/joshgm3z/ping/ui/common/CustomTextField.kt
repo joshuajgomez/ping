@@ -132,7 +132,6 @@ fun CustomTextField3(
 ) {
     val focusRequester = remember { FocusRequester() }
     TextField(
-        textStyle = TextStyle.Default.copy(fontSize = 20.sp),
         modifier = modifier
             .fillMaxWidth()
             .height(57.dp)
@@ -152,7 +151,7 @@ fun CustomTextField3(
         ),
         shape = RoundedCornerShape(32.dp),
         placeholder = {
-            Text(text = hintText, fontSize = 20.sp)
+            Text(text = hintText)
         },
         value = text,
         onValueChange = {
