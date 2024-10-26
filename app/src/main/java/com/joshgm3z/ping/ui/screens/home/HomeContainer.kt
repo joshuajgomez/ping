@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -184,9 +185,20 @@ fun PingBottomAppBar(navController: NavController = rememberNavController()) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
         homeNavItems.forEach { route ->
+            val isSelected = currentDestination?.hierarchy?.any {
+                it.hasRoute(route::class)
+            } == true
             NavigationBarItem(
-                icon = { Icon(imageVector = route.icon, contentDescription = null) },
-                selected = currentDestination?.hierarchy?.any { it == route } == true,
+                icon = {
+                    Icon(
+                        imageVector = route.icon, contentDescription = null,
+                        tint = when {
+                            isSelected -> colorScheme.primary
+                            else -> colorScheme.onSurface.copy(alpha = 0.5f)
+                        }
+                    )
+                },
+                selected = false,
                 onClick = {
                     navController.navigate(route) {
                         // Pop up to the start destination of the graph to
