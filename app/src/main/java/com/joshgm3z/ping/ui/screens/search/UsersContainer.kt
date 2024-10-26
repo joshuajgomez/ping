@@ -1,8 +1,6 @@
 package com.joshgm3z.ping.ui.screens.search
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiPeople
 import androidx.compose.material3.Icon
@@ -27,77 +24,63 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.data.model.User
-import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.data.util.randomUsers
+import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.common.SmallCard
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
 import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
-import com.joshgm3z.ping.ui.viewmodels.UserViewModel
-import com.joshgm3z.ping.ui.viewmodels.UsersUiState
+import com.joshgm3z.ping.ui.viewmodels.SearchUiState
+import com.joshgm3z.ping.ui.viewmodels.SearchViewModel
 import com.joshgm3z.utils.Logger
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-@Preview
+@DarkPreview
 @Composable
-fun PreviewSearchContainer() {
-    PingTheme {
-        Scaffold(
-            topBar = {
-                HomeAppBarContainer("Users")
-            },
-            bottomBar = {
-                PingBottomAppBar()
-            },
-        ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues)) {
-                SearchBar()
-                UserList()
-            }
-        }
+fun PreviewSearchContainer(
+    uiState: SearchUiState = SearchUiState.AllUsers(randomUsers()),
+    query: String = "",
+) = PingTheme {
+    Scaffold(
+        topBar = {
+            HomeAppBarContainer("Users")
+        },
+        bottomBar = {
+            PingBottomAppBar()
+        },
+    ) { paddingValues ->
+        SearchContent(
+            Modifier.padding(paddingValues),
+            MutableStateFlow(uiState),
+            MutableStateFlow(query),
+        )
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
-fun PreviewSearchContainerEmpty() {
-    PingTheme {
-        Column {
-            SearchBar()
-            UserList(users = emptyList())
-        }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewEmpty() {
-    PingTheme {
-        EmptyScreen()
-    }
+fun PreviewSearchContainerUsersEmpty() {
+    PreviewSearchContainer(
+        SearchUiState.Info("Fetching..."), "qwerty"
+    )
 }
 
 @Composable
 fun EmptyScreen(message: String = "You are first!") {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .padding(top = 130.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
+    SmallCard {
         Icon(
             imageVector = Icons.Default.EmojiPeople,
             contentDescription = "empty list",
@@ -115,23 +98,58 @@ fun EmptyScreen(message: String = "You are first!") {
 
 @Composable
 fun UserContainer(
-    modifier: Modifier = Modifier,
-    userViewModel: UserViewModel? = getIfNotPreview { hiltViewModel() },
+    viewModel: SearchViewModel? = getIfNotPreview { hiltViewModel() },
     onUserClick: (user: User) -> Unit,
 ) {
-    Column(modifier = modifier) {
-        SearchBar()
-        val uiState = userViewModel?.uiState?.collectAsState()
-        when (uiState?.value) {
-            is UsersUiState.Ready -> UserList(
-                users = (uiState.value as UsersUiState.Ready).users
-            ) {
-                onUserClick(it)
-            }
+    SearchContent(
+        uiState = viewModel?.uiState ?: MutableStateFlow(SearchUiState.Info("Initial")),
+        query = viewModel?.queryFlow ?: MutableStateFlow(""),
+        onUserClick = onUserClick,
+        onSearchInputChanged = viewModel!!::onSearchInputChanged,
+    )
+}
 
-            else -> {}
+@Composable
+fun SearchContent(
+    modifier: Modifier = Modifier,
+    uiState: StateFlow<SearchUiState>,
+    query: StateFlow<String>,
+    onUserClick: (User) -> Unit = {},
+    onSearchInputChanged: (String) -> Unit = {},
+) {
+    Column(modifier = modifier) {
+        SearchBar(query) {
+            onSearchInputChanged(it)
+        }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            with(uiState.collectAsState().value) {
+                when (this) {
+                    is SearchUiState.AllUsers -> UserList(
+                        users = users,
+                        onSearchItemClick = onUserClick
+                    )
+
+                    is SearchUiState.SearchResult -> UserList(
+                        users = users,
+                        onSearchItemClick = onUserClick
+                    )
+
+                    is SearchUiState.Info -> InfoBox(message)
+                }
+            }
         }
     }
+}
+
+@Composable
+fun InfoBox(message: String) {
+    Text(
+        text = message,
+        modifier = Modifier.padding(top = 40.dp)
+    )
 }
 
 @Composable
@@ -198,16 +216,24 @@ fun SearchItem(
 }
 
 @Composable
-fun SearchBar() {
+fun SearchBar(
+    query: StateFlow<String>,
+    onTextChanged: (String) -> Unit = {}
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        var text by remember { mutableStateOf("") }
+        val text = query.collectAsState().value
         CustomTextField(
             text = text,
             hintText = "Search for user",
-            modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp),
-            onTextChanged = { text = it },
+            modifier = Modifier.padding(
+                vertical = 10.dp,
+                horizontal = 10.dp
+            ),
+            onTextChanged = {
+                onTextChanged(it)
+            },
             onEnterPressed = {},
             isFocusNeeded = false,
         )

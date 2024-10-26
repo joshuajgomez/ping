@@ -55,11 +55,13 @@ interface UserDao {
     suspend fun getAll(): List<User>
 
     @Transaction
-    suspend fun insertAll(userList: List<User>, exceptId: String) {
-        for (user in userList) {
-            if (user.docId != exceptId)
-                insert(user)
-        }
+    suspend fun insertAll(
+        userList: List<User>,
+        exceptId: String
+    ) = userList.filter {
+        it.docId != exceptId
+    }.forEach {
+        insert(it)
     }
 
     @Query("delete from User")
