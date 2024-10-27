@@ -214,7 +214,7 @@ fun SearchItem(
 }
 
 @Composable
-fun SearchBar(
+private fun SearchBar(
     query: StateFlow<String>,
     onTextChanged: (String) -> Unit = {}
 ) {

@@ -42,6 +42,8 @@ constructor(
 
     override suspend fun getUsers(): List<User> = userDao.getAll()
 
+    override suspend fun searchUsers(query: String): List<User> = userDao.searchUsers(query)
+
     override fun syncUserListWithServer(onUserListUpdated: () -> Unit) {
         Logger.entry()
         firestoreDb.getUserList {

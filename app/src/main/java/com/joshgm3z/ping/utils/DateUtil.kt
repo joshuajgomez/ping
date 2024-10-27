@@ -10,3 +10,9 @@ fun getPrettyTime(instance: Long): String {
     val date = Date(instance)
     return dateFormat.format(date).toLowerCase(Locale.current)
 }
+
+fun Long.prettyTime(): String {
+    val dateFormat = SimpleDateFormat("h.mm a")
+    val date = Date(this)
+    return dateFormat.format(date).toLowerCase(Locale.current)
+}

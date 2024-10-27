@@ -58,12 +58,6 @@ constructor(
     override fun createChatDocId(): String =
         firestoreDb.createChatDocId()
 
-    suspend fun uploadChatImage(chat: Chat){
-        val chatId = firestoreDb.createChatDocId()
-        chat.docId = chatId
-        chatDao.insert(chat)
-    }
-
     override fun uploadChat(
         chat: Chat,
         onError: () -> Unit,
@@ -213,5 +207,9 @@ constructor(
 
     override suspend fun updateChatLocal(chat: Chat) {
         chatDao.update(chat)
+    }
+
+    override suspend fun searchChat(query: String): List<Chat> {
+        return chatDao.searchChats(query)
     }
 }

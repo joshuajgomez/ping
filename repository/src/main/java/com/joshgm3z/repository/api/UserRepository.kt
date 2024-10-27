@@ -7,6 +7,8 @@ interface UserRepository {
 
     suspend fun getUsers(): List<User>
 
+    suspend fun searchUsers(query: String): List<User>
+
     fun syncUserListWithServer(onUserListUpdated: () -> Unit)
 
     fun checkUserInServer(

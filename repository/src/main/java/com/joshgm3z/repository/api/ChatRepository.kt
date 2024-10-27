@@ -35,4 +35,6 @@ interface ChatRepository {
     suspend fun insertLocal(chat: Chat)
 
     suspend fun updateChatLocal(chat: Chat)
+
+    suspend fun searchChat(query: String): List<Chat>
 }
