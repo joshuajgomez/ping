@@ -44,18 +44,13 @@ constructor(
         }
         viewModelScope.launch {
             val me = currentUserInfo.currentUser
-            Logger.debug("me $me")
             val users = userRepository.getUsers()
             chatRepository.observeChatsForUserHomeLocal(me.docId).collectLatest {
-                Logger.debug("all chat list update ${it.size}")
                 if (it.isNotEmpty() && users.isEmpty()) {
                     Logger.warn("users list not fetched")
                     _uiState.value = HomeUiState.Empty("Fetching users")
-                } else {
-                    Logger.warn("users list available ${users.size}")
                 }
                 val homeChats = dataUtil.buildHomeChats(me.docId, it, users)
-                Logger.debug("home chat list update ${homeChats.size}")
                 _uiState.value = HomeUiState.Ready(homeChats)
             }
         }

@@ -40,15 +40,15 @@ constructor(
 
     fun uploadImage(
         fileName: String,
-        url: String,
+        uri: Uri,
         onUploadComplete: (String) -> Unit = {},
         onUploadProgress: (Float) -> Unit = {},
         onUploadFailed: (String) -> Unit = {},
     ) {
-        Logger.debug("fileName = [${fileName}], uri = [${url}]")
+        Logger.debug("fileName = [${fileName}], uri = [${uri}]")
         val profilePicReference = storageRef.child(keyProfilePicture)
         val picReference = profilePicReference.child(fileName)
-        picReference.putFile(Uri.parse(url))
+        picReference.putFile(uri)
             .addOnSuccessListener {
                 Logger.debug("upload success")
                 picReference.downloadUrl.addOnSuccessListener {

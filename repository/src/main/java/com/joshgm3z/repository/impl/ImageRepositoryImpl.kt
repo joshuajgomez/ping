@@ -1,5 +1,6 @@
 package com.joshgm3z.repository.impl
 
+import android.net.Uri
 import com.joshgm3z.firebase.FirebaseStorage
 import com.joshgm3z.repository.api.ImageRepository
 import dagger.Binds
@@ -26,13 +27,13 @@ constructor(
 ) : ImageRepository {
     override fun uploadImage(
         fileName: String,
-        localUrl: String,
+        localUri: Uri,
         onSuccess: (String) -> Unit,
         onProgress: (Float) -> Unit,
         onError: (String) -> Unit,
     ) = firebaseStorage.uploadImage(
         fileName = fileName,
-        url = localUrl,
+        uri = localUri,
         onUploadComplete = onSuccess,
         onUploadProgress = onProgress,
         onUploadFailed = onError,

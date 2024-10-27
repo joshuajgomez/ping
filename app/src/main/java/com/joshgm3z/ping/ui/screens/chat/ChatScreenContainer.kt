@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.ui.screens.chat
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
@@ -7,6 +8,10 @@ import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,6 +24,7 @@ import com.joshgm3z.ping.ui.common.InfoCard
 import com.joshgm3z.ping.ui.common.PingWallpaper
 import com.joshgm3z.ping.ui.viewmodels.ChatListState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
+import com.joshgm3z.utils.Logger
 
 @Preview
 @Composable
@@ -47,35 +53,37 @@ private fun PreviewChatScreenLoading() {
 @Composable
 fun ChatScreenContainer(
     goHome: () -> Unit = {},
-    chatViewModel: ChatViewModel = hiltViewModel(),
+    viewModel: ChatViewModel = hiltViewModel(),
     onUserInfoClick: (String) -> Unit = {},
-    openPreview: (
-        imageUrl: String,
-        myUserId: String,
-        toUserId: String,
-    ) -> Unit = { _, _, _ -> },
     onImageClick: (String) -> Unit = {}
 ) {
-    val uiState = chatViewModel.uiState.collectAsState()
-    with(uiState.value) {
-        ChatScreen(
-            chatListState = chatListState,
-            user = you ?: randomUser(),
-            onSendClick = { chatViewModel.onSendButtonClick(it) },
-            onUserInfoClick = { onUserInfoClick(you?.docId ?: "") },
-            onBackClick = {
-                chatViewModel.onScreenExit()
-                goHome()
-            },
-            openPreview = {
-                openPreview(
-                    it,
-                    me.docId,
-                    you?.docId ?: ""
-                )
-            },
-            onImageClick = onImageClick,
+    var imagePreview by remember { mutableStateOf(Uri.parse("")) }
+    when {
+        imagePreview.path?.isNotEmpty() == true -> ImagePreview(
+            imageUri = imagePreview,
+            onBackClick = { imagePreview = Uri.parse("") },
+            onSendClick = {
+                viewModel.uploadChatImage(imagePreview, it)
+                imagePreview = Uri.parse("")
+            }
         )
+
+        else -> {
+            with(viewModel.uiState.collectAsState().value) {
+                ChatScreen(
+                    chatListState = chatListState,
+                    user = you ?: randomUser(),
+                    onSendClick = { viewModel.onSendButtonClick(it) },
+                    onUserInfoClick = { onUserInfoClick(you?.docId ?: "") },
+                    onBackClick = {
+                        viewModel.onScreenExit()
+                        goHome()
+                    },
+                    openPreview = { imagePreview = it },
+                    onImageClick = onImageClick,
+                )
+            }
+        }
     }
 }
 
@@ -86,7 +94,7 @@ fun ChatScreen(
     onSendClick: (String) -> Unit = {},
     onUserInfoClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    openPreview: (String) -> Unit = { },
+    openPreview: (Uri) -> Unit = { },
     onImageClick: (String) -> Unit = { },
 ) {
     Column {

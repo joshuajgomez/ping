@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.ui.screens.settings.image
 
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -116,17 +117,17 @@ private fun ImagePicker(
 @Composable
 fun ImagePickerContent(
     uiState: ImagePickerUiState,
-    saveImage: (String) -> Unit,
+    saveImage: (Uri) -> Unit,
     removeImage: () -> Unit,
     openIconPicker: () -> Unit,
 ) {
     Logger.debug("uiState = $uiState")
     val galleryLauncher = getGalleryLauncher {
-        saveImage(it.toString())
+        saveImage(it)
     }
     val cameraUri = getIfNotPreview { FileUtil.getUri(LocalContext.current) }
     val cameraLauncher = getCameraLauncher {
-        saveImage(cameraUri.toString())
+        saveImage(cameraUri ?: Uri.parse(""))
     }
 
     Column(

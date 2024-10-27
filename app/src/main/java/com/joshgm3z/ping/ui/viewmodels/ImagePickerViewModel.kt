@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.ui.viewmodels
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.data.model.User
@@ -46,14 +47,14 @@ class ImagePickerViewModel
     }
 
     fun saveImage(
-        imageUrl: String,
+        imageUri: Uri,
     ) {
-        Logger.debug("imageUrl = [${imageUrl}]")
+        Logger.debug("imageUrl = [${imageUri}]")
         _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
             imageRepository.uploadImage(
                 fileName = "profile_${me.docId}.jpg",
-                localUrl = imageUrl,
+                localUri = imageUri,
                 onProgress = { _uiState.update { it.copy(loadingProgress = it.loadingProgress) } },
                 onSuccess = {
                     when {

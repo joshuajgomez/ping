@@ -4,6 +4,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
+import com.joshgm3z.utils.Logger
 import com.joshgm3z.utils.const.FirestoreKey
 
 class FirestoreConverter {
@@ -24,14 +25,18 @@ class FirestoreConverter {
             val chatList = ArrayList<Chat>()
             result.forEach {
                 with(it) {
-                    Chat(message = get(FirestoreKey.Chat.message).toString()).apply {
-                        docId = id
-                        sentTime = get(FirestoreKey.Chat.sentTime) as Long
-                        fromUserId = get(FirestoreKey.Chat.fromUserId).toString()
-                        toUserId = get(FirestoreKey.Chat.toUserId).toString()
-                        status = get(FirestoreKey.Chat.status) as Long
-                        imageUrl = get(FirestoreKey.Chat.imageUrl).toString()
-                        chatList.add(this)
+                    try {
+                        Chat(message = get(FirestoreKey.Chat.message).toString()).apply {
+                            docId = id
+                            sentTime = get(FirestoreKey.Chat.sentTime) as Long
+                            fromUserId = get(FirestoreKey.Chat.fromUserId).toString()
+                            toUserId = get(FirestoreKey.Chat.toUserId).toString()
+                            status = get(FirestoreKey.Chat.status) as Long
+                            imageUrl = get(FirestoreKey.Chat.imageUrl).toString()
+                            chatList.add(this)
+                        }
+                    } catch (e: Exception) {
+                        Logger.debug(e.stackTraceToString())
                     }
                 }
             }

@@ -35,7 +35,7 @@ private fun PreviewChatImage() {
 @Composable
 fun ChatImage(
     modifier: Modifier = Modifier,
-    imageUrl: String = "",
+    imageUrl: Any = "",
     placeHolderColor: Color = colorScheme.surfaceContainerHighest,
 ) {
     var maskImage by remember { mutableStateOf(true) }

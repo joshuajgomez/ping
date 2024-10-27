@@ -27,6 +27,9 @@ constructor(
     private lateinit var listenerRegistration: ListenerRegistration
     private var onChatReceived: ((List<Chat>) -> Unit)? = null
 
+    fun createChatDocId(): String =
+        firestore.collection(keyCollectionChatList).document().id
+
     fun registerChat(
         chat: Chat,
         onIdSet: (id: String) -> Unit,
@@ -39,6 +42,26 @@ constructor(
             .addOnSuccessListener {
                 Logger.debug("chat <${chat}> added with id: ${it.id}")
                 onIdSet(it.id)
+            }
+            .addOnFailureListener {
+                Logger.warn("error adding chat: ${it.message}")
+                onError()
+            }
+    }
+
+    fun registerChatWithId(
+        chat: Chat,
+        onError: () -> Unit,
+        onSuccess: () -> Unit,
+    ) {
+        Logger.debug("chat = [${chat}]")
+        val chatDoc = FirestoreConverter.getDocumentFromChat(chat)
+        firestore.collection(keyCollectionChatList)
+            .document(chat.docId)
+            .set(chatDoc)
+            .addOnSuccessListener {
+                Logger.debug("chat <${chat}> added with id")
+                onSuccess()
             }
             .addOnFailureListener {
                 Logger.warn("error adding chat: ${it.message}")
@@ -135,17 +158,6 @@ constructor(
         listenerRegistration.remove()
     }
 
-    fun updateChatStatus(chat: Chat) {
-        Logger.debug("chat = [$chat]")
-        firestore.collection(keyCollectionChatList)
-            .document(chat.docId)
-            .update(FirestoreKey.Chat.status, chat.status)
-            .addOnSuccessListener {}
-            .addOnFailureListener {
-                Logger.warn("error updating chat status: $chat")
-            }
-    }
-
     fun updateUserInfo(
         userId: String,
         key: String,
@@ -170,6 +182,17 @@ constructor(
                 Logger.error("failure ${it.message}")
                 onUpdateError(it.message.toString())
 
+            }
+    }
+
+    fun updateChat(chatId: String, key: String, value: Any) {
+        Logger.debug("chatId = [${chatId}], key = [${key}], value = [${value}]")
+        firestore.collection(keyCollectionChatList)
+            .document(chatId)
+            .update(key, value)
+            .addOnSuccessListener {}
+            .addOnFailureListener {
+                Logger.warn("error updating chat status: $chatId")
             }
     }
 }

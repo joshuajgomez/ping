@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.DoneAll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -35,6 +36,7 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.utils.getPrettyTime
+import com.joshgm3z.utils.Logger
 
 @Composable
 fun ChatList(
@@ -109,6 +111,16 @@ fun PreviewIncomingChatImage() {
     }
 }
 
+@Preview
+@Composable
+fun PreviewSendingChatImage() {
+    PingTheme {
+        val chat = Chat("")
+        chat.imageUploadUri = "aa"
+        ChatItem(chat)
+    }
+}
+
 @Composable
 fun ChatItem(
     chat: Chat,
@@ -152,15 +164,31 @@ private fun ImagePreview(
     chat: Chat,
     onImageClick: () -> Unit,
 ) {
-    if (chat.imageUrl.isEmpty()) return
-    Box(Modifier.clickable { onImageClick() }) {
+    if (chat.imageUrl.isEmpty() && chat.imageUploadUri.isEmpty()) return
+    Box(
+        Modifier.clickable { onImageClick() },
+        contentAlignment = Alignment.Center
+    ) {
         ChatImage(
-            imageUrl = chat.imageUrl,
+            imageUrl = when {
+                chat.imageUrl.isNotEmpty() -> chat.imageUrl
+                else -> chat.imageUploadUri
+            },
             placeHolderColor = when {
                 chat.isOutwards -> colorScheme.surfaceContainerHighest
                 else -> colorScheme.primaryContainer.copy(alpha = 0.9f)
             }
         )
+        if (chat.imageUploadUri.isNotEmpty()) {
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    progress = { chat.imageUploadProgress / 100 },
+                    color = colorScheme.primary
+                )
+            }
+        }
     }
 }
 

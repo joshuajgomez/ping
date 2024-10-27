@@ -165,8 +165,6 @@ fun UserList(
                     SearchItem(it) { onSearchItemClick(it) }
                 }
             }
-        } else {
-            EmptyScreen()
         }
     }
 }

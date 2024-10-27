@@ -9,10 +9,18 @@ interface ChatRepository {
     fun uploadChat(
         chat: Chat,
         onError: () -> Unit = {},
+        onUploaded: (String) -> Unit,
+    )
+
+    fun uploadChatWithId(
+        chat: Chat,
+        onError: () -> Unit = {},
         onUploaded: () -> Unit,
     )
 
     fun observeChatsForUserLocal(userId: String): Flow<List<Chat>>
+
+    fun createChatDocId(): String
 
     fun observeChatsForUserHomeLocal(userId: String): Flow<List<Chat>>
 
@@ -21,4 +29,10 @@ interface ChatRepository {
     fun updateChatStatusToServer(newStatus: Long, chats: List<Chat>)
 
     suspend fun getChat(chatId: String): Chat
+
+    suspend fun updateChat(chatId: String, key: String, value: String)
+
+    suspend fun insertLocal(chat: Chat)
+
+    suspend fun updateChatLocal(chat: Chat)
 }

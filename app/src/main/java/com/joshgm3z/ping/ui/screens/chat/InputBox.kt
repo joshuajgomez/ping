@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.ui.screens.chat
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +36,7 @@ import com.joshgm3z.utils.FileUtil
 @Composable
 fun InputBox(
     modifier: Modifier = Modifier,
-    openPreview: (imageUrl: String) -> Unit = {},
+    openPreview: (Uri) -> Unit = {},
     onSendClick: (text: String) -> Unit = {},
     defaultText: String = "",
 ) {
@@ -49,7 +50,7 @@ fun InputBox(
 
         val cameraUri = getIfNotPreview { FileUtil.getUri(LocalContext.current) }
         val cameraLauncher = getCameraLauncher {
-            openPreview(cameraUri.toString())
+            openPreview(cameraUri ?: Uri.parse(""))
         }
 
         Icon(

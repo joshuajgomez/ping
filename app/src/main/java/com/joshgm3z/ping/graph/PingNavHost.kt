@@ -9,10 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.joshgm3z.ping.ui.common.LoadingContainer
-import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
-import com.joshgm3z.ping.ui.screens.chat.ImagePreview
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
-import com.joshgm3z.ping.ui.screens.settings.navigateToUserInfo
 import com.joshgm3z.ping.ui.viewmodels.EditType
 import kotlinx.serialization.Serializable
 
@@ -41,23 +38,6 @@ fun NavController.navigateToHome() = navigate(Home)
 
 @Serializable
 data class ChatScreen(val userId: String)
-
-@Serializable
-data class ChatImagePreview(
-    val imageUrl: String,
-    val myUserId: String,
-    val toUserId: String,
-)
-
-fun NavController.navigateToImagePreview(
-    imageUrl: String,
-    myUserId: String,
-    toUserId: String,
-) = navigate(
-    ChatImagePreview(
-        imageUrl, myUserId, toUserId
-    )
-)
 
 @Serializable
 data class PingDialog(val title: String, val message: String)

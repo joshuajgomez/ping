@@ -46,7 +46,10 @@ constructor(
     fun onSearchInputChanged(query: String) {
         queryFlow.value = query
         if (query.isEmpty()) {
-            _uiState.value = SearchUiState.AllUsers(users)
+            _uiState.value = when{
+                users.isEmpty() -> SearchUiState.Info("No users found")
+                else -> SearchUiState.AllUsers(users)
+            }
             return
         }
         users.filter {

@@ -16,17 +16,14 @@ import dagger.hilt.components.SingletonComponent
 class DbProvider {
     @Provides
     fun provideDb(context: Context): PingDb =
-        Room.databaseBuilder(
-            context,
-            PingDb::class.java, "ping-db"
-        )
+        Room.databaseBuilder(context, PingDb::class.java, "ping-db")
             .fallbackToDestructiveMigration()
             .build()
 }
 
 @Database(
     entities = [Chat::class, User::class],
-    version = 12,
+    version = 13,
     exportSchema = false
 )
 abstract class PingDb : RoomDatabase() {

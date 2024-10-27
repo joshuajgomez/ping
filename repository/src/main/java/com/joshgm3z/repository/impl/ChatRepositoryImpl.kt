@@ -10,6 +10,7 @@ import com.joshgm3z.repository.room.PingDb
 import com.joshgm3z.repository.room.UserDao
 import com.joshgm3z.utils.Logger
 import com.joshgm3z.utils.NotificationUtil
+import com.joshgm3z.utils.const.FirestoreKey
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -54,16 +55,54 @@ constructor(
         }
     }
 
+    override fun createChatDocId(): String =
+        firestoreDb.createChatDocId()
+
+    suspend fun uploadChatImage(chat: Chat){
+        val chatId = firestoreDb.createChatDocId()
+        chat.docId = chatId
+        chatDao.insert(chat)
+    }
+
     override fun uploadChat(
         chat: Chat,
         onError: () -> Unit,
-        onUploaded: () -> Unit,
+        onUploaded: (String) -> Unit,
     ) {
         Logger.debug("chat = [${chat}]")
         chat.status = Chat.SENT
         firestoreDb.registerChat(
             chat,
             onIdSet = {
+                // chat added to firestore
+                onUploaded(it)
+            },
+            onError = {
+                // error adding chat
+                Logger.warn("error adding chat")
+                scope.launch {
+                    chat.status = Chat.SAVED
+                    chatDao.insert(chat)
+                }
+                onError()
+            }
+        )
+        scope.launch {
+            Thread.sleep(5000)
+            addDummyChat(chat)
+        }
+    }
+
+    override fun uploadChatWithId(
+        chat: Chat,
+        onError: () -> Unit,
+        onUploaded: () -> Unit,
+    ) {
+        Logger.debug("chat = [${chat}]")
+        chat.status = Chat.SENT
+        firestoreDb.registerChatWithId(
+            chat,
+            onSuccess = {
                 // chat added to firestore
                 onUploaded()
             },
@@ -127,7 +166,11 @@ constructor(
                                     fromUserId,
                                     message
                                 )
-                                firestoreDb.updateChatStatus(this)
+                                firestoreDb.updateChat(
+                                    this.docId,
+                                    FirestoreKey.Chat.status,
+                                    status
+                                )
                             }
                         } else {
                             isOutwards = true
@@ -147,12 +190,28 @@ constructor(
                     newStatus == Chat.DELIVERED && status == Chat.SENT -> Chat.DELIVERED
                     else -> null
                 }?.let {
-                    status = it
-                    firestoreDb.updateChatStatus(this)
+                    firestoreDb.updateChat(
+                        this.docId,
+                        FirestoreKey.Chat.status,
+                        it
+                    )
                 }
             }
         }
 
     override suspend fun getChat(chatId: String): Chat =
         chatDao.getChat(chatId).first().first()
+
+    override suspend fun updateChat(chatId: String, key: String, value: String) {
+        firestoreDb.updateChat(chatId, key, value)
+    }
+
+    override suspend fun insertLocal(chat: Chat) {
+        Logger.debug("chat = [${chat}]")
+        chatDao.insert(chat)
+    }
+
+    override suspend fun updateChatLocal(chat: Chat) {
+        chatDao.update(chat)
+    }
 }

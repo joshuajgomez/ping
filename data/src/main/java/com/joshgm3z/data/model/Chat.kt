@@ -1,7 +1,6 @@
 package com.joshgm3z.data.model
 
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.joshgm3z.data.util.randomMessage
 import kotlin.random.Random
@@ -19,6 +18,8 @@ data class Chat(
     var status: Long = SAVED
     var imageUrl: String = ""
     var isOutwards: Boolean = false
+    var imageUploadUri: String = ""
+    var imageUploadProgress: Float = 0f
 
     companion object {
         fun random(message: String = randomMessage()): Chat {
@@ -40,7 +41,9 @@ data class Chat(
         return "Chat(message='$message', docId='$docId'," +
                 " sentTime=$sentTime, fromUserId=$fromUserId, toUserId=$toUserId," +
                 " isOutwards=$isOutwards, status=${textStatus(status)}," +
-                " imageUrl=${imageUrl})"
+                " imageUrl=${imageUrl}," +
+                " imageUpload=[${imageUploadProgress}]>>${imageUploadUri}," +
+                ")"
     }
 
     private fun textStatus(status: Long): String {
@@ -50,6 +53,42 @@ data class Chat(
             READ -> "READ"
             else -> "SAVED"
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Chat
+
+        if (message != other.message) return false
+        if (docId != other.docId) return false
+        if (sentTime != other.sentTime) return false
+        if (fromUserId != other.fromUserId) return false
+        if (toUserId != other.toUserId) return false
+        if (replyToChatId != other.replyToChatId) return false
+        if (status != other.status) return false
+        if (imageUrl != other.imageUrl) return false
+        if (isOutwards != other.isOutwards) return false
+        if (imageUploadUri != other.imageUploadUri) return false
+        if (imageUploadProgress != other.imageUploadProgress) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = message.hashCode()
+        result = 31 * result + docId.hashCode()
+        result = 31 * result + sentTime.hashCode()
+        result = 31 * result + fromUserId.hashCode()
+        result = 31 * result + toUserId.hashCode()
+        result = 31 * result + replyToChatId.hashCode()
+        result = 31 * result + status.hashCode()
+        result = 31 * result + imageUrl.hashCode()
+        result = 31 * result + isOutwards.hashCode()
+        result = 31 * result + imageUploadUri.hashCode()
+        result = 31 * result + imageUploadProgress.hashCode()
+        return result
     }
 
 

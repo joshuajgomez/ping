@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.ui.screens.chat
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,25 +12,18 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.PingButton
-import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.viewmodels.ImagePreviewUiState
-import com.joshgm3z.ping.ui.viewmodels.ImagePreviewViewModel
 
 @DarkPreview
 @Composable
@@ -41,52 +35,33 @@ private fun PreviewImagePreview() {
 
 @Composable
 fun ImagePreview(
-    navController: NavController = rememberNavController(),
-    viewModel: ImagePreviewViewModel? = getIfNotPreview { hiltViewModel() },
-    onBackClick: () -> Unit = {
-        navController.popBackStack()
-    },
-    onSendClick: () -> Unit = {
-        viewModel?.onSendButtonClick()
-    }
+    message: String = "",
+    imageUri: Uri = Uri.parse(""),
+    toName: String = "",
+    onBackClick: () -> Unit = {},
+    onSendClick: (String) -> Unit = {}
 ) {
     SettingContainer(
         "Send image",
         onCloseClick = onBackClick
     ) {
-        val uiState = viewModel?.uiState?.collectAsState()
-        with(uiState?.value) {
-            when (this) {
-                is ImagePreviewUiState.Initial -> {}
-                is ImagePreviewUiState.Ready -> ImagePreviewContent(
-                    imageUrl = imageUrl,
-                    buttonText = "Send to $toName",
-                    onSendClick = onSendClick
-                )
-
-                is ImagePreviewUiState.Sending -> ImagePreviewContent(
-                    imageUrl = imageUrl,
-                    buttonText = "Sending",
-                    onSendClick = onSendClick
-                )
-
-                is ImagePreviewUiState.Sent -> onBackClick()
-
-                else -> {}
-            }
-        }
+        ImagePreviewContent(
+            imageUri = imageUri,
+            buttonText = "Send to $toName",
+            onSendClick = { onSendClick(message) }
+        )
     }
 }
 
 @Composable
 fun ImagePreviewContent(
-    imageUrl: String,
+    imageUri: Uri,
     buttonText: String,
     onSendClick: () -> Unit = {},
 ) {
     Column {
         AsyncImage(
-            model = imageUrl,
+            model = imageUri,
             error = painterResource(R.drawable.wallpaper2),
             contentDescription = null,
             modifier = Modifier
