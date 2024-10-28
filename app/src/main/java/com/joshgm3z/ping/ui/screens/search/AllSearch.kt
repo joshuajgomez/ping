@@ -297,6 +297,7 @@ fun getChatDataList(): List<ChatData> = listOf(
     ChatData(),
     ChatData(),
     ChatData(isOutwards = true, message = "Whats"),
+    ChatData(isOutwards = true, message = "What"),
 )
 
 @DarkPreview
@@ -350,7 +351,7 @@ fun ChatSearchItem(
                 val index = chat.message.indexOf(query)
                 append(chat.message.substring(0, index))
                 withStyle(style = SpanStyle(color = Green40)) {
-                    append(chat.message.substring(index))
+                    append(chat.message.substring(index, index + query.length))
                 }
                 append(chat.message.substring(index + query.length))
             },
