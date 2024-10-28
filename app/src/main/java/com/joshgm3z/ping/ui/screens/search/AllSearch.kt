@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -130,26 +129,34 @@ fun SearchResult(
         SearchHeader(searchHeaderType) {
             searchHeaderType = it
         }
-        ChatResult(searchHeaderType, uiState.query, uiState.chats) {
-            onClick(it.otherGuyId, it.chatId)
+        when (searchHeaderType) {
+            SearchHeaderType.All, SearchHeaderType.Chats -> {
+                ChatResult(uiState.query, uiState.chats) {
+                    onClick(it.otherGuyId, it.chatId)
+                }
+            }
+
+            else -> {}
         }
-        UserResult(searchHeaderType, uiState.users) {
-            onClick(it, "")
+
+        when (searchHeaderType) {
+            SearchHeaderType.All, SearchHeaderType.Users -> {
+                UserResult(uiState.users) {
+                    onClick(it, "")
+                }
+            }
+
+            else -> {}
         }
     }
 }
 
 @Composable
 fun ChatResult(
-    searchHeaderType: SearchHeaderType,
     query: String,
     chats: List<ChatData>,
     onClick: (ChatData) -> Unit
 ) {
-    when (searchHeaderType) {
-        SearchHeaderType.All, SearchHeaderType.Chats -> {}
-        else -> return
-    }
     Column(modifier = Modifier.padding(top = 20.dp)) {
         SearchTitle("Chats")
         LazyColumn {
@@ -167,14 +174,9 @@ fun ChatResult(
 
 @Composable
 fun UserResult(
-    searchHeaderType: SearchHeaderType,
     users: List<User>,
     onClick: (String) -> Unit
 ) {
-    when (searchHeaderType) {
-        SearchHeaderType.All, SearchHeaderType.Users -> {}
-        else -> return
-    }
     Column(modifier = Modifier.padding(top = 20.dp)) {
         SearchTitle("Users")
         Spacer(Modifier.size(10.dp))
