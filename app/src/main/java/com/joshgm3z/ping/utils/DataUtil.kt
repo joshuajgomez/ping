@@ -9,14 +9,6 @@ import javax.inject.Singleton
 @Singleton
 class DataUtil
 @Inject constructor() {
-    fun markOutwardChats(meUserId: String, chats: ArrayList<Chat>): List<Chat> {
-        for (chat in chats) {
-            if (chat.fromUserId != meUserId) {
-                chat.isOutwards = false
-            }
-        }
-        return chats
-    }
 
     fun buildHomeChats(meUserId: String, chats: List<Chat>, users: List<User>): List<HomeChat> {
         val homeChats: HashMap<String, HomeChat> = HashMap()

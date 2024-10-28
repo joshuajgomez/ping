@@ -42,16 +42,19 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.data.model.User
+import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.util.randomUsers
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getIfNotPreview
+import com.joshgm3z.ping.ui.screens.home.HomeChatItem
 import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.AllSearchUiState
 import com.joshgm3z.ping.ui.viewmodels.AllSearchViewModel
-import com.joshgm3z.ping.ui.viewmodels.ChatData
+import com.joshgm3z.ping.ui.viewmodels.Message
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -129,39 +132,62 @@ fun SearchResult(
         SearchHeader(searchHeaderType) {
             searchHeaderType = it
         }
-        when (searchHeaderType) {
-            SearchHeaderType.All, SearchHeaderType.Chats -> {
-                ChatResult(uiState.query, uiState.chats) {
-                    onClick(it.otherGuyId, it.chatId)
-                }
-            }
 
-            else -> {}
+        if (searchHeaderType == SearchHeaderType.All
+            || searchHeaderType == SearchHeaderType.Chats
+            && uiState.homeChats.isNotEmpty()
+        ) ChatResult(uiState.homeChats) {
+            onClick(it.otherGuy.docId, "")
         }
 
-        when (searchHeaderType) {
-            SearchHeaderType.All, SearchHeaderType.Users -> {
-                UserResult(uiState.users) {
-                    onClick(it, "")
+        if (searchHeaderType == SearchHeaderType.All
+            || searchHeaderType == SearchHeaderType.Messages
+            && uiState.messages.isNotEmpty()
+        ) MessagesResult(uiState.query, uiState.messages) {
+            onClick(it.otherGuyId, it.chatId)
+        }
+
+        if (searchHeaderType == SearchHeaderType.All
+            || searchHeaderType == SearchHeaderType.Users
+            && uiState.users.isNotEmpty()
+        ) UserResult(uiState.users) {
+            onClick(it, "")
+        }
+
+    }
+}
+
+@Composable
+fun MessagesResult(
+    query: String,
+    chats: List<Message>,
+    onClick: (Message) -> Unit
+) {
+    Column(modifier = Modifier.padding(top = 20.dp)) {
+        SearchTitle("Messages")
+        LazyColumn {
+            itemsIndexed(chats) { i, it ->
+                ChatSearchItem(it, query) {
+                    onClick(it)
+                }
+                if (i < chats.lastIndex) {
+                    HorizontalDivider()
                 }
             }
-
-            else -> {}
         }
     }
 }
 
 @Composable
 fun ChatResult(
-    query: String,
-    chats: List<ChatData>,
-    onClick: (ChatData) -> Unit
+    chats: List<HomeChat>,
+    onClick: (HomeChat) -> Unit
 ) {
     Column(modifier = Modifier.padding(top = 20.dp)) {
-        SearchTitle("Chats")
+        SearchTitle("Chat")
         LazyColumn {
             itemsIndexed(chats) { i, it ->
-                ChatSearchItem(it, query) {
+                HomeChatItem(it) {
                     onClick(it)
                 }
                 if (i < chats.lastIndex) {
@@ -178,7 +204,7 @@ fun UserResult(
     onClick: (String) -> Unit
 ) {
     Column(modifier = Modifier.padding(top = 20.dp)) {
-        SearchTitle("Users")
+        SearchTitle("Other users")
         Spacer(Modifier.size(10.dp))
         LazyColumn {
             itemsIndexed(users) { i, it ->
@@ -197,6 +223,7 @@ fun UserResult(
 fun SearchTitle(title: String) {
     Text(
         title, fontWeight = FontWeight.Bold,
+        color = colorScheme.onSurface.copy(alpha = 0.7f),
         modifier = Modifier.padding(horizontal = commonHorizontalPadding)
     )
 }
@@ -319,7 +346,7 @@ private fun SearchBar(
 @Composable
 private fun PreviewAllSearch(
     uiState: AllSearchUiState
-    = AllSearchUiState.SearchResult("What", getChatDataList(), randomUsers())
+    = AllSearchUiState.SearchResult("What", getHomeChatList(), getChatDataList(), randomUsers())
 ) {
     PingTheme {
         AllSearch(
@@ -329,14 +356,14 @@ private fun PreviewAllSearch(
     }
 }
 
-fun getChatDataList(): List<ChatData> = listOf(
-    ChatData(isOutwards = true),
-    ChatData(isOutwards = true),
-    ChatData(message = "Some very long Whattt message that is sooooooo long you cant even read it in full long you cant even read it in full "),
-    ChatData(),
-    ChatData(),
-    ChatData(isOutwards = true, message = "Whats"),
-    ChatData(isOutwards = true, message = "What"),
+fun getChatDataList(): List<Message> = listOf(
+    Message(isOutwards = true),
+    Message(isOutwards = true),
+    Message(message = "Some very long Whattt message that is sooooooo long you cant even read it in full long you cant even read it in full "),
+    Message(),
+    Message(),
+    Message(isOutwards = true, message = "Whats"),
+    Message(isOutwards = true, message = "What"),
 )
 
 @DarkPreview
@@ -353,7 +380,7 @@ private fun PreviewAllSearchEmpty() {
 
 @Composable
 fun ChatSearchItem(
-    chat: ChatData,
+    message: Message,
     query: String,
     onClick: () -> Unit
 ) {
@@ -365,14 +392,14 @@ fun ChatSearchItem(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                chat.name,
+                message.name,
                 fontWeight = FontWeight.Bold,
                 color = colorScheme.primary,
                 modifier = Modifier.weight(1f)
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    chat.sentTime,
+                    message.sentTime,
                     color = subTextColor(),
                     fontSize = 15.sp
                 )
@@ -382,17 +409,20 @@ fun ChatSearchItem(
         }
         Text(
             text = buildAnnotatedString {
-                if (chat.isOutwards) {
+                if (message.isOutwards) {
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("You: ")
                     }
                 }
-                val index = chat.message.indexOf(query)
-                append(chat.message.substring(0, index))
-                withStyle(style = SpanStyle(color = Green40)) {
-                    append(chat.message.substring(index, index + query.length))
+                with(message.message) {
+                    indexOf(query).let {
+                        append(substring(0, it))
+                        withStyle(style = SpanStyle(color = Green40)) {
+                            append(substring(it, it + query.length))
+                        }
+                        append(substring(it + query.length))
+                    }
                 }
-                append(chat.message.substring(index + query.length))
             },
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,

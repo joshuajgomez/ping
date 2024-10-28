@@ -2,9 +2,12 @@ package com.joshgm3z.ping.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.data.model.User
+import com.joshgm3z.ping.utils.DataUtil
 import com.joshgm3z.ping.utils.prettyTime
 import com.joshgm3z.repository.api.ChatRepository
+import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.api.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +22,9 @@ sealed class AllSearchUiState {
 
     data class SearchResult(
         val query: String,
-        val chats: List<ChatData>,
-        val users: List<User>
+        val homeChats: List<HomeChat>,
+        val messages: List<Message>,
+        val users: List<User>,
     ) : AllSearchUiState()
 
     data class SearchEmpty(
@@ -28,7 +32,7 @@ sealed class AllSearchUiState {
     ) : AllSearchUiState()
 }
 
-data class ChatData(
+data class Message(
     val message: String = "Whats up my maan",
     val name: String = "Someone",
     val sentTime: String = "Yesterday",
@@ -41,8 +45,10 @@ data class ChatData(
 class AllSearchViewModel
 @Inject
 constructor(
+    private val currentUserInfo: CurrentUserInfo,
     private val userRepository: UserRepository,
     private val chatRepository: ChatRepository,
+    private val dataUtil: DataUtil,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AllSearchUiState>(AllSearchUiState.Initial())
@@ -50,8 +56,9 @@ constructor(
 
     fun onSearchTextInput(query: String) {
         viewModelScope.launch {
-            val chats = chatRepository.searchChat(query).map {
-                ChatData(
+            val chats = chatRepository.searchChat(query)
+            val messages = chats.map {
+                Message(
                     message = it.message,
                     name = userRepository.getUser(it.fromUserId).name,
                     sentTime = it.sentTime.prettyTime(),
@@ -61,10 +68,29 @@ constructor(
                 )
             }
             val users = userRepository.searchUsers(query)
+
+            val homeChats = dataUtil.buildHomeChats(currentUserInfo.currentUser.docId, chats, users)
+            val otherUsers = getRemainingUsers(users, homeChats)
+
             _uiState.value = when {
                 chats.isEmpty() && users.isEmpty() -> AllSearchUiState.SearchEmpty()
-                else -> AllSearchUiState.SearchResult(query, chats, users)
+                else -> AllSearchUiState.SearchResult(
+                    query,
+                    homeChats,
+                    messages,
+                    otherUsers,
+                )
             }
+        }
+    }
+
+    private fun getRemainingUsers(
+        users: List<User>,
+        homeChats: List<HomeChat>
+    ): List<User> {
+        val userIds = homeChats.map { it.otherGuy.docId }
+        return users.filter {
+            !userIds.contains(it.docId)
         }
     }
 }
