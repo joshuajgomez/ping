@@ -33,7 +33,7 @@ import com.joshgm3z.ping.ui.screens.search.UserContainer
 import com.joshgm3z.ping.ui.screens.search.UserList
 import com.joshgm3z.ping.ui.screens.settings.MainSettingsScreen
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.viewmodels.UserViewModel
+import com.joshgm3z.ping.ui.viewmodels.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -61,7 +61,7 @@ fun PreviewHomeScreenListEmpty() {
         ) {
             HomeChatList(
                 modifier = Modifier.padding(it),
-                homeChats = emptyList()
+                uiState = MutableStateFlow(HomeUiState.Empty())
             )
         }
     }
@@ -141,19 +141,7 @@ fun HomeScreenContainer(
                         navController.navigate(ChatScreen(chat.otherGuy.docId))
                     },
                     onGoToUsersClicked = {
-                        homeNavController.navigate(HomeRoute.UserList) {
-                            // Pop up to the start destination of the graph to
-                            // avoid building up a large stack of destinations
-                            // on the back stack as users select items
-                            popUpTo(homeNavController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            // Avoid multiple copies of the same destination when
-                            // reselecting the same item
-                            launchSingleTop = true
-                            // Restore state when reselecting a previously selected item
-                            restoreState = true
-                        }
+                        navController.navigateToUsers()
                     },
                     onSearchClick = onSearchClick
                 )
@@ -170,6 +158,22 @@ fun HomeScreenContainer(
                 MainSettingsScreen(navController = navController)
             }
         }
+    }
+}
+
+private fun NavController.navigateToUsers() {
+    navigate(HomeRoute.UserList) {
+        // Pop up to the start destination of the graph to
+        // avoid building up a large stack of destinations
+        // on the back stack as users select items
+        popUpTo(graph.findStartDestination().id) {
+            saveState = true
+        }
+        // Avoid multiple copies of the same destination when
+        // reselecting the same item
+        launchSingleTop = true
+        // Restore state when reselecting a previously selected item
+        restoreState = true
     }
 }
 

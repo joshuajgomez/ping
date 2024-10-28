@@ -4,10 +4,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Forum
@@ -46,10 +49,10 @@ import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
-import com.joshgm3z.ping.ui.common.getIfNotPreview
-import com.joshgm3z.ping.ui.screens.search.AllSearchTextField
-import com.joshgm3z.ping.ui.screens.search.AllSearchTextFieldView
+import com.joshgm3z.ping.ui.theme.Gray60
 import com.joshgm3z.ping.utils.getPrettyTime
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @DarkPreview
 @Composable
@@ -64,10 +67,8 @@ fun PreviewHomeChatList() {
                     PingBottomAppBar()
                 },
             ) { paddingValues ->
-                LazyColumn(Modifier.padding(paddingValues)) {
-                    items(items = getHomeChatList()) {
-                        HomeChatItem(it) {}
-                    }
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    HomeChatList(uiState = MutableStateFlow(HomeUiState.Ready(getHomeChatList())))
                 }
             }
         }
@@ -99,51 +100,65 @@ fun PreviewHomeReceivedChat() {
 
 @Composable
 fun HomeChatListContainer(
-    homeViewModel: HomeViewModel? = getIfNotPreview { hiltViewModel() },
+    viewModel: HomeViewModel = hiltViewModel(),
     onChatClick: (homeChat: HomeChat) -> Unit = {},
     onGoToUsersClicked: () -> Unit = {},
     onSearchClick: () -> Unit = {},
 ) {
-    Column {
-        AllSearchTextFieldView(onClick = onSearchClick)
-        val uiState = homeViewModel?.uiState?.collectAsState()
-        when (uiState?.value) {
-            is HomeUiState.Ready -> {
-                HomeChatList(
-                    homeChats = (uiState.value as HomeUiState.Ready).homeChats,
-                    onChatClick = { onChatClick(it) },
-                    onGoToUsersClicked = { onGoToUsersClicked() }
-                )
+    HomeChatList(
+        uiState = viewModel.uiState,
+        onChatClick = onChatClick,
+        onGoToUsersClicked = onGoToUsersClicked,
+        onSearchClick = onSearchClick
+    )
+}
+
+@Composable
+fun HomeChatList(
+    modifier: Modifier = Modifier,
+    uiState: StateFlow<HomeUiState> = MutableStateFlow(HomeUiState.Empty()),
+    onChatClick: (homeChat: HomeChat) -> Unit = {},
+    onGoToUsersClicked: () -> Unit = {},
+    onSearchClick: () -> Unit = {},
+) {
+    Column(modifier) {
+        SearchBoxView(
+            onClick = onSearchClick,
+            modifier = Modifier.padding(horizontal = 10.dp),
+            hintText = "Search chats, users or anything"
+        )
+        Spacer(Modifier.size(10.dp))
+        with(uiState.collectAsState().value) {
+            when (this) {
+                is HomeUiState.Ready -> {
+                    LazyColumn {
+                        items(items = homeChats) { it ->
+                            HomeChatItem(it) {
+                                onChatClick(it)
+                            }
+                        }
+                    }
+                }
+
+                else -> EmptyScreen(onGoToUsersClicked)
             }
 
-            else -> {
-                EmptyScreen {
-                    onGoToUsersClicked()
-                }
-            }
         }
     }
 }
 
-@Preview
 @Composable
-fun HomeChatList(
-    modifier: Modifier = Modifier,
-    homeChats: List<HomeChat> = getHomeChatList(),
-    onChatClick: (homeChat: HomeChat) -> Unit = {},
-    onGoToUsersClicked: () -> Unit = {},
-) {
-    if (homeChats.isNotEmpty()) {
-        LazyColumn {
-            items(items = homeChats) { it ->
-                HomeChatItem(it) {
-                    onChatClick(it)
-                }
-            }
-        }
-    } else {
-        EmptyScreen(onGoToUsersClicked = { onGoToUsersClicked() })
-    }
+fun SearchBoxView(onClick: () -> Unit, modifier: Modifier, hintText: String) {
+    Text(
+        hintText,
+        modifier
+            .clip(shape = RoundedCornerShape(30.dp))
+            .clickable { onClick() }
+            .background(Gray60)
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 8.dp),
+        color = colorScheme.onSurface.copy(alpha = 0.4f)
+    )
 }
 
 @Composable

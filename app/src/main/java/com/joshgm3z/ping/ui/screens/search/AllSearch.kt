@@ -54,6 +54,7 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.AllSearchUiState
 import com.joshgm3z.ping.ui.viewmodels.AllSearchViewModel
 import com.joshgm3z.ping.ui.viewmodels.Message
+import com.joshgm3z.utils.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -63,6 +64,7 @@ fun AllSearchContainer(
     onCloseClick: () -> Unit,
 ) {
     AllSearch(
+        queryFlow = viewModel.queryFlow,
         uiState = viewModel.uiState,
         onSearchInputChanged = { viewModel.onSearchTextInput(it) },
         onCloseClick = onCloseClick,
@@ -76,6 +78,7 @@ private fun subTextColor() = colorScheme.onSurface.copy(alpha = 0.5f)
 
 @Composable
 private fun AllSearch(
+    queryFlow: StateFlow<String> = MutableStateFlow(""),
     uiState: StateFlow<AllSearchUiState>,
     onSearchInputChanged: (String) -> Unit = {},
     onCloseClick: () -> Unit = {},
@@ -83,6 +86,7 @@ private fun AllSearch(
     Scaffold(
         topBar = {
             SearchBar(
+                queryFlow = queryFlow,
                 onTextChanged = onSearchInputChanged,
                 onCloseClick = onCloseClick
             )
@@ -100,7 +104,6 @@ private fun AllSearch(
                     is AllSearchUiState.Initial -> InfoBox2(message)
                     is AllSearchUiState.SearchEmpty -> InfoBox(message)
                     is AllSearchUiState.SearchResult -> SearchResult(this)
-                    else -> {}
                 }
             }
         }
@@ -131,27 +134,27 @@ fun SearchResult(
     onClick: (userId: String, chatId: String) -> Unit = { _, _ -> }
 ) {
     Column {
-        var searchHeaderType by rememberSaveable { mutableStateOf(SearchHeaderType.Users) }
+        var searchHeaderType by rememberSaveable { mutableStateOf(SearchHeaderType.All) }
         SearchHeader(searchHeaderType) {
             searchHeaderType = it
         }
 
-        if (searchHeaderType == SearchHeaderType.All
-            || searchHeaderType == SearchHeaderType.Chats
+        if ((searchHeaderType == SearchHeaderType.All
+            || searchHeaderType == SearchHeaderType.Chats)
             && uiState.homeChats.isNotEmpty()
         ) ChatResult(uiState.homeChats) {
             onClick(it.otherGuy.docId, "")
         }
 
-        if (searchHeaderType == SearchHeaderType.All
-            || searchHeaderType == SearchHeaderType.Messages
+        if ((searchHeaderType == SearchHeaderType.All
+            || searchHeaderType == SearchHeaderType.Messages)
             && uiState.messages.isNotEmpty()
         ) MessagesResult(uiState.query, uiState.messages) {
             onClick(it.otherGuyId, it.chatId)
         }
 
-        if (searchHeaderType == SearchHeaderType.All
-            || searchHeaderType == SearchHeaderType.Users
+        if ((searchHeaderType == SearchHeaderType.All
+            || searchHeaderType == SearchHeaderType.Users)
             && uiState.users.isNotEmpty()
         ) UserResult(uiState.users) {
             onClick(it, "")
@@ -316,10 +319,10 @@ fun SearchChip(
 
 @Composable
 private fun SearchBar(
+    queryFlow: StateFlow<String>,
     onTextChanged: (String) -> Unit = {},
     onCloseClick: () -> Unit,
 ) {
-    val query = rememberSaveable { mutableStateOf("") }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(
@@ -333,14 +336,15 @@ private fun SearchBar(
                 contentDescription = "Close"
             )
         }
+        val query = queryFlow.collectAsState()
+        Logger.warn("query.value = [${query.value}]")
         AllSearchTextField(
             text = query.value,
             hintText = "Search for user",
             onTextChanged = {
-                query.value = it
                 onTextChanged(it)
             },
-            isFocusNeeded = false,
+            isFocusNeeded = true,
         )
     }
 }

@@ -9,7 +9,9 @@ import com.joshgm3z.ping.utils.prettyTime
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.api.UserRepository
+import com.joshgm3z.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -51,16 +53,35 @@ constructor(
     private val dataUtil: DataUtil,
 ) : ViewModel() {
 
+    private val me: User
+        get() = currentUserInfo.currentUser
+
     private val _uiState = MutableStateFlow<AllSearchUiState>(AllSearchUiState.Initial())
     val uiState = _uiState.asStateFlow()
 
+    private val _queryFlow = MutableStateFlow("")
+    val queryFlow = _queryFlow.asStateFlow()
+
     fun onSearchTextInput(query: String) {
-        viewModelScope.launch {
+        Logger.debug("query = [${query}]")
+        _queryFlow.value = query
+        if (query.isEmpty()) {
+            _uiState.value = AllSearchUiState.Initial()
+            return
+        }
+        viewModelScope.launch(Dispatchers.IO) {
             val chats = chatRepository.searchChat(query)
-            val messages = chats.map {
+            val messages = chats.map { it ->
+                Logger.debug("it = [$it]")
+                val name = when (me.docId) {
+                    it.fromUserId -> it.toUserId
+                    else -> it.fromUserId
+                }.let {
+                    userRepository.getUser(it).name
+                }
                 Message(
                     message = it.message,
-                    name = userRepository.getUser(it.fromUserId).name,
+                    name = name,
                     sentTime = it.sentTime.prettyTime(),
                     chatId = it.docId,
                     otherGuyId = it.fromUserId,
@@ -69,7 +90,7 @@ constructor(
             }
             val users = userRepository.searchUsers(query)
 
-            val homeChats = dataUtil.buildHomeChats(currentUserInfo.currentUser.docId, chats, users)
+            val homeChats = dataUtil.buildHomeChats(me.docId, chats, users)
             val otherUsers = getRemainingUsers(users, homeChats)
 
             _uiState.value = when {

@@ -2,7 +2,6 @@ package com.joshgm3z.ping.ui.screens.search
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.theme.Gray60
@@ -43,7 +43,7 @@ fun AllSearchTextField(
     text: String = "",
     hintText: String = "Search anything",
     isFocusNeeded: Boolean = true,
-    onTextChanged: (text: String) -> Unit = {},
+    onTextChanged: (String) -> Unit = {},
 ) {
     val focusRequester = remember { FocusRequester() }
     BasicTextField(
@@ -51,13 +51,14 @@ fun AllSearchTextField(
         textStyle = LocalTextStyle.current.copy(
             color = colorScheme.onSurface,
         ),
-        onValueChange = {},
+        onValueChange = onTextChanged,
         modifier = Modifier
             .background(
                 color = Gray60,
                 shape = RoundedCornerShape(30.dp)
             )
             .padding(horizontal = 10.dp, vertical = 8.dp)
+            .focusRequester(focusRequester)
             .fillMaxWidth(),
         decorationBox = { innerTextField ->
             Row(
@@ -89,49 +90,6 @@ fun AllSearchTextField(
             focusRequester.requestFocus()
         }
     }
-}
-
-@Composable
-fun AllSearchTextFieldView(
-    modifier: Modifier = Modifier,
-    hintText: String = "Search anything",
-    onClick: () -> Unit,
-) {
-    BasicTextField(
-        value = "",
-        textStyle = LocalTextStyle.current.copy(
-            color = colorScheme.onSurface,
-        ),
-        onValueChange = {},
-        modifier = Modifier
-            .background(
-                color = Gray60,
-                shape = RoundedCornerShape(30.dp)
-            )
-            .padding(horizontal = 10.dp, vertical = 8.dp)
-            .fillMaxWidth()
-            .clickable { onClick() },
-        decorationBox = { innerTextField ->
-            Row(
-                modifier,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    Modifier
-                        .weight(1f)
-                        .padding(start = 5.dp)
-                ) {
-                    Text(
-                        text = hintText,
-                        style = LocalTextStyle.current.copy(
-                            color = colorScheme.onSurface.copy(alpha = 0.3f),
-                        )
-                    )
-                    innerTextField()
-                }
-            }
-        }
-    )
 }
 
 @Composable

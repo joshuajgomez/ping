@@ -3,6 +3,7 @@ package com.joshgm3z.ping.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.data.model.HomeChat
+import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.ping.utils.DataUtil
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.CurrentUserInfo
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class HomeUiState {
-    data class Ready(val homeChats: List<HomeChat>) : HomeUiState()
+    data class Ready(val homeChats: List<HomeChat> = getHomeChatList()) : HomeUiState()
     data class Empty(val message: String = "Looking for chats") : HomeUiState()
 }
 

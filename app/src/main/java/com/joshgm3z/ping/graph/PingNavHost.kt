@@ -108,7 +108,9 @@ fun NavGraphBuilder.loadingGraph(navController: NavHostController) {
 
 fun NavGraphBuilder.homeGraph(navController: NavHostController) {
     composable<Home> {
-        HomeScreenContainer(navController = navController,
-            onSearchClick = { navController.navigate(AllSearch) })
+        HomeScreenContainer(
+            navController = navController,
+            onSearchClick = { navController.navigate(AllSearch) }
+        )
     }
 }
