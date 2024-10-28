@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,8 +28,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -122,13 +126,14 @@ fun SearchResult(
     onClick: (userId: String, chatId: String) -> Unit = { _, _ -> }
 ) {
     Column {
-        SearchHeader()
-        Spacer(Modifier.size(20.dp))
-        ChatResult(uiState.query, uiState.chats) {
+        var searchHeaderType by rememberSaveable { mutableStateOf(SearchHeaderType.Users) }
+        SearchHeader(searchHeaderType) {
+            searchHeaderType = it
+        }
+        ChatResult(searchHeaderType, uiState.query, uiState.chats) {
             onClick(it.otherGuyId, it.chatId)
         }
-        Spacer(Modifier.height(20.dp))
-        UserResult(uiState.users) {
+        UserResult(searchHeaderType, uiState.users) {
             onClick(it, "")
         }
     }
@@ -136,11 +141,16 @@ fun SearchResult(
 
 @Composable
 fun ChatResult(
+    searchHeaderType: SearchHeaderType,
     query: String,
     chats: List<ChatData>,
     onClick: (ChatData) -> Unit
 ) {
-    Column {
+    when (searchHeaderType) {
+        SearchHeaderType.All, SearchHeaderType.Chats -> {}
+        else -> return
+    }
+    Column(modifier = Modifier.padding(top = 20.dp)) {
         SearchTitle("Chats")
         LazyColumn {
             itemsIndexed(chats) { i, it ->
@@ -157,10 +167,15 @@ fun ChatResult(
 
 @Composable
 fun UserResult(
+    searchHeaderType: SearchHeaderType,
     users: List<User>,
     onClick: (String) -> Unit
 ) {
-    Column {
+    when (searchHeaderType) {
+        SearchHeaderType.All, SearchHeaderType.Users -> {}
+        else -> return
+    }
+    Column(modifier = Modifier.padding(top = 20.dp)) {
         SearchTitle("Users")
         Spacer(Modifier.size(10.dp))
         LazyColumn {
@@ -213,35 +228,57 @@ fun ArrowForward() {
     )
 }
 
+enum class SearchHeaderType {
+    All,
+    Chats,
+    Messages,
+    Users,
+    Photos,
+}
+
 @Composable
-fun SearchHeader() {
-    Row(
+fun SearchHeader(
+    selectedHeaderType: SearchHeaderType,
+    onSearchHeaderClick: (SearchHeaderType) -> Unit
+) {
+    LazyRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 15.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        SearchChip("Everything")
-        SearchChip("Chats")
-        SearchChip("Users")
+        items(SearchHeaderType.entries) {
+            SearchChip(it.name, it == selectedHeaderType) {
+                onSearchHeaderClick(it)
+            }
+        }
     }
 }
 
 @Composable
 fun SearchChip(
     title: String,
+    isSelected: Boolean,
     onClick: () -> Unit = {}
 ) {
+    val textColor = when {
+        isSelected -> colorScheme.onPrimary
+        else -> colorScheme.primary
+    }
+    val bgColor = when {
+        isSelected -> colorScheme.primary
+        else -> colorScheme.onPrimary
+    }
     Text(
         text = title,
         modifier = Modifier
             .clip(shape = RoundedCornerShape(20.dp))
             .clickable { onClick() }
             .background(
-                color = colorScheme.onPrimary,
+                color = bgColor,
             )
             .padding(horizontal = 10.dp, vertical = 3.dp),
-        color = colorScheme.primary
+        color = textColor
     )
 }
 
