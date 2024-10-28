@@ -2,6 +2,7 @@ package com.joshgm3z.ping.ui.screens.search
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -88,6 +89,49 @@ fun AllSearchTextField(
             focusRequester.requestFocus()
         }
     }
+}
+
+@Composable
+fun AllSearchTextFieldView(
+    modifier: Modifier = Modifier,
+    hintText: String = "Search anything",
+    onClick: () -> Unit,
+) {
+    BasicTextField(
+        value = "",
+        textStyle = LocalTextStyle.current.copy(
+            color = colorScheme.onSurface,
+        ),
+        onValueChange = {},
+        modifier = Modifier
+            .background(
+                color = Gray60,
+                shape = RoundedCornerShape(30.dp)
+            )
+            .padding(horizontal = 10.dp, vertical = 8.dp)
+            .fillMaxWidth()
+            .clickable { onClick() },
+        decorationBox = { innerTextField ->
+            Row(
+                modifier,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .padding(start = 5.dp)
+                ) {
+                    Text(
+                        text = hintText,
+                        style = LocalTextStyle.current.copy(
+                            color = colorScheme.onSurface.copy(alpha = 0.3f),
+                        )
+                    )
+                    innerTextField()
+                }
+            }
+        }
+    )
 }
 
 @Composable

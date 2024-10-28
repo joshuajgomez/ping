@@ -48,7 +48,6 @@ import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.util.randomUsers
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
-import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.home.HomeChatItem
 import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
@@ -60,10 +59,14 @@ import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun AllSearchContainer(
-    allSearchViewModel: AllSearchViewModel?
-    = getIfNotPreview { hiltViewModel() }
+    viewModel: AllSearchViewModel = hiltViewModel(),
+    onCloseClick: () -> Unit,
 ) {
-    AllSearch(allSearchViewModel?.uiState)
+    AllSearch(
+        uiState = viewModel.uiState,
+        onSearchInputChanged = { viewModel.onSearchTextInput(it) },
+        onCloseClick = onCloseClick,
+    )
 }
 
 private val commonHorizontalPadding = 20.dp
@@ -73,7 +76,7 @@ private fun subTextColor() = colorScheme.onSurface.copy(alpha = 0.5f)
 
 @Composable
 private fun AllSearch(
-    uiState: StateFlow<AllSearchUiState>?,
+    uiState: StateFlow<AllSearchUiState>,
     onSearchInputChanged: (String) -> Unit = {},
     onCloseClick: () -> Unit = {},
 ) {
@@ -92,7 +95,7 @@ private fun AllSearch(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.size(5.dp))
-            with(uiState?.collectAsState()?.value) {
+            with(uiState.collectAsState().value) {
                 when (this) {
                     is AllSearchUiState.Initial -> InfoBox2(message)
                     is AllSearchUiState.SearchEmpty -> InfoBox(message)

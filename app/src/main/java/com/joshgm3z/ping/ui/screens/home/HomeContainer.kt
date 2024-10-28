@@ -116,6 +116,7 @@ val homeNavItems = listOf(
 @Composable
 fun HomeScreenContainer(
     navController: NavController = rememberNavController(),
+    onSearchClick: () -> Unit = {},
 ) {
     val homeNavController = rememberNavController()
     val appTitleFlow = MutableStateFlow("Ping")
@@ -154,6 +155,7 @@ fun HomeScreenContainer(
                             restoreState = true
                         }
                     },
+                    onSearchClick = onSearchClick
                 )
             }
             composable<HomeRoute.UserList> {

@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
+import com.joshgm3z.ping.ui.screens.search.AllSearchContainer
 import com.joshgm3z.ping.ui.viewmodels.EditType
 import kotlinx.serialization.Serializable
 
@@ -23,9 +24,6 @@ data object Frx
 data object SignIn
 
 @Serializable
-data class SignUp(val name: String)
-
-@Serializable
 data class Welcome(val name: String)
 
 @Serializable
@@ -35,6 +33,9 @@ data class Loading(val message: String)
 data object Home
 
 fun NavController.navigateToHome() = navigate(Home)
+
+@Serializable
+data object AllSearch
 
 @Serializable
 data class ChatScreen(val userId: String)
@@ -72,8 +73,6 @@ data object SignOut
 @Serializable
 data object GoodBye
 
-fun NavController.navigateToGoodBye() = navigate(GoodBye)
-
 fun NavController.goBack() = popBackStack()
 
 @Composable
@@ -87,9 +86,16 @@ fun PingNavHost(startRoute: Any) {
         frxGraph(navController)
         loadingGraph(navController)
         homeGraph(navController)
+        searchGraph(navController)
         chatGraph(navController)
         settingGraph(navController)
         dialogGraph(navController)
+    }
+}
+
+fun NavGraphBuilder.searchGraph(navController: NavHostController) {
+    composable<AllSearch> {
+        AllSearchContainer(onCloseClick = navController::goBack)
     }
 }
 
@@ -102,6 +108,7 @@ fun NavGraphBuilder.loadingGraph(navController: NavHostController) {
 
 fun NavGraphBuilder.homeGraph(navController: NavHostController) {
     composable<Home> {
-        HomeScreenContainer(navController = navController)
+        HomeScreenContainer(navController = navController,
+            onSearchClick = { navController.navigate(AllSearch) })
     }
 }

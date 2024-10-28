@@ -47,6 +47,8 @@ import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getIfNotPreview
+import com.joshgm3z.ping.ui.screens.search.AllSearchTextField
+import com.joshgm3z.ping.ui.screens.search.AllSearchTextFieldView
 import com.joshgm3z.ping.utils.getPrettyTime
 
 @DarkPreview
@@ -100,20 +102,24 @@ fun HomeChatListContainer(
     homeViewModel: HomeViewModel? = getIfNotPreview { hiltViewModel() },
     onChatClick: (homeChat: HomeChat) -> Unit = {},
     onGoToUsersClicked: () -> Unit = {},
+    onSearchClick: () -> Unit = {},
 ) {
-    val uiState = homeViewModel?.uiState?.collectAsState()
-    when (uiState?.value) {
-        is HomeUiState.Ready -> {
-            HomeChatList(
-                homeChats = (uiState.value as HomeUiState.Ready).homeChats,
-                onChatClick = { onChatClick(it) },
-                onGoToUsersClicked = { onGoToUsersClicked() }
-            )
-        }
+    Column {
+        AllSearchTextFieldView(onClick = onSearchClick)
+        val uiState = homeViewModel?.uiState?.collectAsState()
+        when (uiState?.value) {
+            is HomeUiState.Ready -> {
+                HomeChatList(
+                    homeChats = (uiState.value as HomeUiState.Ready).homeChats,
+                    onChatClick = { onChatClick(it) },
+                    onGoToUsersClicked = { onGoToUsersClicked() }
+                )
+            }
 
-        else -> {
-            EmptyScreen {
-                onGoToUsersClicked()
+            else -> {
+                EmptyScreen {
+                    onGoToUsersClicked()
+                }
             }
         }
     }
