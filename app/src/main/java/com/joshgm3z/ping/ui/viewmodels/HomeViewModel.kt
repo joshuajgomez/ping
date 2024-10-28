@@ -46,7 +46,7 @@ constructor(
         viewModelScope.launch {
             val me = currentUserInfo.currentUser
             val users = userRepository.getUsers()
-            chatRepository.observeChatsForUserHomeLocal(me.docId).collectLatest {
+            chatRepository.observeChatsForUserHomeLocal().collectLatest {
                 if (it.isNotEmpty() && users.isEmpty()) {
                     Logger.warn("users list not fetched")
                     _uiState.value = HomeUiState.Empty("Fetching users")

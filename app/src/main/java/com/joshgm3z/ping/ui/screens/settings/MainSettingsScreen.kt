@@ -26,10 +26,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.joshgm3z.data.util.randomUser
-import com.joshgm3z.ping.graph.Chat
+import com.joshgm3z.ping.graph.ChatSettings
 import com.joshgm3z.ping.graph.Notifications
 import com.joshgm3z.ping.graph.Profile
-import com.joshgm3z.ping.graph.SettingRoute
 import com.joshgm3z.ping.graph.SignOut
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
@@ -72,7 +71,7 @@ fun MainSettingsScreen(
             "Chat Settings",
             "Change chat settings"
         ) {
-            navController.navigate(Chat)
+            navController.navigate(ChatSettings)
         },
         Setting(
             "Notifications",

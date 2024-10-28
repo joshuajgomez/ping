@@ -7,15 +7,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,13 +32,17 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.utils.getPrettyTime
+import kotlinx.coroutines.launch
 
 @Composable
 fun ChatList(
     chats: List<Chat> = emptyList(),
     onImageClick: (String) -> Unit,
+    scrollToChatId: String = "",
 ) {
+    val listState = rememberLazyListState()
     LazyColumn(
+        state = listState,
         reverseLayout = true,
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -46,6 +55,21 @@ fun ChatList(
             )
         }
     }
+    listState.ScrollIfNeeded(scrollToChatId, chats)
+}
+
+@Composable
+private fun LazyListState.ScrollIfNeeded(scrollToChatId: String, chats: List<Chat>) {
+    if (scrollToChatId.isEmpty()) return
+    val index = chats.indexOfFirst { it.docId == scrollToChatId }
+    if (index != -1) {
+        val coroutineScope = rememberCoroutineScope()
+        LaunchedEffect(Unit) {
+            coroutineScope.launch {
+                scrollToItem(index)
+            }
+        }
+    }
 }
 
 @Composable
@@ -56,8 +80,7 @@ fun ChatItem(
     Column(
         modifier = Modifier
             .padding(horizontal = 15.dp, vertical = 10.dp)
-            .fillMaxWidth()
-            .height(218.dp),
+            .fillMaxWidth(),
         horizontalAlignment = when {
             chat.isOutwards -> Alignment.End
             else -> Alignment.Start

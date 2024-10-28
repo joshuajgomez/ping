@@ -134,8 +134,8 @@ constructor(
         return chatDao.getChatsOfUserTimeDesc(userId)
     }
 
-    override fun observeChatsForUserHomeLocal(userId: String): Flow<List<Chat>> {
-        return chatDao.getChatsOfUserTimeAsc(userId)
+    override fun observeChatsForUserHomeLocal(): Flow<List<Chat>> {
+        return chatDao.getAllChatsTimeAsc()
     }
 
     override fun observerChatsForMeFromServer() = scope.launch {

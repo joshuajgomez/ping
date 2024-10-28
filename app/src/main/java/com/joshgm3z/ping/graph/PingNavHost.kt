@@ -38,7 +38,7 @@ fun NavController.navigateToHome() = navigate(Home)
 data object AllSearch
 
 @Serializable
-data class ChatScreen(val userId: String)
+data class ChatScreen(val userId: String, val chatId: String = "")
 
 @Serializable
 data class PingDialog(val title: String, val message: String)
@@ -53,7 +53,7 @@ data object Profile
 data object ImagePicker
 
 @Serializable
-data object Chat
+data object ChatSettings
 
 @Serializable
 data object Notifications
@@ -95,7 +95,12 @@ fun PingNavHost(startRoute: Any) {
 
 fun NavGraphBuilder.searchGraph(navController: NavHostController) {
     composable<AllSearch> {
-        AllSearchContainer(onCloseClick = navController::goBack)
+        AllSearchContainer(
+            onCloseClick = navController::goBack,
+            onSearchResultClick = { userId, chatId ->
+                navController.navigate(ChatScreen(userId, chatId))
+            }
+        )
     }
 }
 

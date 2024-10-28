@@ -14,25 +14,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed class AllSearchUiState {
-    data class Initial(
-        val message: String = "Search for chats, users or anything"
-    ) : AllSearchUiState()
-
-    data class SearchResult(
-        val query: String,
-        val homeChats: List<HomeChat>,
-        val messages: List<Message>,
-        val users: List<User>,
-    ) : AllSearchUiState()
-
-    data class SearchEmpty(
-        val message: String = "Sorry I couldn't find anything"
-    ) : AllSearchUiState()
-}
+data class AllSearchUiState(
+    val homeChats: List<HomeChat> = emptyList(),
+    val messages: List<Message> = emptyList(),
+    val users: List<User> = emptyList(),
+)
 
 data class Message(
     val message: String = "Whats up my maan",
@@ -56,7 +47,7 @@ constructor(
     private val me: User
         get() = currentUserInfo.currentUser
 
-    private val _uiState = MutableStateFlow<AllSearchUiState>(AllSearchUiState.Initial())
+    private val _uiState = MutableStateFlow(AllSearchUiState())
     val uiState = _uiState.asStateFlow()
 
     private val _queryFlow = MutableStateFlow("")
@@ -66,12 +57,26 @@ constructor(
         Logger.debug("query = [${query}]")
         _queryFlow.value = query
         if (query.isEmpty()) {
-            _uiState.value = AllSearchUiState.Initial()
+            _uiState.value = AllSearchUiState()
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
-            val chats = chatRepository.searchChat(query)
-            val messages = chats.map { it ->
+            checkChats(query)
+            val users = userRepository.searchUsers(query)
+            getHomeChats(users) { homeChats ->
+                _uiState.update {
+                    it.copy(homeChats = homeChats)
+                }
+                _uiState.update {
+                    it.copy(users = getRemainingUsers(users, homeChats))
+                }
+            }
+        }
+    }
+
+    private suspend fun checkChats(query: String) =
+        chatRepository.searchChat(query)
+            .map { it ->
                 Logger.debug("it = [$it]")
                 val name = when (me.docId) {
                     it.fromUserId -> it.toUserId
@@ -87,21 +92,23 @@ constructor(
                     otherGuyId = it.fromUserId,
                     isOutwards = it.isOutwards
                 )
+            }.let { messages ->
+                _uiState.update {
+                    it.copy(messages = messages)
+                }
             }
-            val users = userRepository.searchUsers(query)
 
+    private fun getHomeChats(
+        users: List<User>,
+        onFetched: (List<HomeChat>) -> Unit
+    ) = viewModelScope.launch {
+        val chats = chatRepository.observeChatsForUserHomeLocal().first()
+        if (users.isEmpty()) {
+            Logger.warn("users list not fetched")
+            onFetched(emptyList())
+        } else {
             val homeChats = dataUtil.buildHomeChats(me.docId, chats, users)
-            val otherUsers = getRemainingUsers(users, homeChats)
-
-            _uiState.value = when {
-                chats.isEmpty() && users.isEmpty() -> AllSearchUiState.SearchEmpty()
-                else -> AllSearchUiState.SearchResult(
-                    query,
-                    homeChats,
-                    messages,
-                    otherUsers,
-                )
-            }
+            onFetched(homeChats)
         }
     }
 
@@ -113,5 +120,17 @@ constructor(
         return users.filter {
             !userIds.contains(it.docId)
         }
+    }
+
+    companion object {
+        fun getChatDataList(): List<Message> = listOf(
+            Message(isOutwards = true),
+            Message(isOutwards = true),
+            Message(message = "Some very long Whattt message that is sooooooo long you cant even read it in full long you cant even read it in full "),
+            Message(),
+            Message(),
+            Message(isOutwards = true, message = "Whats"),
+            Message(isOutwards = true, message = "What"),
+        )
     }
 }

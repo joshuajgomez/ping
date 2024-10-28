@@ -12,7 +12,6 @@ import com.joshgm3z.ping.ui.screens.settings.SignOutSetting
 import com.joshgm3z.ping.ui.screens.settings.UserInfo
 import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
 import com.joshgm3z.ping.ui.screens.settings.navigateToEditScreen
-import com.joshgm3z.ping.ui.viewmodels.keySelectedProfileIcon
 
 fun NavGraphBuilder.settingGraph(
     navController: NavHostController,
@@ -34,7 +33,7 @@ fun NavGraphBuilder.settingGraph(
         composable<UserInfo>(enterTransition = slideIn) {
             UserInfo(onGoBackClick = onBackClick)
         }
-        composable<Chat>(enterTransition = slideIn) {
+        composable<ChatSettings>(enterTransition = slideIn) {
             SettingContainer("Chat Settings", onCloseClick = onBackClick) {
                 Text("Sample setting")
             }

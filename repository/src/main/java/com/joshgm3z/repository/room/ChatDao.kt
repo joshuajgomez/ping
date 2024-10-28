@@ -18,8 +18,8 @@ interface ChatDao {
     @Query("select * from Chat where fromUserId = :userId or toUserId = :userId order by sentTime desc")
     fun getChatsOfUserTimeDesc(userId: String): Flow<List<Chat>>
 
-    @Query("select * from Chat where fromUserId = :userId or toUserId = :userId order by sentTime asc")
-    fun getChatsOfUserTimeAsc(userId: String): Flow<List<Chat>>
+    @Query("select * from Chat order by sentTime asc")
+    fun getAllChatsTimeAsc(): Flow<List<Chat>>
 
     @Update
     suspend fun update(chat: Chat)

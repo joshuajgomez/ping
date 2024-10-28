@@ -13,7 +13,6 @@ class DataUtil
     fun buildHomeChats(meUserId: String, chats: List<Chat>, users: List<User>): List<HomeChat> {
         val homeChats: HashMap<String, HomeChat> = HashMap()
         for (chat in chats) {
-//                Logger.verbose("chat = [$chat]")
             val user = getUser(chat.fromUserId, chat.toUserId, users) ?: continue
             var homeChat: HomeChat
             if (homeChats.containsKey(user.docId)) {

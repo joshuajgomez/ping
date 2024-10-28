@@ -22,7 +22,7 @@ interface ChatRepository {
 
     fun createChatDocId(): String
 
-    fun observeChatsForUserHomeLocal(userId: String): Flow<List<Chat>>
+    fun observeChatsForUserHomeLocal(): Flow<List<Chat>>
 
     fun observerChatsForMeFromServer(): Job
 

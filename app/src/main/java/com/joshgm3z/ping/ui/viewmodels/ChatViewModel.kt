@@ -56,6 +56,7 @@ class ChatViewModel
 
     init {
         val userId = savedStateHandle.toRoute<ChatScreen>().userId
+        val chatId = savedStateHandle.toRoute<ChatScreen>().chatId
         viewModelScope.launch {
             _uiState.update {
                 it.copy(you = userRepository.getUser(userId))

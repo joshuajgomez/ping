@@ -3,6 +3,7 @@ package com.joshgm3z.ping.graph
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.joshgm3z.ping.ui.screens.chat.ChatImageViewer
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.chat.ImageViewer
@@ -14,7 +15,8 @@ fun NavGraphBuilder.chatGraph(navController: NavHostController) {
         ChatScreenContainer(
             goHome = navController::goBack,
             onUserInfoClick = navController::navigateToUserInfo,
-            onImageClick = navController::navigateToImageViewer
+            onImageClick = navController::navigateToImageViewer,
+            scrollToChatId = it.toRoute<ChatScreen>().chatId,
         )
     }
     composable<ChatImageViewer> {

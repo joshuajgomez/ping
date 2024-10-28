@@ -62,12 +62,14 @@ import kotlinx.coroutines.flow.StateFlow
 fun AllSearchContainer(
     viewModel: AllSearchViewModel = hiltViewModel(),
     onCloseClick: () -> Unit,
+    onSearchResultClick: (userId: String, chatId: String) -> Unit,
 ) {
     AllSearch(
         queryFlow = viewModel.queryFlow,
         uiState = viewModel.uiState,
         onSearchInputChanged = { viewModel.onSearchTextInput(it) },
         onCloseClick = onCloseClick,
+        onSearchResultClick = onSearchResultClick,
     )
 }
 
@@ -82,6 +84,7 @@ private fun AllSearch(
     uiState: StateFlow<AllSearchUiState>,
     onSearchInputChanged: (String) -> Unit = {},
     onCloseClick: () -> Unit = {},
+    onSearchResultClick: (userId: String, chatId: String) -> Unit = { _, _ -> },
 ) {
     Scaffold(
         topBar = {
@@ -100,11 +103,11 @@ private fun AllSearch(
         ) {
             Spacer(Modifier.size(5.dp))
             with(uiState.collectAsState().value) {
-                when (this) {
-                    is AllSearchUiState.Initial -> InfoBox2(message)
-                    is AllSearchUiState.SearchEmpty -> InfoBox(message)
-                    is AllSearchUiState.SearchResult -> SearchResult(this)
-                }
+                SearchResult(
+                    uiState = this,
+                    query = queryFlow.value,
+                    onClick = onSearchResultClick
+                )
             }
         }
     }
@@ -130,36 +133,55 @@ fun InfoBox2(message: String) {
 
 @Composable
 fun SearchResult(
-    uiState: AllSearchUiState.SearchResult,
+    uiState: AllSearchUiState,
+    query: String,
     onClick: (userId: String, chatId: String) -> Unit = { _, _ -> }
 ) {
-    Column {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         var searchHeaderType by rememberSaveable { mutableStateOf(SearchHeaderType.All) }
-        SearchHeader(searchHeaderType) {
+        SearchHeader(searchHeaderType, uiState) {
             searchHeaderType = it
         }
-
-        if ((searchHeaderType == SearchHeaderType.All
-            || searchHeaderType == SearchHeaderType.Chats)
-            && uiState.homeChats.isNotEmpty()
-        ) ChatResult(uiState.homeChats) {
-            onClick(it.otherGuy.docId, "")
+        SearchResultContent(searchHeaderType, uiState, query, onClick)
+        when {
+            uiState.homeChats.isNotEmpty() -> {}
+            uiState.messages.isNotEmpty() -> {}
+            uiState.users.isNotEmpty() -> {}
+            query.isEmpty() -> InfoBox2("Search for anything")
+            else -> InfoBox("Sorry, I couldn't find anything")
         }
+    }
+}
 
-        if ((searchHeaderType == SearchHeaderType.All
-            || searchHeaderType == SearchHeaderType.Messages)
-            && uiState.messages.isNotEmpty()
-        ) MessagesResult(uiState.query, uiState.messages) {
-            onClick(it.otherGuyId, it.chatId)
-        }
+@Composable
+fun SearchResultContent(
+    searchHeaderType: SearchHeaderType,
+    uiState: AllSearchUiState,
+    query: String,
+    onClick: (userId: String, chatId: String) -> Unit,
+) {
+    if ((searchHeaderType == SearchHeaderType.All
+                || searchHeaderType == SearchHeaderType.Chats)
+        && uiState.homeChats.isNotEmpty()
+    ) ChatResult(uiState.homeChats) {
+        onClick(it.otherGuy.docId, "")
+    }
 
-        if ((searchHeaderType == SearchHeaderType.All
-            || searchHeaderType == SearchHeaderType.Users)
-            && uiState.users.isNotEmpty()
-        ) UserResult(uiState.users) {
-            onClick(it, "")
-        }
+    if ((searchHeaderType == SearchHeaderType.All
+                || searchHeaderType == SearchHeaderType.Messages)
+        && uiState.messages.isNotEmpty()
+    ) MessagesResult(query, uiState.messages) {
+        onClick(it.otherGuyId, it.chatId)
+    }
 
+    if ((searchHeaderType == SearchHeaderType.All
+                || searchHeaderType == SearchHeaderType.Users)
+        && uiState.users.isNotEmpty()
+    ) UserResult(uiState.users) {
+        onClick(it, "")
     }
 }
 
@@ -210,7 +232,7 @@ fun UserResult(
     onClick: (String) -> Unit
 ) {
     Column(modifier = Modifier.padding(top = 20.dp)) {
-        SearchTitle("Other users")
+        SearchTitle("Users")
         Spacer(Modifier.size(10.dp))
         LazyColumn {
             itemsIndexed(users) { i, it ->
@@ -274,17 +296,32 @@ enum class SearchHeaderType {
 @Composable
 fun SearchHeader(
     selectedHeaderType: SearchHeaderType,
+    uiState: AllSearchUiState,
     onSearchHeaderClick: (SearchHeaderType) -> Unit
 ) {
+    val list = listOf(
+        SearchHeaderType.All to (uiState.users.size + uiState.messages.size + uiState.homeChats.size),
+        SearchHeaderType.Chats to uiState.homeChats.size,
+        SearchHeaderType.Messages to uiState.messages.size,
+        SearchHeaderType.Users to uiState.users.size,
+        SearchHeaderType.Photos to 0,
+    )
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 15.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        items(SearchHeaderType.entries) {
-            SearchChip(it.name, it == selectedHeaderType) {
-                onSearchHeaderClick(it)
+        items(list) {
+            val title = when {
+                it.second == 0 -> it.first.name
+                else -> "${it.first}(${it.second})"
+            }
+            SearchChip(
+                title = title,
+                isSelected = it.first == selectedHeaderType
+            ) {
+                onSearchHeaderClick(it.first)
             }
         }
     }
@@ -353,36 +390,27 @@ private fun SearchBar(
 @Composable
 private fun PreviewAllSearch(
     uiState: AllSearchUiState
-    = AllSearchUiState.SearchResult("What", getHomeChatList(), getChatDataList(), randomUsers())
+    = AllSearchUiState(getHomeChatList(), AllSearchViewModel.getChatDataList(), randomUsers())
 ) {
     PingTheme {
         AllSearch(
-            uiState = MutableStateFlow(uiState)
+            uiState = MutableStateFlow(uiState),
+            queryFlow = MutableStateFlow("What"),
         )
 
     }
 }
 
-fun getChatDataList(): List<Message> = listOf(
-    Message(isOutwards = true),
-    Message(isOutwards = true),
-    Message(message = "Some very long Whattt message that is sooooooo long you cant even read it in full long you cant even read it in full "),
-    Message(),
-    Message(),
-    Message(isOutwards = true, message = "Whats"),
-    Message(isOutwards = true, message = "What"),
-)
-
 @DarkPreview
 @Composable
 private fun PreviewAllSearchInitial() {
-    PreviewAllSearch(AllSearchUiState.Initial())
+    PreviewAllSearch(AllSearchUiState())
 }
 
 @DarkPreview
 @Composable
 private fun PreviewAllSearchEmpty() {
-    PreviewAllSearch(AllSearchUiState.SearchEmpty())
+    PreviewAllSearch(AllSearchUiState())
 }
 
 @Composable

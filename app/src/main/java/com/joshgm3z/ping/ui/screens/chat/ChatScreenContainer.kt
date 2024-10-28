@@ -3,6 +3,8 @@ package com.joshgm3z.ping.ui.screens.chat
 import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.Forum
@@ -11,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,7 +58,8 @@ fun ChatScreenContainer(
     goHome: () -> Unit = {},
     viewModel: ChatViewModel = hiltViewModel(),
     onUserInfoClick: (String) -> Unit = {},
-    onImageClick: (String) -> Unit = {}
+    onImageClick: (String) -> Unit = {},
+    scrollToChatId: String = "",
 ) {
     var imagePreview by remember { mutableStateOf(Uri.parse("")) }
     when {
@@ -72,6 +76,7 @@ fun ChatScreenContainer(
             with(viewModel.uiState.collectAsState().value) {
                 ChatScreen(
                     chatListState = chatListState,
+                    scrollToChatId = scrollToChatId,
                     user = you ?: randomUser(),
                     onSendClick = { viewModel.onSendButtonClick(it) },
                     onUserInfoClick = { onUserInfoClick(you?.docId ?: "") },
@@ -96,6 +101,7 @@ fun ChatScreen(
     onBackClick: () -> Unit = {},
     openPreview: (Uri) -> Unit = { },
     onImageClick: (String) -> Unit = { },
+    scrollToChatId: String = "",
 ) {
     Column {
         ChatAppBar(
@@ -109,8 +115,9 @@ fun ChatScreen(
             PingWallpaper {
                 when (chatListState) {
                     is ChatListState.Ready -> ChatList(
-                        chatListState.chats,
-                        onImageClick
+                        chats = chatListState.chats,
+                        onImageClick = onImageClick,
+                        scrollToChatId = scrollToChatId,
                     )
 
                     is ChatListState.Loading -> InfoCard(
