@@ -450,12 +450,17 @@ fun ChatSearchItem(
                     }
                 }
                 with(message.message) {
-                    indexOf(query).let {
-                        append(substring(0, it))
-                        withStyle(style = SpanStyle(color = Green40)) {
-                            append(substring(it, it + query.length))
+                    try {
+                        indexOf(query).let {
+                            append(substring(0, it))
+                            withStyle(style = SpanStyle(color = Green40)) {
+                                append(substring(it, it + query.length))
+                            }
+                            append(substring(it + query.length))
                         }
-                        append(substring(it + query.length))
+                    } catch (e: StringIndexOutOfBoundsException) {
+                        Logger.error(e.stackTraceToString())
+                        append(substring(0))
                     }
                 }
             },

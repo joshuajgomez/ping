@@ -3,8 +3,6 @@ package com.joshgm3z.ping.ui.screens.chat
 import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.Forum
@@ -13,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,7 +24,6 @@ import com.joshgm3z.ping.ui.common.InfoCard
 import com.joshgm3z.ping.ui.common.PingWallpaper
 import com.joshgm3z.ping.ui.viewmodels.ChatListState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
-import com.joshgm3z.utils.Logger
 
 @Preview
 @Composable

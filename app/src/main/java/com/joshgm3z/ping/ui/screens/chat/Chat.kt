@@ -1,14 +1,19 @@
 package com.joshgm3z.ping.ui.screens.chat
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,8 +21,12 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,31 +40,72 @@ import androidx.compose.ui.unit.sp
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.model.Chat
+import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.utils.getPrettyTime
 import kotlinx.coroutines.launch
+
+@DarkPreview
+@Composable
+private fun PreviewScrollButton() {
+    PingTheme {
+        ScrollButton()
+    }
+}
 
 @Composable
 fun ChatList(
     chats: List<Chat> = emptyList(),
-    onImageClick: (String) -> Unit,
+    onImageClick: (String) -> Unit = {},
     scrollToChatId: String = "",
 ) {
-    val listState = rememberLazyListState()
-    LazyColumn(
-        state = listState,
-        reverseLayout = true,
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        items(items = chats) {
-            ChatItem(
-                chat = it,
-                onImageClick = {
-                    onImageClick(it.docId)
-                }
+    Box(contentAlignment = Alignment.BottomCenter) {
+        val listState = rememberLazyListState()
+        LazyColumn(
+            state = listState,
+            reverseLayout = true,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            items(items = chats) {
+                ChatItem(
+                    chat = it,
+                    onImageClick = {
+                        onImageClick(it.docId)
+                    }
+                )
+            }
+        }
+        listState.ScrollIfNeeded(scrollToChatId, chats)
+        val coroutineScope = rememberCoroutineScope()
+        ScrollButton(visible = listState.firstVisibleItemIndex > 5) {
+            coroutineScope.launch {
+                listState.scrollToItem(0)
+            }
+        }
+    }
+}
+
+@Composable
+fun ScrollButton(visible: Boolean = true, onClick: () -> Unit = {}) {
+    AnimatedVisibility(visible) {
+        Row(
+            modifier = Modifier
+                .padding(bottom = 10.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(color = colorScheme.onPrimary)
+                .clickable { onClick() }
+                .padding(horizontal = 15.dp, vertical = 8.dp)
+        ) {
+            Icon(
+                Icons.Default.ArrowDownward, contentDescription = null,
+                tint = colorScheme.primary
+            )
+            Spacer(Modifier.size(10.dp))
+            Text(
+                text = "Scroll to bottom",
+                color = colorScheme.primary
             )
         }
     }
-    listState.ScrollIfNeeded(scrollToChatId, chats)
 }
 
 @Composable
@@ -66,7 +116,7 @@ private fun LazyListState.ScrollIfNeeded(scrollToChatId: String, chats: List<Cha
         val coroutineScope = rememberCoroutineScope()
         LaunchedEffect(Unit) {
             coroutineScope.launch {
-                scrollToItem(index)
+                animateScrollToItem(index)
             }
         }
     }
