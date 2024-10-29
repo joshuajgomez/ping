@@ -27,13 +27,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.getCameraLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
-import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.utils.FileUtil
 
@@ -85,7 +83,7 @@ fun InputBox(
                 Icon(
                     Icons.TwoTone.CameraAlt,
                     contentDescription = null,
-                    tint = Green40
+                    tint = colorScheme.primary
                 )
             }
             Spacer(Modifier.size(5.dp))
@@ -94,12 +92,13 @@ fun InputBox(
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(25.dp)
-                    .background(Green40)
+                    .background(colorScheme.primary)
                     .padding(3.dp)
             ) {
                 Icon(
                     Icons.AutoMirrored.Default.ArrowForward,
                     contentDescription = null,
+                    tint = colorScheme.onPrimary
                 )
             }
         }

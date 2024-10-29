@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
@@ -32,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.PingWallpaper
 import com.joshgm3z.ping.ui.screens.settings.image.IconPicker
-import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 
 @DarkPreview
@@ -202,14 +202,14 @@ fun FrxItem(title: String, enabled: Boolean, onClick: () -> Unit = {}) {
         RadioButton(
             enabled, onClick = onClick,
             colors = RadioButtonDefaults.colors().copy(
-                selectedColor = Green40,
-                unselectedColor = Green40
+                selectedColor = colorScheme.primary,
+                unselectedColor = colorScheme.primary
             )
         )
         Spacer(Modifier.width(5.dp))
         Text(
             title,
-            color = Green40
+            color = colorScheme.primary
         )
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -22,6 +23,7 @@ import coil3.compose.AsyncImage
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.PingButton
+import com.joshgm3z.ping.ui.common.PingButtonState
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 
@@ -29,7 +31,7 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 @Composable
 private fun PreviewImagePreview() {
     PingTheme {
-        ImagePreview()
+        ImagePreview(toName = "Alien")
     }
 }
 
@@ -69,28 +71,12 @@ fun ImagePreviewContent(
                 .clip(RoundedCornerShape(10.dp)),
             contentScale = ContentScale.Crop,
         )
-        Spacer(Modifier.height(30.dp))
+        Spacer(Modifier.height(5.dp))
         SendButton(
             buttonText,
             onClick = onSendClick
         )
     }
-}
-
-@Composable
-fun Recipient(name: String?) {
-    if (name.isNullOrEmpty()) return
-    Text(
-        name,
-        fontSize = 20.sp,
-        color = colorScheme.onSurface,
-        modifier = Modifier
-            .background(
-                color = colorScheme.primary.copy(alpha = 0.2f),
-                shape = RoundedCornerShape(10.dp)
-            )
-            .padding(horizontal = 10.dp, vertical = 3.dp)
-    )
 }
 
 @Composable
@@ -100,7 +86,9 @@ private fun SendButton(
 ) {
     PingButton(
         text,
-        icon = Icons.AutoMirrored.Default.Send,
+        state = PingButtonState.WithIcon(
+            Icons.AutoMirrored.Default.ArrowForward
+        ),
         onClick = {
             onClick()
         },

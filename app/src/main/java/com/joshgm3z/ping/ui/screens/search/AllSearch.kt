@@ -49,7 +49,6 @@ import com.joshgm3z.data.util.randomUsers
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.screens.home.HomeChatItem
-import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.AllSearchUiState
 import com.joshgm3z.ping.ui.viewmodels.AllSearchViewModel
@@ -450,10 +449,11 @@ fun ChatSearchItem(
                     }
                 }
                 with(message.message) {
+                    val color = colorScheme.primary
                     try {
                         indexOf(query).let {
                             append(substring(0, it))
-                            withStyle(style = SpanStyle(color = Green40)) {
+                            withStyle(style = SpanStyle(color = color)) {
                                 append(substring(it, it + query.length))
                             }
                             append(substring(it + query.length))

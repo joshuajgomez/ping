@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,8 +24,6 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.PermMedia
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.CustomTextField3
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.ErrorText
+import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.dashedBorder
 import com.joshgm3z.ping.ui.common.getCameraLauncher
@@ -55,7 +53,6 @@ import com.joshgm3z.ping.ui.common.getGalleryLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.Setting
 import com.joshgm3z.ping.ui.screens.settings.SettingListCard
-import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.SignUpViewModel
 import com.joshgm3z.utils.FileUtil
@@ -164,18 +161,10 @@ fun SignUpContent(
                     error = ""
                 })
             ErrorText(error)
-            Button(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
-                onClick = onSignUpClick,
-                colors = ButtonDefaults.buttonColors().copy(
-                    containerColor = Green40,
-                ),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Text("Create account", color = colorScheme.onSurface)
-            }
+            PingButton(
+                "Create Account",
+                onClick = onSignUpClick
+            )
         }
 
     }
@@ -253,13 +242,13 @@ fun ImageInput(
             IconButton(
                 onInputClick,
                 modifier = Modifier
-                    .background(Green40, shape = CircleShape)
+                    .background(colorScheme.primary, shape = CircleShape)
                     .size(30.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "edit image",
-                    tint = colorScheme.onSurface,
+                    tint = colorScheme.onPrimary,
                 )
             }
         }
@@ -271,13 +260,13 @@ fun ImagePlaceHolder() {
     Box(
         Modifier
             .fillMaxSize()
-            .dashedBorder(color = Green40),
+            .dashedBorder(color = colorScheme.primary),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             Icons.Outlined.Person,
             contentDescription = "user",
-            tint = Green40,
+            tint = colorScheme.primary,
             modifier = Modifier.size(80.dp)
         )
     }

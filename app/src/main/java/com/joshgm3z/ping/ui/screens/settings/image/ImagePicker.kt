@@ -47,7 +47,6 @@ import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.settings.Setting
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.screens.settings.SettingListCard
-import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.theme.Red20
 import com.joshgm3z.ping.ui.viewmodels.ImagePickerUiState
@@ -200,7 +199,7 @@ fun InfoText(message: String) {
         Row(
             Modifier
                 .fillMaxWidth()
-                .background(Green40, shape = RoundedCornerShape(10.dp))
+                .background(colorScheme.primary, shape = RoundedCornerShape(10.dp))
                 .padding(horizontal = 20.dp, vertical = 10.dp)
         ) {
             Icon(Icons.Default.CheckCircle, contentDescription = null)

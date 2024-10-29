@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.CustomTextField3
 import com.joshgm3z.ping.ui.common.ErrorText
+import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.common.getIfNotPreview
-import com.joshgm3z.ping.ui.theme.Green40
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
 
@@ -96,18 +96,10 @@ fun SignInContent(
                 error = ""
             })
         ErrorText(error)
-        Button(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth(),
-            onClick = onSignInClick,
-            colors = ButtonDefaults.buttonColors().copy(
-                containerColor = Green40,
-            ),
-            shape = RoundedCornerShape(10.dp)
-        ) {
-            Text("Sign in", color = colorScheme.onSurface)
-        }
+        PingButton(
+            "Create Account",
+            onClick = onSignInClick
+        )
     }
 }
 

@@ -48,6 +48,7 @@ import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.theme.Gray60
 import com.joshgm3z.ping.utils.getPrettyTime
@@ -307,14 +308,9 @@ fun EmptyScreen(onGoToUsersClicked: () -> Unit = {}) {
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(30.dp))
-        Button(
-            onClick = { onGoToUsersClicked() }
-        ) {
-            Text(
-                text = "Go to users",
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center,
-            )
-        }
+        PingButton(
+            "Create Account",
+            onClick = onGoToUsersClicked
+        )
     }
 }

@@ -14,7 +14,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.joshgm3z.ping.ui.theme.Green40
 
 @Composable
 fun Logo(modifier: Modifier = Modifier) {
@@ -33,7 +32,7 @@ fun Logo(modifier: Modifier = Modifier) {
         Spacer(Modifier.width(10.dp))
         Text(
             "ping!",
-            color = Green40,
+            color = colorScheme.primary,
             fontSize = 40.sp,
             fontStyle = FontStyle.Italic,
             fontWeight = FontWeight.Bold

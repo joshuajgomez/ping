@@ -29,6 +29,7 @@ import com.joshgm3z.ping.graph.EditScreen
 import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.PingButton
+import com.joshgm3z.ping.ui.common.PingButtonState
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.EditScreenUiState
@@ -65,7 +66,7 @@ fun EditScreen(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 20.dp)
+                .padding(top = 10.dp)
         ) {
             CustomTextField(
                 text = text,
@@ -75,16 +76,29 @@ fun EditScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 ErrorMessage(uiState.error)
                 Spacer(Modifier.height(20.dp))
-                PingButton(
-                    text = when {
-                        uiState.isLoading -> "Updating"
-                        else -> "Update"
-                    },
-                    onClick = { viewModel?.updateValue(text) },
-                    isShowLoading = uiState.isLoading,
-                    textColor = colorScheme.onPrimary,
-                    containerColor = colorScheme.primary,
-                )
+                Row {
+                    val buttonModifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = 20.dp)
+                    PingButton(
+                        state = PingButtonState.Secondary,
+                        text = "Cancel",
+                        onClick = goBack,
+                        modifier = buttonModifier
+                    )
+                    PingButton(
+                        text = when {
+                            uiState.isLoading -> "Updating"
+                            else -> "Update"
+                        },
+                        onClick = { viewModel?.updateValue(text) },
+                        state = when {
+                            uiState.isLoading -> PingButtonState.Loading
+                            else -> PingButtonState.Default
+                        },
+                        modifier = buttonModifier
+                    )
+                }
             }
         }
     }

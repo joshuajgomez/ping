@@ -25,8 +25,6 @@ import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getIfNotPreview
-import com.joshgm3z.ping.ui.theme.Green40
-import com.joshgm3z.ping.ui.theme.Green50
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.EditType
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
@@ -57,7 +55,7 @@ fun ProfileSettings(
             user.about.isEmpty() -> Setting(
                 "Add bio",
                 icon = Icons.Default.Add,
-                textColor = Green40
+                textColor = colorScheme.primary
             ) { openEditScreen(EditType.Bio) }
 
             else -> Setting(
