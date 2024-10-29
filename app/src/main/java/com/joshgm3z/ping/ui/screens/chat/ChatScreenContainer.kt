@@ -3,9 +3,11 @@ package com.joshgm3z.ping.ui.screens.chat
 import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.Forum
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -99,16 +101,27 @@ fun ChatScreen(
     onImageClick: (String) -> Unit = { },
     scrollToChatId: String = "",
 ) {
-    Column {
-        ChatAppBar(
-            user = user,
-            onUserInfoClick = onUserInfoClick,
-            onBackClick = onBackClick
-        )
-        Box(
-            modifier = Modifier.weight(1f),
-        ) {
-            PingWallpaper {
+    Scaffold(
+        topBar = {
+            ChatAppBar(
+                user = user,
+                onUserInfoClick = onUserInfoClick,
+                onBackClick = onBackClick
+            )
+        },
+        bottomBar = {
+            InputBox(
+                onSendClick = { onSendClick(it) },
+                openPreview = {
+                    openPreview(it)
+                }
+            )
+        }
+    ) { paddingValues ->
+        PingWallpaper {
+            Box(
+                modifier = Modifier.padding(paddingValues),
+            ) {
                 when (chatListState) {
                     is ChatListState.Ready -> ChatList(
                         chats = chatListState.chats,
@@ -130,12 +143,8 @@ fun ChatScreen(
                 }
             }
         }
-        InputBox2(
-            onSendClick = { onSendClick(it) },
-            openPreview = {
-                openPreview(it)
-            }
-        )
+
     }
 }
+
 
