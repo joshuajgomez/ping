@@ -130,7 +130,7 @@ fun ChatScreen(
                 }
             }
         }
-        InputBox(
+        InputBox2(
             onSendClick = { onSendClick(it) },
             openPreview = {
                 openPreview(it)
