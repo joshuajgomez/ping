@@ -78,7 +78,7 @@ fun SettingContainer(
         Column(
             modifier
                 .padding(it)
-                .padding(horizontal = 20.dp)
+                .padding(20.dp)
         ) {
             content()
         }
@@ -97,7 +97,7 @@ private fun SettingTitle(
         expandedHeight = 150.dp,
         title = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = 15.dp),
             ) {
                 IconButton(
                     onCloseClick,
@@ -110,7 +110,7 @@ private fun SettingTitle(
                         tint = colorScheme.onSurface
                     )
                 }
-                Spacer(Modifier.height(30.dp))
+                Spacer(Modifier.weight(1f))
                 Text(
                     title,
                     fontSize = 35.sp,

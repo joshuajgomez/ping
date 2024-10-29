@@ -2,10 +2,9 @@ package com.joshgm3z.ping.ui.screens.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -48,23 +47,21 @@ fun SignOutSetting(
                 "Do you really want to sign out of ping?",
                 color = colorScheme.onSurface
             )
-            Row {
-                val buttonModifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 20.dp)
+            Column {
+                val modifier = Modifier.fillMaxWidth()
                 PingButton(
-                    modifier = buttonModifier,
+                    modifier = modifier,
                     text = "Go back",
                     state = PingButtonState.Secondary,
                     onClick = onBackClick
                 )
-                Spacer(Modifier.size(20.dp))
                 val buttonState = when (viewModel?.uiState?.collectAsState()?.value) {
                     is SignOutUiState.Loading -> PingButtonState.ErrorLoading
                     else -> PingButtonState.Error
                 }
+                Spacer(Modifier.size(20.dp))
                 PingButton(
-                    modifier = buttonModifier,
+                    modifier = modifier,
                     text = "Sign out",
                     state = buttonState,
                     onClick = {

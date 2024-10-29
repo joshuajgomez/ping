@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
@@ -76,16 +78,15 @@ fun EditScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 ErrorMessage(uiState.error)
                 Spacer(Modifier.height(20.dp))
-                Row {
-                    val buttonModifier = Modifier
-                        .weight(1f)
-                        .padding(vertical = 20.dp)
+                Column {
+                    val buttonModifier = Modifier.fillMaxWidth()
                     PingButton(
                         state = PingButtonState.Secondary,
                         text = "Cancel",
                         onClick = goBack,
                         modifier = buttonModifier
                     )
+                    Spacer(Modifier.size(20.dp))
                     PingButton(
                         text = when {
                             uiState.isLoading -> "Updating"
