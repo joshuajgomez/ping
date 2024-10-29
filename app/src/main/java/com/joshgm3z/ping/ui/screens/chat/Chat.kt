@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,7 +24,6 @@ import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,6 +40,8 @@ import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.utils.getPrettyTime
 import kotlinx.coroutines.launch
+
+val chatBubbleRadius = 10.dp
 
 @DarkPreview
 @Composable
@@ -138,14 +137,14 @@ fun ChatItem(
     ) {
         Column(
             modifier = Modifier
-                .clip(RoundedCornerShape(9.dp))
+                .clip(RoundedCornerShape(chatBubbleRadius))
                 .background(
                     when {
                         chat.isOutwards -> colorScheme.surfaceContainerHighest
                         else -> colorScheme.primary
                     }
                 )
-                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .padding(2.dp)
                 .widthIn(min = 5.dp, max = 250.dp),
             horizontalAlignment = when {
                 chat.isOutwards -> Alignment.End
@@ -165,22 +164,20 @@ fun Message(chat: Chat) {
     if (chat.message.isNotEmpty()) {
         Text(
             text = chat.message,
-            fontSize = 18.sp,
             color = when {
                 chat.isOutwards -> colorScheme.onSurface
                 else -> colorScheme.onPrimary
             },
-            modifier = Modifier.padding(start = 2.dp, end = 2.dp, top = 5.dp)
+            modifier = Modifier.padding(horizontal = 5.dp)
         )
     }
 }
 
 @Composable
 fun Details(chat: Chat) {
-    Row {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         if (chat.isOutwards) StatusIcon(
             status = chat.status,
-            modifier = Modifier.padding(top = 3.dp)
         )
         Text(
             text = getPrettyTime(chat.sentTime),

@@ -48,17 +48,22 @@ fun ChatAppBar(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .padding(5.dp)
             .fillMaxWidth()
-            .background(color = colorScheme.surface.copy(alpha = 0.8f))
+            .background(
+                color = colorScheme.surface,
+                shape = RoundedCornerShape(30.dp)
+            )
+            .padding(5.dp)
     ) {
         IconButton(
             onBackClick,
-            modifier = Modifier
+            modifier = Modifier.padding(1.dp)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
                 contentDescription = "go to home",
-                tint = colorScheme.onSurface,
+                tint = colorScheme.onSurface.copy(alpha = 0.7f),
                 modifier = Modifier
                     .size(80.dp)
                     .padding(5.dp)
@@ -72,14 +77,13 @@ fun ChatAppBar(
         ) {
             UserImage(
                 modifier = Modifier
-                    .size(30.dp),
+                    .size(40.dp),
                 imageUrl = user.imagePath
             )
             Spacer(modifier = Modifier.width(15.dp))
             Text(
                 text = user.name,
-                fontSize = 22.sp,
-                color = colorScheme.onSurface,
+                color = colorScheme.onSurface.copy(alpha = 0.7f),
                 modifier = Modifier.widthIn(80.dp)
             )
         }
@@ -87,7 +91,7 @@ fun ChatAppBar(
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = "more options",
-                tint = colorScheme.onSurface,
+                tint = colorScheme.onSurface.copy(alpha = 0.7f),
                 modifier = Modifier
                     .padding(8.dp)
                     .size(60.dp)

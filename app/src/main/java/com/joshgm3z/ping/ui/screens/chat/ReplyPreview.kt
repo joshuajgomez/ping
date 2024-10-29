@@ -19,7 +19,7 @@ fun ReplyPreview(chat: Chat) {
         Column(
             modifier = Modifier
                 .background(
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(chatBubbleRadius),
                     color = when {
                         chat.isOutwards -> colorScheme.surfaceContainerHigh
                         else -> colorScheme.primaryContainer.copy(alpha = 0.9f)
