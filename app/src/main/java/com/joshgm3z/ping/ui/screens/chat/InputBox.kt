@@ -1,6 +1,7 @@
 package com.joshgm3z.ping.ui.screens.chat
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,22 +43,21 @@ import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.util.randomChat
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.getCameraLauncher
-import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.utils.FileUtil
 
-sealed class InputPreviewState {
-    data object Empty : InputPreviewState()
-    data class Reply(val chat: Chat) : InputPreviewState()
-    data class Image(val imageUri: Uri) : InputPreviewState()
+sealed class InlinePreviewState {
+    data object Empty : InlinePreviewState()
+    data class Reply(val chat: Chat, val fromName: String) : InlinePreviewState()
+    data class Image(val imageUri: Uri) : InlinePreviewState()
+    data class WebUrl(val url: String) : InlinePreviewState()
 }
 
 @Composable
 fun InputBox(
-    openPreview: (Uri) -> Unit = {},
+    openCamera: () -> Unit = {},
+    deletePreview: () -> Unit = {},
     onSendClick: (text: String) -> Unit = {},
-    preview: InputPreviewState = InputPreviewState.Empty,
+    preview: InlinePreviewState = InlinePreviewState.Empty,
 ) {
     var text by remember { mutableStateOf("") }
     val topRadius = 20.dp
@@ -69,71 +68,89 @@ fun InputBox(
             .background(colorScheme.surface)
             .padding(10.dp)
     ) {
-        InputPreview(preview) {
-
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(colorScheme.surfaceContainer, shape = RoundedCornerShape(30.dp))
-                .padding(start = 15.dp, end = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BasicTextField(
-                value = text,
-                onValueChange = { text = it },
-                modifier = Modifier.weight(1f),
-                textStyle = LocalTextStyle.current.copy(
-                    color = colorScheme.onSurface.copy(alpha = 0.8f),
-                ),
-                decorationBox = { innerTextField ->
-                    when {
-                        text.isEmpty() -> Text(
-                            "Type something",
-                            color = colorScheme.onSurface.copy(alpha = 0.3f)
-                        )
-
-                        else -> innerTextField()
-                    }
-                }
-
+        AnimatedVisibility(preview !is InlinePreviewState.Empty) {
+            InputPreview(
+                state = preview,
+                onDeleteClick = deletePreview
             )
-            val cameraUri = getIfNotPreview { FileUtil.getUri(LocalContext.current) }
-            val cameraLauncher = getCameraLauncher {
-                openPreview(cameraUri ?: Uri.parse(""))
+        }
+        MessageBox(
+            text = text,
+            onTextChange = { text = it },
+            onSendClick = {
+                text = ""
+                onSendClick(it)
+            },
+            openCamera = openCamera
+        )
+    }
+}
+
+@Composable
+fun MessageBox(
+    text: String,
+    onTextChange: (String) -> Unit,
+    onSendClick: (String) -> Unit,
+    openCamera: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(colorScheme.surfaceContainer, shape = RoundedCornerShape(30.dp))
+            .padding(start = 15.dp, end = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        BasicTextField(
+            value = text,
+            onValueChange = onTextChange,
+            modifier = Modifier.weight(1f),
+            textStyle = LocalTextStyle.current.copy(
+                color = colorScheme.onSurface.copy(alpha = 0.8f),
+            ),
+            decorationBox = { innerTextField ->
+                when {
+                    text.isEmpty() -> Text(
+                        "Type something",
+                        color = colorScheme.onSurface.copy(alpha = 0.3f)
+                    )
+
+                    else -> innerTextField()
+                }
             }
-            IconButton({ cameraLauncher.launch(cameraUri!!) }) {
-                Icon(
-                    Icons.TwoTone.CameraAlt,
-                    contentDescription = null,
-                    tint = colorScheme.primary
-                )
-            }
-            Spacer(Modifier.size(5.dp))
-            IconButton(
-                onClick = { onSendClick(text) },
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(25.dp)
-                    .background(colorScheme.primary)
-                    .padding(3.dp)
-            ) {
-                Icon(
-                    Icons.AutoMirrored.Default.ArrowForward,
-                    contentDescription = null,
-                    tint = colorScheme.onPrimary
-                )
-            }
+
+        )
+
+        IconButton(openCamera) {
+            Icon(
+                Icons.TwoTone.CameraAlt,
+                contentDescription = null,
+                tint = colorScheme.primary
+            )
+        }
+        Spacer(Modifier.size(5.dp))
+        IconButton(
+            onClick = { onSendClick(text) },
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(25.dp)
+                .background(colorScheme.primary)
+                .padding(3.dp)
+        ) {
+            Icon(
+                Icons.AutoMirrored.Default.ArrowForward,
+                contentDescription = null,
+                tint = colorScheme.onPrimary
+            )
         }
     }
 }
 
 @Composable
 fun InputPreview(
-    state: InputPreviewState,
+    state: InlinePreviewState,
     onDeleteClick: () -> Unit
 ) {
-    if (state == InputPreviewState.Empty) return
+    if (state == InlinePreviewState.Empty) return
     Box(
         modifier = Modifier
             .fillMaxWidth(),
@@ -159,9 +176,9 @@ fun InputPreview(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             when (state) {
-                is InputPreviewState.Reply -> {
+                is InlinePreviewState.Reply -> {
                     Text(
-                        "Reply to chat",
+                        state.fromName,
                         fontWeight = FontWeight.Bold,
                         color = colorScheme.primary
                     )
@@ -173,7 +190,7 @@ fun InputPreview(
                     )
                 }
 
-                is InputPreviewState.Image -> {
+                is InlinePreviewState.Image -> {
                     Text(
                         "Send image",
                         fontWeight = FontWeight.Bold,
@@ -233,7 +250,7 @@ fun PreviewInputBox() {
 fun PreviewInputBoxReply() {
     PingTheme {
         Box(Modifier.padding(10.dp)) {
-            InputBox(preview = InputPreviewState.Reply(randomChat()))
+            InputBox(preview = InlinePreviewState.Reply(randomChat(), "Alien"))
         }
     }
 }
@@ -243,7 +260,7 @@ fun PreviewInputBoxReply() {
 fun PreviewInputBoxImage() {
     PingTheme {
         Box(Modifier.padding(10.dp)) {
-            InputBox(preview = InputPreviewState.Image(Uri.parse("")))
+            InputBox(preview = InlinePreviewState.Image(Uri.parse("")))
         }
     }
 }

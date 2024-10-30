@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.graph.ChatScreen
+import com.joshgm3z.ping.ui.screens.chat.InlinePreviewState
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.api.ImageRepository
@@ -56,7 +57,6 @@ class ChatViewModel
 
     init {
         val userId = savedStateHandle.toRoute<ChatScreen>().userId
-        val chatId = savedStateHandle.toRoute<ChatScreen>().chatId
         viewModelScope.launch {
             _uiState.update {
                 it.copy(you = userRepository.getUser(userId))
@@ -70,7 +70,6 @@ class ChatViewModel
         chatObserverJob = viewModelScope.launch {
             chatRepository.observeChatsForUserLocal(userId).cancellable()
                 .collect { chats ->
-                    Logger.warn("121212 chats = [${chats}]")
                     _uiState.update {
                         it.copy(
                             chatListState = when {
@@ -86,16 +85,38 @@ class ChatViewModel
 
     fun onSendButtonClick(
         message: String = "",
+        inlinePreviewState: InlinePreviewState,
     ) {
         Logger.debug("message = [${message}]")
+
+        val chat = Chat(message = message)
         with(_uiState.value) {
-            val chat = Chat(message = message)
+            chat.docId = chatRepository.createChatDocId()
             chat.toUserId = you?.docId ?: ""
             chat.fromUserId = me.docId
+            chat.isOutwards = true
             chat.sentTime = System.currentTimeMillis()
-            viewModelScope.launch(Dispatchers.IO) {
-                chatRepository.uploadChat(chat) {}
+        }
+
+        when (inlinePreviewState) {
+            is InlinePreviewState.Reply -> {
+                chat.replyToChatId = inlinePreviewState.chat.docId
             }
+
+            is InlinePreviewState.Image -> {
+                chat.imageUploadUri = inlinePreviewState.imageUri.toString()
+            }
+
+            is InlinePreviewState.Empty -> {}
+            is InlinePreviewState.WebUrl -> {}
+        }
+        viewModelScope.launch {
+            chatRepository.insertLocal(chat)
+        }
+        if (inlinePreviewState is InlinePreviewState.Image) {
+            uploadChatImage(chat)
+        } else {
+            chatRepository.uploadChatWithId(chat, {}, {})
         }
     }
 
@@ -104,41 +125,27 @@ class ChatViewModel
         chatObserverJob?.cancel()
     }
 
-    fun uploadChatImage(imageLocalUri: Uri, message: String) {
-        Logger.debug("imageLocalUri = [${imageLocalUri}], message = [${message}]")
-        with(_uiState.value) {
-            val chat = Chat(message = message)
-            chat.docId = chatRepository.createChatDocId()
-            chat.toUserId = you?.docId ?: ""
-            chat.fromUserId = me.docId
-            chat.isOutwards = true
-            chat.imageUploadUri = imageLocalUri.toString()
-            chat.sentTime = System.currentTimeMillis()
-            viewModelScope.launch {
-                chatRepository.insertLocal(chat)
-            }
-
-            val imageFileName = "chat_${me.docId}_${System.currentTimeMillis()}.jpg"
-            imageRepository.uploadImage(
-                fileName = imageFileName,
-                localUri = imageLocalUri,
-                onProgress = { progress ->
-                    chat.imageUploadProgress = progress
-                    viewModelScope.launch {
-                        chatRepository.updateChatLocal(chat)
-                    }
-                },
-                onSuccess = {
-                    chat.imageUploadUri = ""
-                    chat.imageUploadProgress = 0f
-                    viewModelScope.launch {
-                        chatRepository.updateChatLocal(chat)
-                    }
-                    chat.imageUrl = it
-                    chatRepository.uploadChatWithId(chat, {}, {})
+    private fun uploadChatImage(chat: Chat) {
+        val imageFileName = "chat_${chat.fromUserId}_${System.currentTimeMillis()}.jpg"
+        imageRepository.uploadImage(
+            fileName = imageFileName,
+            localUri = Uri.parse(chat.imageUploadUri),
+            onProgress = { progress ->
+                chat.imageUploadProgress = progress
+                viewModelScope.launch {
+                    chatRepository.updateChatLocal(chat)
                 }
-            )
-        }
+            },
+            onSuccess = {
+                chat.imageUploadUri = ""
+                chat.imageUploadProgress = 0f
+                viewModelScope.launch {
+                    chatRepository.updateChatLocal(chat)
+                }
+                chat.imageUrl = it
+                chatRepository.uploadChatWithId(chat, {}, {})
+            }
+        )
     }
 
     companion object {

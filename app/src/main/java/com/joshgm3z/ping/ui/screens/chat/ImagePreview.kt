@@ -1,29 +1,20 @@
 package com.joshgm3z.ping.ui.screens.chat
 
 import android.net.Uri
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.PingButton
-import com.joshgm3z.ping.ui.common.PingButtonState
+import com.joshgm3z.ping.ui.common.TwoPingButtons
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.theme.PingTheme
 
@@ -31,26 +22,24 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 @Composable
 private fun PreviewImagePreview() {
     PingTheme {
-        ImagePreview(toName = "Alien")
+        ImagePreview()
     }
 }
 
 @Composable
 fun ImagePreview(
-    message: String = "",
     imageUri: Uri = Uri.parse(""),
-    toName: String = "",
     onBackClick: () -> Unit = {},
-    onSendClick: (String) -> Unit = {}
+    onSendClick: () -> Unit = {}
 ) {
     SettingContainer(
-        "Send image",
+        "Add image",
         onCloseClick = onBackClick
     ) {
         ImagePreviewContent(
             imageUri = imageUri,
-            buttonText = "Send to $toName",
-            onSendClick = { onSendClick(message) }
+            onSendClick = onSendClick,
+            onCancelClick = onBackClick,
         )
     }
 }
@@ -58,8 +47,8 @@ fun ImagePreview(
 @Composable
 fun ImagePreviewContent(
     imageUri: Uri,
-    buttonText: String,
     onSendClick: () -> Unit = {},
+    onCancelClick: () -> Unit = {},
 ) {
     Column {
         AsyncImage(
@@ -72,25 +61,10 @@ fun ImagePreviewContent(
             contentScale = ContentScale.Crop,
         )
         Spacer(Modifier.height(5.dp))
-        SendButton(
-            buttonText,
-            onClick = onSendClick
+        TwoPingButtons(
+            text1 = "Add image",
+            onClick1 = onSendClick,
+            onClick2 = onCancelClick
         )
     }
-}
-
-@Composable
-private fun SendButton(
-    text: String,
-    onClick: () -> Unit = {},
-) {
-    PingButton(
-        text,
-        state = PingButtonState.WithIcon(
-            Icons.AutoMirrored.Default.ArrowForward
-        ),
-        onClick = {
-            onClick()
-        },
-    )
 }

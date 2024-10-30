@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Icecream
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joshgm3z.ping.ui.theme.PingTheme
 
-@Preview
+@DarkPreview
 @Composable
 private fun PreviewPingButton() {
     PingTheme {
@@ -35,12 +37,14 @@ private fun PreviewPingButton() {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             listOf(
-                PingButtonState.Default,
-                PingButtonState.Secondary,
-                PingButtonState.Loading,
-                PingButtonState.Error,
-                PingButtonState.ErrorLoading,
-                PingButtonState.WithIcon(),
+                PingButtonState.Default(),
+                PingButtonState.Default(true),
+                PingButtonState.Secondary(),
+                PingButtonState.Secondary(true),
+                PingButtonState.Error(),
+                PingButtonState.Error(true),
+                PingButtonState.WithIcon(icon = Icons.Default.Icecream),
+                PingButtonState.WithIcon(icon = Icons.Default.Icecream, isLoading = true),
             ).forEach {
                 PingButton(state = it)
             }
@@ -48,26 +52,29 @@ private fun PreviewPingButton() {
     }
 }
 
-sealed class PingButtonState {
-    data object Default : PingButtonState()
-    data object Secondary : PingButtonState()
-    data object Loading : PingButtonState()
-    data object Error : PingButtonState()
-    data object ErrorLoading : PingButtonState()
-    data class WithIcon(val icon: ImageVector = Icons.Default.Replay) : PingButtonState()
+sealed class PingButtonState(val showLoading: Boolean) {
+    data class Default(val isLoading: Boolean = false) : PingButtonState(isLoading)
+    data class Secondary(val isLoading: Boolean = false) : PingButtonState(isLoading)
+    data class Error(val isLoading: Boolean = false) : PingButtonState(isLoading)
+    data class WithIcon(
+        val icon: ImageVector,
+        val isLoading: Boolean = false
+    ) : PingButtonState(isLoading)
 }
 
 @Composable
 fun PingButton(
     text: String = "Confirm",
-    state: PingButtonState = PingButtonState.Default,
-    modifier: Modifier = Modifier.fillMaxWidth().padding(10.dp),
+    state: PingButtonState = PingButtonState.Default(),
+    modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .padding(10.dp),
     onClick: () -> Unit = {},
 ) {
     val color: Color
     val containerColor: Color
     when (state) {
-        is PingButtonState.Error, is PingButtonState.ErrorLoading -> {
+        is PingButtonState.Error -> {
             color = colorScheme.error
             containerColor = colorScheme.errorContainer
         }
@@ -84,18 +91,13 @@ fun PingButton(
     }
     PingButtonContent(
         modifier = modifier
-            .height(40.dp)
-        ,
+            .height(40.dp),
         containerColor = containerColor,
         onClick = onClick,
+        color = color,
+        state = state,
         content = {
             when (state) {
-                is PingButtonState.Loading,
-                is PingButtonState.ErrorLoading -> CircularProgressIndicator(
-                    color = color,
-                    modifier = Modifier.size(25.dp)
-                )
-
                 is PingButtonState.WithIcon -> {
                     Icon(
                         imageVector = state.icon,
@@ -111,11 +113,47 @@ fun PingButton(
     )
 }
 
+@DarkPreview
+@Composable
+private fun PreviewTwoPingButtons() {
+    PingTheme {
+        TwoPingButtons()
+    }
+}
+
+@Composable
+fun TwoPingButtons(
+    text1: String = "Confirm",
+    loading1: Boolean = false,
+    loading2: Boolean = false,
+    text2: String = "Cancel",
+    onClick1: () -> Unit = {},
+    onClick2: () -> Unit = {},
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        val modifier: Modifier = Modifier.fillMaxWidth()
+        PingButton(
+            text = text1,
+            onClick = onClick1,
+            modifier = modifier,
+            state = PingButtonState.Default(loading1)
+        )
+        PingButton(
+            text = text2,
+            onClick = onClick2,
+            modifier = modifier,
+            state = PingButtonState.Secondary(loading2)
+        )
+    }
+}
+
 @Composable
 private fun PingButtonContent(
     modifier: Modifier,
     onClick: () -> Unit,
+    color: Color,
     containerColor: Color,
+    state: PingButtonState,
     content: @Composable () -> Unit
 ) {
     Button(
@@ -125,6 +163,9 @@ private fun PingButtonContent(
             containerColor = containerColor,
         )
     ) {
-        content()
+        when {
+            state.showLoading -> CircularProgressIndicator(color = color)
+            else -> content()
+        }
     }
 }

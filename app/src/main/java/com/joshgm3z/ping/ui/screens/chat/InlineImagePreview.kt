@@ -28,12 +28,10 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 @Composable
 fun InlineImagePreview(
     chat: Chat,
-    onImageClick: () -> Unit,
 ) {
     if (chat.imageUrl.isEmpty() && chat.imageUploadUri.isEmpty()) return
     val uploadOngoing = chat.imageUploadUri.isNotEmpty()
     Box(
-        Modifier.clickable(!uploadOngoing) { onImageClick() },
         contentAlignment = Alignment.Center
     ) {
         ChatImage(

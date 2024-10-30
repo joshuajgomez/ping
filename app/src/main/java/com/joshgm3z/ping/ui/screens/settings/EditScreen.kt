@@ -32,6 +32,7 @@ import com.joshgm3z.ping.ui.common.CustomTextField
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.common.PingButtonState
+import com.joshgm3z.ping.ui.common.TwoPingButtons
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.EditScreenUiState
@@ -78,28 +79,11 @@ fun EditScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 ErrorMessage(uiState.error)
                 Spacer(Modifier.height(20.dp))
-                Column {
-                    val buttonModifier = Modifier.fillMaxWidth()
-                    PingButton(
-                        state = PingButtonState.Secondary,
-                        text = "Cancel",
-                        onClick = goBack,
-                        modifier = buttonModifier
-                    )
-                    Spacer(Modifier.size(20.dp))
-                    PingButton(
-                        text = when {
-                            uiState.isLoading -> "Updating"
-                            else -> "Update"
-                        },
-                        onClick = { viewModel?.updateValue(text) },
-                        state = when {
-                            uiState.isLoading -> PingButtonState.Loading
-                            else -> PingButtonState.Default
-                        },
-                        modifier = buttonModifier
-                    )
-                }
+                TwoPingButtons(
+                    text1 = "Update",
+                    onClick1 = { viewModel?.updateValue(text) },
+                    onClick2 = goBack
+                )
             }
         }
     }

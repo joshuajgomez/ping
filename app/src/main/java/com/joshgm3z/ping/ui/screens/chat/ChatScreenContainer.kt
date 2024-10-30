@@ -2,7 +2,6 @@ package com.joshgm3z.ping.ui.screens.chat
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FileDownload
@@ -15,8 +14,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.model.User
@@ -24,14 +25,19 @@ import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.InfoCard
 import com.joshgm3z.ping.ui.common.PingWallpaper
+import com.joshgm3z.ping.ui.common.getCameraLauncher
+import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.viewmodels.ChatListState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
+import com.joshgm3z.utils.FileUtil
 
 @Preview
 @Composable
 private fun PreviewChatScreen() {
     PingTheme {
-        ChatScreen(chatListState = ChatListState.Ready(getChatList()))
+        ChatScreen(
+            chatListState = ChatListState.Ready(getChatList()),
+        )
     }
 }
 
@@ -60,12 +66,21 @@ fun ChatScreenContainer(
     scrollToChatId: String = "",
 ) {
     var imagePreview by remember { mutableStateOf(Uri.parse("")) }
+    val cameraUri = getIfNotPreview { FileUtil.getUri(LocalContext.current) } ?: Uri.parse("")
+    val cameraLauncher = getCameraLauncher {
+        imagePreview = cameraUri
+    }
+
+    var inlinePreviewState by remember {
+        mutableStateOf<InlinePreviewState>(InlinePreviewState.Empty)
+    }
+
     when {
         imagePreview.path?.isNotEmpty() == true -> ImagePreview(
             imageUri = imagePreview,
             onBackClick = { imagePreview = Uri.parse("") },
             onSendClick = {
-                viewModel.uploadChatImage(imagePreview, it)
+                inlinePreviewState = InlinePreviewState.Image(imagePreview)
                 imagePreview = Uri.parse("")
             }
         )
@@ -76,14 +91,26 @@ fun ChatScreenContainer(
                     chatListState = chatListState,
                     scrollToChatId = scrollToChatId,
                     user = you ?: randomUser(),
-                    onSendClick = { viewModel.onSendButtonClick(it) },
+                    onSendClick = {
+                        viewModel.onSendButtonClick(it, inlinePreviewState)
+                        inlinePreviewState = InlinePreviewState.Empty
+                    },
                     onUserInfoClick = { onUserInfoClick(you?.docId ?: "") },
                     onBackClick = {
                         viewModel.onScreenExit()
                         goHome()
                     },
-                    openPreview = { imagePreview = it },
+                    openCamera = { cameraLauncher.launch(cameraUri) },
                     onImageClick = onImageClick,
+                    inlinePreviewState = inlinePreviewState,
+                    deletePreview = { inlinePreviewState = InlinePreviewState.Empty },
+                    onReplyClick = {
+                        val fromName: String = when {
+                            it.fromUserId == me.docId -> "You"
+                            else -> you?.name ?: "Someone"
+                        }
+                        inlinePreviewState = InlinePreviewState.Reply(it, fromName)
+                    }
                 )
             }
         }
@@ -97,9 +124,12 @@ fun ChatScreen(
     onSendClick: (String) -> Unit = {},
     onUserInfoClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    openPreview: (Uri) -> Unit = { },
+    openCamera: () -> Unit = { },
     onImageClick: (String) -> Unit = { },
     scrollToChatId: String = "",
+    inlinePreviewState: InlinePreviewState = InlinePreviewState.Empty,
+    deletePreview: () -> Unit = {},
+    onReplyClick: (Chat) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -111,10 +141,10 @@ fun ChatScreen(
         },
         bottomBar = {
             InputBox(
-                onSendClick = { onSendClick(it) },
-                openPreview = {
-                    openPreview(it)
-                }
+                onSendClick = onSendClick,
+                openCamera = openCamera,
+                preview = inlinePreviewState,
+                deletePreview = deletePreview,
             )
         }
     ) { paddingValues ->
@@ -127,6 +157,7 @@ fun ChatScreen(
                         chats = chatListState.chats,
                         onImageClick = onImageClick,
                         scrollToChatId = scrollToChatId,
+                        onReplyClick = onReplyClick
                     )
 
                     is ChatListState.Loading -> InfoCard(

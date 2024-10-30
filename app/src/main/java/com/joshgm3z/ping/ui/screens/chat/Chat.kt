@@ -1,8 +1,10 @@
 package com.joshgm3z.ping.ui.screens.chat
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,6 +57,7 @@ private fun PreviewScrollButton() {
 fun ChatList(
     chats: List<Chat> = emptyList(),
     onImageClick: (String) -> Unit = {},
+    onReplyClick: (Chat) -> Unit = {},
     scrollToChatId: String = "",
 ) {
     Box(contentAlignment = Alignment.BottomCenter) {
@@ -67,8 +70,11 @@ fun ChatList(
             items(items = chats) {
                 ChatItem(
                     chat = it,
-                    onImageClick = {
-                        onImageClick(it.docId)
+                    onClick = {
+                        if (it.imageUploadUri.isNotEmpty()) onImageClick(it.docId)
+                    },
+                    onLongClick = {
+                        onReplyClick(it)
                     }
                 )
             }
@@ -121,15 +127,21 @@ private fun LazyListState.ScrollIfNeeded(scrollToChatId: String, chats: List<Cha
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChatItem(
     chat: Chat,
-    onImageClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
             .padding(horizontal = 15.dp, vertical = 10.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .combinedClickable(
+                onLongClick = onLongClick,
+                onClick = onClick
+            ),
         horizontalAlignment = when {
             chat.isOutwards -> Alignment.End
             else -> Alignment.Start
@@ -151,7 +163,7 @@ fun ChatItem(
                 else -> Alignment.Start
             }
         ) {
-            InlineImagePreview(chat, onImageClick)
+            InlineImagePreview(chat)
             ReplyPreview(chat)
             Message(chat)
         }

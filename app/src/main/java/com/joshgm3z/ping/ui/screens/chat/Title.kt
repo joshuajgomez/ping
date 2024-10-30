@@ -48,11 +48,9 @@ fun ChatAppBar(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .padding(5.dp)
             .fillMaxWidth()
             .background(
                 color = colorScheme.surface,
-                shape = RoundedCornerShape(30.dp)
             )
             .padding(5.dp)
     ) {
@@ -77,7 +75,7 @@ fun ChatAppBar(
         ) {
             UserImage(
                 modifier = Modifier
-                    .size(40.dp),
+                    .size(45.dp),
                 imageUrl = user.imagePath
             )
             Spacer(modifier = Modifier.width(15.dp))

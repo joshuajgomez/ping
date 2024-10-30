@@ -16,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.common.PingButtonState
+import com.joshgm3z.ping.ui.common.TwoPingButtons
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.SignOutUiState
@@ -47,28 +48,15 @@ fun SignOutSetting(
                 "Do you really want to sign out of ping?",
                 color = colorScheme.onSurface
             )
-            Column {
-                val modifier = Modifier.fillMaxWidth()
-                PingButton(
-                    modifier = modifier,
-                    text = "Go back",
-                    state = PingButtonState.Secondary,
-                    onClick = onBackClick
-                )
-                val buttonState = when (viewModel?.uiState?.collectAsState()?.value) {
-                    is SignOutUiState.Loading -> PingButtonState.ErrorLoading
-                    else -> PingButtonState.Error
-                }
-                Spacer(Modifier.size(20.dp))
-                PingButton(
-                    modifier = modifier,
-                    text = "Sign out",
-                    state = buttonState,
-                    onClick = {
-                        viewModel?.onSignOutClicked(onLoggedOut)
-                    }
-                )
-            }
+            val uiState = viewModel?.uiState?.collectAsState()
+            TwoPingButtons(
+                text1 = "Sign out",
+                loading1 = uiState?.value is SignOutUiState.Loading,
+                onClick1 = {
+                    viewModel?.onSignOutClicked(onLoggedOut)
+                },
+                onClick2 = onBackClick
+            )
         }
     }
 }
