@@ -21,8 +21,8 @@ constructor(
 ) {
     private val firestore = Firebase.firestore
 
-    private val keyCollectionChatList = "chatList"
-    private val keyCollectionUserList = "userList"
+    private val keyCollectionChatList = "chats_list"
+    private val keyCollectionUserList = "users_list"
 
     private lateinit var listenerRegistration: ListenerRegistration
     private var onChatReceived: ((List<Chat>) -> Unit)? = null
