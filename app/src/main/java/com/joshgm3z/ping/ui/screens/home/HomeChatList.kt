@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -34,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -182,7 +184,6 @@ fun HomeChatItem(
         )
         Text(
             text = homeChat.otherGuy.name,
-            fontSize = 20.sp,
             color = colorScheme.onSurface,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier
@@ -308,9 +309,12 @@ fun EmptyScreen(onGoToUsersClicked: () -> Unit = {}) {
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(30.dp))
-        PingButton(
-            "Create Account",
+        TextButton(
             onClick = onGoToUsersClicked
-        )
+        ) {
+            Text(
+                "See users",
+            )
+        }
     }
 }

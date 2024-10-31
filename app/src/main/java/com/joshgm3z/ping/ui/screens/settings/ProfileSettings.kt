@@ -32,7 +32,7 @@ import com.joshgm3z.ping.utils.getPrettyTime
 
 @DarkPreview
 @Composable
-fun PreviewProfileSettings() {
+private fun PreviewProfileSettings() {
     PingTheme {
         ProfileSettings()
     }

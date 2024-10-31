@@ -40,7 +40,7 @@ import kotlinx.serialization.Transient
 
 @Preview
 @Composable
-fun PreviewHomeScreenList() {
+private fun PreviewHomeScreenList() {
     PingTheme {
         Scaffold(
             topBar = { HomeAppBar() },
@@ -53,7 +53,7 @@ fun PreviewHomeScreenList() {
 
 @Preview
 @Composable
-fun PreviewHomeScreenListEmpty() {
+private fun PreviewHomeScreenListEmpty() {
     PingTheme {
         Scaffold(
             topBar = { HomeAppBar() },
@@ -69,7 +69,7 @@ fun PreviewHomeScreenListEmpty() {
 
 @Preview
 @Composable
-fun PreviewHomeScreenSettings() {
+private fun PreviewHomeScreenSettings() {
     PingTheme {
         Scaffold(
             topBar = { HomeAppBar() },
