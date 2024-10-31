@@ -14,6 +14,7 @@ import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.api.ImageRepository
 import com.joshgm3z.repository.api.UserRepository
 import com.joshgm3z.utils.Logger
+import com.joshgm3z.utils.const.FirestoreKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -128,6 +129,7 @@ class ChatViewModel
     private fun uploadChatImage(chat: Chat) {
         val imageFileName = "chat_${chat.fromUserId}_${System.currentTimeMillis()}.jpg"
         imageRepository.uploadImage(
+            folderName = FirestoreKey.keyChatImages,
             fileName = imageFileName,
             localUri = Uri.parse(chat.imageUploadUri),
             onProgress = { progress ->

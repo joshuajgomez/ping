@@ -5,6 +5,7 @@ import android.net.Uri
 interface ImageRepository {
 
     fun uploadImage(
+        folderName: String,
         fileName: String,
         localUri: Uri,
         onSuccess: (String) -> Unit = {},

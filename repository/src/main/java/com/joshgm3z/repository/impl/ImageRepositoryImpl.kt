@@ -26,12 +26,14 @@ constructor(
     private val firebaseStorage: FirebaseStorage,
 ) : ImageRepository {
     override fun uploadImage(
+        folderName: String,
         fileName: String,
         localUri: Uri,
         onSuccess: (String) -> Unit,
         onProgress: (Float) -> Unit,
         onError: (String) -> Unit,
     ) = firebaseStorage.uploadImage(
+        folderName = folderName,
         fileName = fileName,
         uri = localUri,
         onUploadComplete = onSuccess,

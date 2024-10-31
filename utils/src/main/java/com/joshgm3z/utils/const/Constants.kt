@@ -24,4 +24,9 @@ class FirestoreKey {
             const val dateOfJoining = "dateOfJoining"
         }
     }
+
+    companion object {
+        val keyChatImages = "chat_images"
+        val keyProfilePicture = "profile_pictures"
+    }
 }

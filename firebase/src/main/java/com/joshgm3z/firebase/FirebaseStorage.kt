@@ -25,7 +25,6 @@ constructor(
     private val scope: CoroutineScope,
 ) {
 
-    private val keyProfilePicture = "profile_pictures"
     private val keyProfileIcons = "profile_icons"
 
     private val storage = Firebase.storage
@@ -39,14 +38,15 @@ constructor(
     }
 
     fun uploadImage(
+        folderName: String,
         fileName: String,
         uri: Uri,
         onUploadComplete: (String) -> Unit = {},
         onUploadProgress: (Float) -> Unit = {},
         onUploadFailed: (String) -> Unit = {},
     ) {
-        Logger.debug("fileName = [${fileName}], uri = [${uri}]")
-        val profilePicReference = storageRef.child(keyProfilePicture)
+        Logger.debug("folderName=[${folderName}], fileName=[${fileName}], uri=[${uri}]")
+        val profilePicReference = storageRef.child(folderName)
         val picReference = profilePicReference.child(fileName)
         picReference.putFile(uri)
             .addOnSuccessListener {

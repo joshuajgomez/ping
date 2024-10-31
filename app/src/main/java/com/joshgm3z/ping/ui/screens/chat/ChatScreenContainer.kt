@@ -105,10 +105,6 @@ fun ChatScreenContainer(
                     inlinePreviewState = inlinePreviewState,
                     deletePreview = { inlinePreviewState = InlinePreviewState.Empty },
                     onReplyClick = {
-                        val fromName: String = when {
-                            it.fromUserId == me.docId -> "You"
-                            else -> you?.name ?: "Someone"
-                        }
                         inlinePreviewState = InlinePreviewState.Reply(it)
                     }
                 )
