@@ -46,6 +46,7 @@ import com.joshgm3z.ping.ui.common.CustomTextField3
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.ErrorText
 import com.joshgm3z.ping.ui.common.PingButton
+import com.joshgm3z.ping.ui.common.PingButtonState
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.dashedBorder
 import com.joshgm3z.ping.ui.common.getCameraLauncher
@@ -71,7 +72,6 @@ fun SignUpContent(
     inputName: String = "",
     signUpViewModel: SignUpViewModel? = getIfNotPreview { hiltViewModel() },
     onSignUpComplete: (String) -> Unit = {},
-    showLoading: (Boolean) -> Unit = {},
     showPicker: () -> Unit = {},
 ) {
     Column {
@@ -86,7 +86,6 @@ fun SignUpContent(
             when {
                 name.isNotEmpty() -> {
                     isShowLoading = true
-                    showLoading(true)
                     signUpViewModel?.onSignUpClick(
                         name,
                         inputImage,
@@ -94,7 +93,7 @@ fun SignUpContent(
                         onSignUpComplete = onSignUpComplete,
                         onSignUpError = {
                             error = it
-                            showLoading(false)
+                            isShowLoading = false
                         },
                     )
                 }
@@ -163,8 +162,10 @@ fun SignUpContent(
             ErrorText(error)
             PingButton(
                 "Create Account",
+                state = PingButtonState.Accent(isShowLoading),
                 onClick = onSignUpClick
             )
+            Spacer(Modifier.size(10.dp))
         }
 
     }

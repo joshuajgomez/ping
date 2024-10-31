@@ -60,7 +60,7 @@ fun ImagePreviewContent(
                 .clip(RoundedCornerShape(10.dp)),
             contentScale = ContentScale.Crop,
         )
-        Spacer(Modifier.height(5.dp))
+        Spacer(Modifier.height(50.dp))
         TwoPingButtons(
             text1 = "Add image",
             onClick1 = onSendClick,

@@ -2,7 +2,6 @@ package com.joshgm3z.ping.ui.screens.frx
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,7 +61,6 @@ fun FrxContainer(
 
     PingWallpaper {
         var isSignIn by remember { mutableStateOf(default) }
-        var showLoading by remember { mutableStateOf(false) }
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -81,7 +79,6 @@ fun FrxContainer(
                     SignInCard(
                         isSignIn,
                         onClickExpand = { isSignIn = true },
-                        showLoading = { showLoading = it },
                         onSignInComplete = onSignInComplete
                     )
                     if (!isSignIn) {
@@ -96,7 +93,6 @@ fun FrxContainer(
                             showDropDownMenu = true
                         },
                     )
-                    LoadingBar(showLoading)
                 }
             }
             when {
@@ -145,7 +141,6 @@ fun LoadingBar(showLoading: Boolean) {
 private fun SignInCard(
     expanded: Boolean,
     onClickExpand: () -> Unit,
-    showLoading: (Boolean) -> Unit,
     onSignInComplete: (String) -> Unit,
 ) {
     Column {
@@ -155,7 +150,6 @@ private fun SignInCard(
             modifier = Modifier.padding(horizontal = 10.dp)
         ) {
             SignInContent(
-                showLoading = showLoading,
                 onSignInComplete = onSignInComplete
             )
         }

@@ -2,8 +2,10 @@ package com.joshgm3z.ping.ui.screens.frx
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
@@ -26,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.common.CustomTextField3
 import com.joshgm3z.ping.ui.common.ErrorText
 import com.joshgm3z.ping.ui.common.PingButton
+import com.joshgm3z.ping.ui.common.PingButtonState
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.SignInViewModel
@@ -42,22 +45,22 @@ fun PreviewFullSignInInput() {
 fun SignInContent(
     signInViewModel: SignInViewModel? = getIfNotPreview { hiltViewModel() },
     onSignInComplete: (String) -> Unit = {},
-    showLoading: (Boolean) -> Unit = {},
 ) {
     var name by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
     val onSignInClick: () -> Unit = {
         when {
             name.isNotEmpty() -> {
                 error = ""
-                showLoading(true)
+                isLoading = true
                 signInViewModel?.onSignInClick(
                     name,
                     onSignInComplete = onSignInComplete,
                     onNewUser = {
-                        showLoading(false)
+                        isLoading = false
                         error = "User not found"
                     },
                     onError = {
@@ -97,9 +100,11 @@ fun SignInContent(
             })
         ErrorText(error)
         PingButton(
-            "Create Account",
+            "Sign in",
+            state = PingButtonState.Accent(isLoading),
             onClick = onSignInClick
         )
+        Spacer(Modifier.size(10.dp))
     }
 }
 

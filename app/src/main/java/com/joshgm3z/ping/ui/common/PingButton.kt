@@ -39,6 +39,8 @@ private fun PreviewPingButton() {
             listOf(
                 PingButtonState.Default(),
                 PingButtonState.Default(true),
+                PingButtonState.Accent(),
+                PingButtonState.Accent(true),
                 PingButtonState.Secondary(),
                 PingButtonState.Secondary(true),
                 PingButtonState.Error(),
@@ -54,6 +56,7 @@ private fun PreviewPingButton() {
 
 sealed class PingButtonState(val showLoading: Boolean) {
     data class Default(val isLoading: Boolean = false) : PingButtonState(isLoading)
+    data class Accent(val isLoading: Boolean = false) : PingButtonState(isLoading)
     data class Secondary(val isLoading: Boolean = false) : PingButtonState(isLoading)
     data class Error(val isLoading: Boolean = false) : PingButtonState(isLoading)
     data class WithIcon(
@@ -80,18 +83,22 @@ fun PingButton(
         }
 
         is PingButtonState.Secondary -> {
-            color = colorScheme.onPrimaryContainer
-            containerColor = colorScheme.primaryContainer
+            color = colorScheme.onSurface
+            containerColor = colorScheme.surfaceContainerHigh
+        }
+
+        is PingButtonState.Accent -> {
+            color = colorScheme.primaryContainer
+            containerColor = colorScheme.primary
         }
 
         else -> {
-            color = colorScheme.onPrimary
-            containerColor = colorScheme.primary
+            color = colorScheme.surface
+            containerColor = colorScheme.onSurface
         }
     }
     PingButtonContent(
-        modifier = modifier
-            .height(40.dp),
+        modifier = modifier.height(50.dp),
         containerColor = containerColor,
         onClick = onClick,
         color = color,
@@ -164,7 +171,11 @@ private fun PingButtonContent(
         )
     ) {
         when {
-            state.showLoading -> CircularProgressIndicator(color = color)
+            state.showLoading -> CircularProgressIndicator(
+                color = color,
+                modifier = Modifier.size(30.dp)
+            )
+
             else -> content()
         }
     }

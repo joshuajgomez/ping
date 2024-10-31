@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -46,7 +47,8 @@ fun SignOutSetting(
         ) {
             Text(
                 "Do you really want to sign out of ping?",
-                color = colorScheme.onSurface
+                color = colorScheme.onSurface,
+                modifier = Modifier.padding(horizontal = 10.dp)
             )
             val uiState = viewModel?.uiState?.collectAsState()
             TwoPingButtons(
