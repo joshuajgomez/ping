@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.ui.screens.chat
 
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,29 +25,36 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.model.Chat
+import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.utils.getPrettyTime
 import kotlinx.coroutines.launch
 
 val chatBubbleRadius = 10.dp
 
-@DarkPreview
+//@DarkPreview
 @Composable
 private fun PreviewScrollButton() {
     PingTheme {
@@ -81,7 +90,8 @@ fun ChatList(
         }
         listState.ScrollIfNeeded(scrollToChatId, chats)
         val coroutineScope = rememberCoroutineScope()
-        ScrollButton(visible = listState.firstVisibleItemIndex > 5) {
+        val visibleIndex = remember { derivedStateOf { listState.firstVisibleItemIndex } }
+        ScrollButton(visible = visibleIndex.value > 5) {
             coroutineScope.launch {
                 listState.scrollToItem(0)
             }
@@ -163,11 +173,94 @@ fun ChatItem(
                 else -> Alignment.Start
             }
         ) {
-            InlineImagePreview(chat)
-            ReplyPreview(chat)
+            InlinePreview(chat)
             Message(chat)
         }
         Details(chat)
+    }
+}
+
+@Composable
+fun InlinePreview(
+    chat: Chat,
+) {
+    val preview = when {
+        chat.imageUrl.isNotEmpty() -> InlinePreviewState.Image(Uri.parse(chat.imageUrl))
+        chat.replyToChatId.isNotEmpty() -> InlinePreviewState.Reply(chat)
+        chat.webUrl.isNotEmpty() -> InlinePreviewState.WebUrl(chat.webUrl)
+        else -> InlinePreviewState.Empty
+    }
+    if (preview is InlinePreviewState.Empty) return
+    Column(
+        modifier = Modifier
+            .padding(3.dp)
+            .clip(RoundedCornerShape(chatBubbleRadius))
+            .background(
+                color = when {
+                    chat.isOutwards -> colorScheme.surfaceContainerHigh
+                    else -> colorScheme.primaryContainer.copy(alpha = 0.9f)
+                }
+            )
+    ) {
+        ReplyContent(preview)
+    }
+}
+
+@Composable
+fun ReplyContent(
+    preview: InlinePreviewState,
+) {
+    val titleColor: Color = colorScheme.onBackground
+    val textColor: Color = colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+    when (preview) {
+        is InlinePreviewState.Reply -> Column(Modifier.padding(8.dp)) {
+            Text(
+                text = preview.chat.fromUserName.ifEmpty { "Unknown" },
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold,
+                color = titleColor
+            )
+            Text(
+                text = preview.chat.message,
+                fontSize = 17.sp,
+                color = textColor
+            )
+        }
+
+        is InlinePreviewState.Image -> AsyncImage(
+            model = preview.imageUri,
+            error = painterResource(R.drawable.wallpaper2),
+            contentDescription = null,
+            modifier = Modifier
+                .height(150.dp)
+                .fillMaxWidth(),
+            contentScale = ContentScale.Crop,
+        )
+
+        is InlinePreviewState.WebUrl -> {
+            AsyncImage(
+                model = null,
+                contentDescription = null,
+                error = painterResource(R.drawable.wallpaper2),
+                modifier = Modifier
+                    .height(100.dp)
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Crop,
+            )
+            Column(Modifier.padding(8.dp)) {
+                Icon(
+                    Icons.Default.Link,
+                    contentDescription = null,
+                    tint = colorScheme.onSurface.copy(alpha = 0.5f),
+                    modifier = Modifier.size(30.dp)
+                )
+                Text("Search Google", color = titleColor)
+                Text("Search google for anything", color = textColor)
+            }
+        }
+
+        else -> {}
+
     }
 }
 
@@ -178,7 +271,7 @@ fun Message(chat: Chat) {
             text = chat.message,
             color = when {
                 chat.isOutwards -> colorScheme.onSurface
-                else -> colorScheme.onPrimary
+                else -> colorScheme.onSurface.copy(alpha = 0.9f)
             },
             modifier = Modifier.padding(horizontal = 5.dp)
         )
@@ -200,7 +293,7 @@ fun Details(chat: Chat) {
     }
 }
 
-@Preview
+//@Preview
 @Composable
 fun PreviewStatusIcon() {
     PingTheme {
@@ -226,7 +319,7 @@ fun PreviewChatList() {
     }
 }
 
-@Preview
+//@Preview
 @Composable
 fun PreviewIncomingChat() {
     PingTheme {
@@ -236,7 +329,7 @@ fun PreviewIncomingChat() {
     }
 }
 
-@Preview
+//@Preview
 @Composable
 fun PreviewOutgoingChat() {
     PingTheme {
@@ -246,18 +339,66 @@ fun PreviewOutgoingChat() {
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
 fun PreviewOutgoingChatReply() {
     PingTheme {
         val chat = Chat.random("me too")
-        chat.isOutwards = true
-        chat.replyToChatId = "im going to movie"
-        ChatItem(chat)
+        Column {
+            ChatItem(chat.apply {
+                isOutwards = true
+            })
+            ChatItem(chat.apply {
+                isOutwards = true
+                replyToChatId = "im going to movie"
+            })
+            ChatItem(chat.apply {
+                isOutwards = true
+                imageUrl = "im going to movie"
+            })
+            ChatItem(Chat("").apply {
+                isOutwards = true
+                imageUrl = "true"
+            })
+            ChatItem(Chat("https://www.google.com").apply {
+                isOutwards = true
+            })
+            ChatItem(chat.apply {
+                isOutwards = true
+            })
+        }
     }
 }
 
-@Preview
+@DarkPreview
+@Composable
+fun PreviewOutgoingChatReply2() {
+    PingTheme {
+        val chat = Chat.random("Im coming over very soon")
+        Column {
+            ChatItem(chat)
+            ChatItem(chat.apply {
+                isOutwards = false
+                replyToChatId = "im going to movie"
+            })
+            ChatItem(chat.apply {
+                isOutwards = false
+                imageUrl = "im going to movie"
+            })
+            /*            ChatItem(Chat("").apply {
+                            imageUrl = "true"
+                        })*/
+            ChatItem(Chat("https://www.google.com").apply {
+                isOutwards = false
+            })
+            ChatItem(chat.apply {
+                isOutwards = false
+            })
+        }
+    }
+}
+
+//@Preview
 @Composable
 fun PreviewIncomingChatReply() {
     PingTheme {
@@ -268,7 +409,7 @@ fun PreviewIncomingChatReply() {
     }
 }
 
-@Preview
+//@Preview
 @Composable
 fun PreviewIncomingChatImage() {
     PingTheme {

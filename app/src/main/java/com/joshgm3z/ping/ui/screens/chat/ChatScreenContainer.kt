@@ -109,7 +109,7 @@ fun ChatScreenContainer(
                             it.fromUserId == me.docId -> "You"
                             else -> you?.name ?: "Someone"
                         }
-                        inlinePreviewState = InlinePreviewState.Reply(it, fromName)
+                        inlinePreviewState = InlinePreviewState.Reply(it)
                     }
                 )
             }

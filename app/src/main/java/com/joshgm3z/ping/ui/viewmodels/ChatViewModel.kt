@@ -15,7 +15,6 @@ import com.joshgm3z.repository.api.ImageRepository
 import com.joshgm3z.repository.api.UserRepository
 import com.joshgm3z.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -94,6 +93,7 @@ class ChatViewModel
             chat.docId = chatRepository.createChatDocId()
             chat.toUserId = you?.docId ?: ""
             chat.fromUserId = me.docId
+            chat.fromUserName = "You"
             chat.isOutwards = true
             chat.sentTime = System.currentTimeMillis()
         }

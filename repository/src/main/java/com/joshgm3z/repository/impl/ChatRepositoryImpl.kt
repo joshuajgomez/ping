@@ -152,6 +152,8 @@ constructor(
                     with(it) {
                         val user: User = userDao.getUser(fromUserId)
                         if (toUserId == me.docId) {
+                            // necessary null check
+                            fromUserName = user?.name ?: "Unknown"
                             if (status == Chat.SENT) {
                                 status = Chat.DELIVERED
                                 notificationUtil.showNotification(
@@ -168,6 +170,7 @@ constructor(
                             }
                         } else {
                             isOutwards = true
+                            fromUserName = "You"
                         }
                         chatDao.insert(this)
                     }

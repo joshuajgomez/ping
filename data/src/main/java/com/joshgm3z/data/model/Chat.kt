@@ -1,6 +1,7 @@
 package com.joshgm3z.data.model
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.joshgm3z.data.util.randomMessage
 import kotlin.random.Random
@@ -13,6 +14,7 @@ data class Chat(
     var docId: String = ""
     var sentTime: Long = 0
     var fromUserId: String = ""
+    var fromUserName: String = ""
     var toUserId: String = ""
     var replyToChatId: String = ""
     var status: Long = SAVED
@@ -20,6 +22,21 @@ data class Chat(
     var isOutwards: Boolean = false
     var imageUploadUri: String = ""
     var imageUploadProgress: Float = 0f
+
+    @get:Ignore
+    val webUrl: String
+        get() = with(message) {
+            when {
+                this == null -> ""
+                contains("http") -> {
+                    val start = indexOf("http")
+                    val end = indexOf(" ", startIndex = start)
+                    return substring(start, if (end == -1) length else end)
+                }
+
+                else -> ""
+            }
+        }
 
     companion object {
         fun random(message: String = randomMessage()): Chat {

@@ -18,6 +18,7 @@ class FirestoreConverter {
                 FirestoreKey.Chat.message to chat.message,
                 FirestoreKey.Chat.imageUrl to chat.imageUrl,
                 FirestoreKey.Chat.status to chat.status,
+                FirestoreKey.Chat.replyToChatId to chat.replyToChatId,
             )
         }
 
@@ -33,6 +34,7 @@ class FirestoreConverter {
                             toUserId = get(FirestoreKey.Chat.toUserId).toString()
                             status = get(FirestoreKey.Chat.status) as Long
                             imageUrl = get(FirestoreKey.Chat.imageUrl).toString()
+                            replyToChatId = get(FirestoreKey.Chat.replyToChatId).toString()
                             chatList.add(this)
                         }
                     } catch (e: Exception) {
@@ -63,20 +65,8 @@ class FirestoreConverter {
             }
             return when {
                 document == null -> null
-                else -> {
-                    User().apply {
-                        docId = document.id
-                        name = document.get(FirestoreKey.User.name).toString()
-                        imagePath = document.get(FirestoreKey.User.imagePath).toString()
-                        about = document.get(FirestoreKey.User.about).toString()
-                        document.get(FirestoreKey.User.dateOfJoining)?.let {
-                            dateOfJoining = it as Long
-                        }
-                        document.get(FirestoreKey.User.profileIcon)?.let {
-                            profileIcon = Integer.parseInt(it.toString())
-                        }
-                    }
-                }
+                else -> getUserFromDocument(document)
+
             }
         }
 
@@ -93,17 +83,7 @@ class FirestoreConverter {
         fun getUserListFromDocument(result: QuerySnapshot): ArrayList<User> {
             val userList = ArrayList<User>()
             for (document in result) {
-                User(name = document[FirestoreKey.User.name].toString()).apply {
-                    docId = document.id
-                    imagePath = document.get(FirestoreKey.User.imagePath).toString()
-                    about = document.get(FirestoreKey.User.about)?.toString() ?: ""
-                    document.get(FirestoreKey.User.dateOfJoining)
-                        ?.let { dateOfJoining = it as Long }
-                    document.get(FirestoreKey.User.profileIcon)?.let {
-                        profileIcon = Integer.parseInt(it.toString())
-                    }
-                    userList.add(this)
-                }
+                userList.add(getUserFromDocument(document))
             }
             return userList
         }

@@ -47,7 +47,7 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 
 sealed class InlinePreviewState {
     data object Empty : InlinePreviewState()
-    data class Reply(val chat: Chat, val fromName: String) : InlinePreviewState()
+    data class Reply(val chat: Chat) : InlinePreviewState()
     data class Image(val imageUri: Uri) : InlinePreviewState()
     data class WebUrl(val url: String) : InlinePreviewState()
 }
@@ -87,7 +87,7 @@ fun InputBox(
 }
 
 @Composable
-fun MessageBox(
+private fun MessageBox(
     text: String,
     onTextChange: (String) -> Unit,
     onSendClick: (String) -> Unit,
@@ -146,9 +146,9 @@ fun MessageBox(
 }
 
 @Composable
-fun InputPreview(
+private fun InputPreview(
     state: InlinePreviewState,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit = {}
 ) {
     if (state == InlinePreviewState.Empty) return
     Box(
@@ -178,7 +178,7 @@ fun InputPreview(
             when (state) {
                 is InlinePreviewState.Reply -> {
                     Text(
-                        state.fromName,
+                        state.chat.fromUserName.ifEmpty { "Unknown" },
                         fontWeight = FontWeight.Bold,
                         color = colorScheme.primary
                     )
@@ -250,7 +250,7 @@ fun PreviewInputBox() {
 fun PreviewInputBoxReply() {
     PingTheme {
         Box(Modifier.padding(10.dp)) {
-            InputBox(preview = InlinePreviewState.Reply(randomChat(), "Alien"))
+            InputBox(preview = InlinePreviewState.Reply(randomChat()))
         }
     }
 }

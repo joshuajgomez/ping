@@ -11,6 +11,7 @@ class FirestoreKey {
             const val imageUrl = "imageUrl"
             const val status = "status"
             const val sentTime = "sentTime"
+            const val replyToChatId = "replyToChatId"
         }
     }
 
