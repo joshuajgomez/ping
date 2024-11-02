@@ -24,7 +24,7 @@ interface UserRepository {
         onError: (message: String) -> Unit,
     )
 
-    suspend fun getUser(userId: String): User
+    suspend fun getUser(userId: String): User?
 
     fun getUserFlow(userId: String): Flow<User>
 

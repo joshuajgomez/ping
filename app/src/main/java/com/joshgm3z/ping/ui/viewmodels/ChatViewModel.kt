@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.ui.viewmodels
 
-import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,13 +7,10 @@ import androidx.navigation.toRoute
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.graph.ChatScreen
-import com.joshgm3z.ping.ui.screens.chat.InlinePreviewState
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.CurrentUserInfo
-import com.joshgm3z.repository.api.ImageRepository
 import com.joshgm3z.repository.api.UserRepository
 import com.joshgm3z.utils.Logger
-import com.joshgm3z.utils.const.FirestoreKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +32,13 @@ data class ChatUiState(
     val chatListState: ChatListState,
 )
 
+sealed class ChatInlineUiState {
+    data object Empty : ChatInlineUiState()
+    data class Reply(val chat: Chat, val fromUserName: String) : ChatInlineUiState()
+    data class Image(val imageUrl: String) : ChatInlineUiState()
+    data class WebUrl(val webUrl: String) : ChatInlineUiState()
+}
+
 @HiltViewModel
 class ChatViewModel
 @Inject constructor(
@@ -43,7 +46,6 @@ class ChatViewModel
     currentUserInfo: CurrentUserInfo,
     private val chatRepository: ChatRepository,
     private val userRepository: UserRepository,
-    private val imageRepository: ImageRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -83,71 +85,51 @@ class ChatViewModel
         }
     }
 
-    fun onSendButtonClick(
-        message: String = "",
-        inlinePreviewState: InlinePreviewState,
-    ) {
-        Logger.debug("message = [${message}]")
+    fun getChatPreviewState(chat: Chat): ChatInlineUiState = with(_uiState.value) {
+        when (chatListState) {
+            is ChatListState.Ready -> when {
+                chat.replyToChatId.isNotEmpty() -> {
+                    val replyChat: Chat? = chatListState.chats.firstOrNull {
+                        it.docId == chat.replyToChatId
+                    }
+                    val fromUserName: String = when (replyChat?.fromUserId == you?.docId) {
+                        true -> you?.name ?: "Unknown"
+                        else -> "You"
+                    }
+                    when {
+                        replyChat != null -> ChatInlineUiState.Reply(
+                            chat = replyChat,
+                            fromUserName = fromUserName
+                        )
 
-        val chat = Chat(message = message)
-        with(_uiState.value) {
-            chat.docId = chatRepository.createChatDocId()
-            chat.toUserId = you?.docId ?: ""
-            chat.fromUserId = me.docId
-            chat.fromUserName = "You"
-            chat.isOutwards = true
-            chat.sentTime = System.currentTimeMillis()
-        }
+                        else -> ChatInlineUiState.Empty
+                    }
+                }
 
-        when (inlinePreviewState) {
-            is InlinePreviewState.Reply -> {
-                chat.replyToChatId = inlinePreviewState.chat.docId
+                chat.webUrl.isNotEmpty() -> {
+                    ChatInlineUiState.WebUrl(chat.webUrl)
+                }
+
+                chat.imageUrl.isNotEmpty() -> {
+                    ChatInlineUiState.Image(chat.imageUrl)
+                }
+
+                else -> {
+                    ChatInlineUiState.Empty
+                }
             }
 
-            is InlinePreviewState.Image -> {
-                chat.imageUploadUri = inlinePreviewState.imageUri.toString()
+            else -> {
+                Logger.error("chats.isEmpty")
+                return ChatInlineUiState.Empty
             }
+        }
 
-            is InlinePreviewState.Empty -> {}
-            is InlinePreviewState.WebUrl -> {}
-        }
-        viewModelScope.launch {
-            chatRepository.insertLocal(chat)
-        }
-        if (inlinePreviewState is InlinePreviewState.Image) {
-            uploadChatImage(chat)
-        } else {
-            chatRepository.uploadChatWithId(chat, {}, {})
-        }
     }
 
     fun onScreenExit() {
         Logger.entry()
         chatObserverJob?.cancel()
-    }
-
-    private fun uploadChatImage(chat: Chat) {
-        val imageFileName = "chat_${chat.fromUserId}_${System.currentTimeMillis()}.jpg"
-        imageRepository.uploadImage(
-            folderName = FirestoreKey.keyChatImages,
-            fileName = imageFileName,
-            localUri = Uri.parse(chat.imageUploadUri),
-            onProgress = { progress ->
-                chat.imageUploadProgress = progress
-                viewModelScope.launch {
-                    chatRepository.updateChatLocal(chat)
-                }
-            },
-            onSuccess = {
-                chat.imageUploadUri = ""
-                chat.imageUploadProgress = 0f
-                viewModelScope.launch {
-                    chatRepository.updateChatLocal(chat)
-                }
-                chat.imageUrl = it
-                chatRepository.uploadChatWithId(chat, {}, {})
-            }
-        )
     }
 
     companion object {

@@ -20,6 +20,8 @@ interface ChatRepository {
 
     fun observeChatsForUserLocal(userId: String): Flow<List<Chat>>
 
+    suspend fun getChatsForUser(userId: String): List<Chat>
+
     fun createChatDocId(): String
 
     fun observeChatsForUserHomeLocal(): Flow<List<Chat>>

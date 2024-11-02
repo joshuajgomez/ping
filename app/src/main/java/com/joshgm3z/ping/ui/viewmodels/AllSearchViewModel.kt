@@ -82,7 +82,7 @@ constructor(
                     it.fromUserId -> it.toUserId
                     else -> it.fromUserId
                 }.let {
-                    userRepository.getUser(it).name
+                    userRepository.getUser(it)?.name ?: "Unknown"
                 }
                 Message(
                     message = it.message,

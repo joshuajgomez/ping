@@ -57,7 +57,9 @@ data class Chat(
     override fun toString(): String {
         return "Chat(message='$message', docId='$docId'," +
                 " sentTime=$sentTime, fromUserId=$fromUserId, toUserId=$toUserId," +
-                " isOutwards=$isOutwards, status=${textStatus(status)}," +
+                " isOutwards=$isOutwards," +
+                " replyToChatId=$replyToChatId," +
+                " status=${textStatus(status)}," +
                 " imageUrl=${imageUrl}," +
                 " imageUpload=[${imageUploadProgress}]>>${imageUploadUri}," +
                 ")"

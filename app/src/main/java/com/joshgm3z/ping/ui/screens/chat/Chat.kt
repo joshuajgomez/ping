@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.ui.screens.chat
 
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -31,6 +30,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,12 +43,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.common.getIfNotPreview
+import com.joshgm3z.ping.ui.viewmodels.ChatInlineUiState
+import com.joshgm3z.ping.ui.viewmodels.ChatListState
+import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.utils.getPrettyTime
 import kotlinx.coroutines.launch
 
@@ -68,6 +73,7 @@ fun ChatList(
     onImageClick: (String) -> Unit = {},
     onReplyClick: (Chat) -> Unit = {},
     scrollToChatId: String = "",
+    viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() }
 ) {
     Box(contentAlignment = Alignment.BottomCenter) {
         val listState = rememberLazyListState()
@@ -84,7 +90,8 @@ fun ChatList(
                     },
                     onLongClick = {
                         onReplyClick(it)
-                    }
+                    },
+                    viewModel = viewModel,
                 )
             }
         }
@@ -143,6 +150,7 @@ fun ChatItem(
     chat: Chat,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
+    viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() }
 ) {
     Column(
         modifier = Modifier
@@ -173,7 +181,7 @@ fun ChatItem(
                 else -> Alignment.Start
             }
         ) {
-            InlinePreview(chat)
+            InlinePreview(chat, viewModel)
             Message(chat)
         }
         Details(chat)
@@ -183,14 +191,11 @@ fun ChatItem(
 @Composable
 fun InlinePreview(
     chat: Chat,
+    viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() }
 ) {
-    val preview = when {
-        chat.imageUrl.isNotEmpty() -> InlinePreviewState.Image(Uri.parse(chat.imageUrl))
-        chat.replyToChatId.isNotEmpty() -> InlinePreviewState.Reply(chat)
-        chat.webUrl.isNotEmpty() -> InlinePreviewState.WebUrl(chat.webUrl)
-        else -> InlinePreviewState.Empty
-    }
-    if (preview is InlinePreviewState.Empty) return
+    val uiState = viewModel?.getChatPreviewState(chat)
+    if (uiState is ChatInlineUiState.Empty) return
+
     Column(
         modifier = Modifier
             .padding(3.dp)
@@ -202,33 +207,33 @@ fun InlinePreview(
                 }
             )
     ) {
-        ReplyContent(preview)
+        ReplyContent(uiState ?: ChatInlineUiState.Empty)
     }
 }
 
 @Composable
 fun ReplyContent(
-    preview: InlinePreviewState,
+    uiState: ChatInlineUiState,
 ) {
     val titleColor: Color = colorScheme.onBackground
     val textColor: Color = colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-    when (preview) {
-        is InlinePreviewState.Reply -> Column(Modifier.padding(8.dp)) {
+    when (uiState) {
+        is ChatInlineUiState.Reply -> Column(Modifier.padding(8.dp)) {
             Text(
-                text = preview.chat.fromUserName.ifEmpty { "Unknown" },
+                text = uiState.fromUserName,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
                 color = titleColor
             )
             Text(
-                text = preview.chat.message,
+                text = uiState.chat.message,
                 fontSize = 17.sp,
                 color = textColor
             )
         }
 
-        is InlinePreviewState.Image -> AsyncImage(
-            model = preview.imageUri,
+        is ChatInlineUiState.Image -> AsyncImage(
+            model = uiState.imageUrl,
             error = painterResource(R.drawable.wallpaper2),
             contentDescription = null,
             modifier = Modifier
@@ -237,7 +242,7 @@ fun ReplyContent(
             contentScale = ContentScale.Crop,
         )
 
-        is InlinePreviewState.WebUrl -> {
+        is ChatInlineUiState.WebUrl -> {
             AsyncImage(
                 model = null,
                 contentDescription = null,

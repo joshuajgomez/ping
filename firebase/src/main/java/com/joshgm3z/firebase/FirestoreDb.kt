@@ -195,4 +195,21 @@ constructor(
                 Logger.warn("error updating chat status: $chatId")
             }
     }
+
+    fun updateChatList(chatIds: List<Chat>, key: String, value: Any) {
+        Logger.debug("chatId = [${chatIds}], key = [${key}], value = [${value}]")
+        firestore.runTransaction {
+            chatIds.forEach { chat ->
+                it.update(
+                    firestore.collection(keyCollectionChatList).document(chat.docId),
+                    key,
+                    value
+                )
+            }
+        }
+            .addOnSuccessListener {}
+            .addOnFailureListener {
+                Logger.warn("error updating chat status")
+            }
+    }
 }

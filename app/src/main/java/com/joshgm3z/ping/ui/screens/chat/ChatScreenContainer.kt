@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.ui.screens.chat
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -9,15 +8,9 @@ import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.model.User
@@ -25,11 +18,10 @@ import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.InfoCard
 import com.joshgm3z.ping.ui.common.PingWallpaper
-import com.joshgm3z.ping.ui.common.getCameraLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
+import com.joshgm3z.ping.ui.viewmodels.ChatInputViewModel
 import com.joshgm3z.ping.ui.viewmodels.ChatListState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
-import com.joshgm3z.utils.FileUtil
 
 @Preview
 @Composable
@@ -65,68 +57,36 @@ fun ChatScreenContainer(
     onImageClick: (String) -> Unit = {},
     scrollToChatId: String = "",
 ) {
-    var imagePreview by remember { mutableStateOf(Uri.parse("")) }
-    val cameraUri = getIfNotPreview { FileUtil.getUri(LocalContext.current) } ?: Uri.parse("")
-    val cameraLauncher = getCameraLauncher {
-        imagePreview = cameraUri
-    }
-
-    var inlinePreviewState by remember {
-        mutableStateOf<InlinePreviewState>(InlinePreviewState.Empty)
-    }
-
-    when {
-        imagePreview.path?.isNotEmpty() == true -> ImagePreview(
-            imageUri = imagePreview,
-            onBackClick = { imagePreview = Uri.parse("") },
-            onSendClick = {
-                inlinePreviewState = InlinePreviewState.Image(imagePreview)
-                imagePreview = Uri.parse("")
-            }
-        )
-
-        else -> {
-            with(viewModel.uiState.collectAsState().value) {
-                ChatScreen(
-                    chatListState = chatListState,
-                    scrollToChatId = scrollToChatId,
-                    user = you ?: randomUser(),
-                    onSendClick = {
-                        viewModel.onSendButtonClick(it, inlinePreviewState)
-                        inlinePreviewState = InlinePreviewState.Empty
-                    },
-                    onUserInfoClick = { onUserInfoClick(you?.docId ?: "") },
-                    onBackClick = {
-                        viewModel.onScreenExit()
-                        goHome()
-                    },
-                    openCamera = { cameraLauncher.launch(cameraUri) },
-                    onImageClick = onImageClick,
-                    inlinePreviewState = inlinePreviewState,
-                    deletePreview = { inlinePreviewState = InlinePreviewState.Empty },
-                    onReplyClick = {
-                        inlinePreviewState = InlinePreviewState.Reply(it)
-                    }
-                )
-            }
+    with(viewModel.uiState.collectAsState().value) {
+        you?.let {
+            ChatScreen(
+                chatListState = chatListState,
+                scrollToChatId = scrollToChatId,
+                user = it,
+                onUserInfoClick = { onUserInfoClick(you.docId) },
+                onBackClick = {
+                    viewModel.onScreenExit()
+                    goHome()
+                },
+                onImageClick = onImageClick,
+            )
         }
     }
 }
+
 
 @Composable
 fun ChatScreen(
     chatListState: ChatListState,
     user: User = randomUser(),
-    onSendClick: (String) -> Unit = {},
     onUserInfoClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    openCamera: () -> Unit = { },
     onImageClick: (String) -> Unit = { },
     scrollToChatId: String = "",
-    inlinePreviewState: InlinePreviewState = InlinePreviewState.Empty,
-    deletePreview: () -> Unit = {},
-    onReplyClick: (Chat) -> Unit = {},
+    viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() },
+    inputViewModel: ChatInputViewModel? = getIfNotPreview { hiltViewModel() },
 ) {
+    inputViewModel?.otherGuy = user
     Scaffold(
         topBar = {
             ChatAppBar(
@@ -135,14 +95,7 @@ fun ChatScreen(
                 onBackClick = onBackClick
             )
         },
-        bottomBar = {
-            InputBox(
-                onSendClick = onSendClick,
-                openCamera = openCamera,
-                preview = inlinePreviewState,
-                deletePreview = deletePreview,
-            )
-        }
+        bottomBar = { InputBox(inputViewModel) }
     ) { paddingValues ->
         PingWallpaper {
             Box(
@@ -153,7 +106,10 @@ fun ChatScreen(
                         chats = chatListState.chats,
                         onImageClick = onImageClick,
                         scrollToChatId = scrollToChatId,
-                        onReplyClick = onReplyClick
+                        onReplyClick = {
+                            inputViewModel?.updateReplyPreviewState(it)
+                        },
+                        viewModel = viewModel,
                     )
 
                     is ChatListState.Loading -> InfoCard(

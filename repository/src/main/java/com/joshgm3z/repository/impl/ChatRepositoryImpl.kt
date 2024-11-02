@@ -134,6 +134,10 @@ constructor(
         return chatDao.getChatsOfUserTimeDesc(userId)
     }
 
+    override suspend fun getChatsForUser(userId: String): List<Chat> {
+        return chatDao.getChatsOfUserTimeDesc(userId).first()
+    }
+
     override fun observeChatsForUserHomeLocal(): Flow<List<Chat>> {
         return chatDao.getAllChatsTimeAsc()
     }
@@ -148,10 +152,11 @@ constructor(
         val me = currentUserInfo.currentUser
         firestoreDb.listenForChatToOrFromUser(me.docId) {
             scope.launch {
+                val firestoreList = mutableListOf<Chat>()
                 it.forEach {
                     with(it) {
-                        val user: User = userDao.getUser(fromUserId)
                         if (toUserId == me.docId) {
+                            val user: User = userDao.getUser(fromUserId)
                             // necessary null check
                             fromUserName = user?.name ?: "Unknown"
                             if (status == Chat.SENT) {
@@ -162,19 +167,16 @@ constructor(
                                     fromUserId,
                                     message
                                 )
-                                firestoreDb.updateChat(
-                                    this.docId,
-                                    FirestoreKey.Chat.status,
-                                    status
-                                )
+                                firestoreList.add(this)
                             }
                         } else {
                             isOutwards = true
                             fromUserName = "You"
                         }
-                        chatDao.insert(this)
                     }
                 }
+                firestoreDb.updateChatList(firestoreList, FirestoreKey.Chat.status, Chat.DELIVERED)
+                chatDao.insertAll(it)
             }
         }
     }

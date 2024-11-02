@@ -34,7 +34,7 @@ class ImageViewerViewModel
                 val chat = chatRepository.getChat(it.chatId)
                 name = when {
                     chat.isOutwards -> "You"
-                    else -> userRepository.getUser(chat.fromUserId).name
+                    else -> userRepository.getUser(chat.fromUserId)?.name ?: "Unknown"
                 }
                 _chat.value = chat
             }
