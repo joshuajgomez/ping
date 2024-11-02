@@ -1,9 +1,11 @@
 package com.joshgm3z.ping.ui.screens.chat
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,13 +20,22 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Reply
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +53,7 @@ import com.joshgm3z.ping.ui.theme.Gray80
 import com.joshgm3z.ping.ui.viewmodels.ChatInlineUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.utils.getPrettyTime
+import com.joshgm3z.utils.Logger
 import kotlinx.coroutines.launch
 
 val chatBubbleRadius = 10.dp
@@ -65,13 +77,13 @@ fun ChatList(
             items(items = chats) { chat ->
                 ChatItem(
                     chat = chat,
-                    onClick = { it ->
-                        when (it) {
+                    onClick = { uiState ->
+                        when (uiState) {
                             is ChatInlineUiState.Image -> onImageClick(chat.docId)
                             is ChatInlineUiState.Reply -> {
                                 scope.launch {
                                     listState.scrollToItem(
-                                        chats.indexOfFirst { it.docId == chat.docId }
+                                        chats.indexOfFirst { it.docId == uiState.chat.docId }
                                     )
                                 }
                             }
@@ -79,7 +91,7 @@ fun ChatList(
                             else -> {}
                         }
                     },
-                    onLongClick = {
+                    onSwipeRight = {
                         onReplyClick(chat)
                     },
                     viewModel = viewModel,
@@ -117,43 +129,61 @@ fun ChatItem(
     chat: Chat,
     onClick: (ChatInlineUiState) -> Unit = {},
     onLongClick: (ChatInlineUiState) -> Unit = {},
+    onSwipeRight: (ChatInlineUiState) -> Unit = {},
     viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() },
     defaultUiStateForPreview: ChatInlineUiState = ChatInlineUiState.Empty,
 ) {
     val previewState = viewModel?.getChatPreviewState(chat) ?: defaultUiStateForPreview
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 15.dp, vertical = 10.dp)
-            .fillMaxWidth()
-            .combinedClickable(
-                onLongClick = { onLongClick(previewState) },
-                onClick = { onClick(previewState) }
-            ),
-        horizontalAlignment = when {
-            chat.isOutwards -> Alignment.End
-            else -> Alignment.Start
+    val state = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            when (value) {
+                SwipeToDismissBoxValue.StartToEnd -> {
+                    onSwipeRight(previewState)
+                }
+
+                else -> {}
+            }
+            false
         }
-    ) {
+    )
+    val interactionSource = remember { MutableInteractionSource() }
+    SwipeToDismissBox(state = state, backgroundContent = {}) {
         Column(
             modifier = Modifier
-                .clip(RoundedCornerShape(chatBubbleRadius))
-                .background(
-                    when {
-                        chat.isOutwards -> colorScheme.surfaceContainerHighest
-                        else -> colorScheme.primary
-                    }
-                )
-                .padding(2.dp)
-                .widthIn(min = 5.dp, max = 250.dp),
+                .padding(horizontal = 15.dp, vertical = 10.dp)
+                .fillMaxWidth()
+                .combinedClickable(
+                    indication = null,
+                    interactionSource = interactionSource,
+                    onLongClick = { onLongClick(previewState) },
+                    onClick = { onClick(previewState) }
+                ),
             horizontalAlignment = when {
                 chat.isOutwards -> Alignment.End
                 else -> Alignment.Start
             }
         ) {
-            InlinePreview(chat, previewState)
-            Message(chat)
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(chatBubbleRadius))
+                    .background(
+                        when {
+                            chat.isOutwards -> colorScheme.surfaceContainerHighest
+                            else -> colorScheme.primary
+                        }
+                    )
+                    .padding(2.dp)
+                    .widthIn(min = 5.dp, max = 250.dp),
+                horizontalAlignment = when {
+                    chat.isOutwards -> Alignment.End
+                    else -> Alignment.Start
+                }
+            ) {
+                InlinePreview(chat, previewState)
+                Message(chat)
+            }
+            Details(chat)
         }
-        Details(chat)
     }
 }
 
