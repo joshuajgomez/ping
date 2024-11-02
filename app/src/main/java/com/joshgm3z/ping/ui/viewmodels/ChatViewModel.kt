@@ -1,5 +1,6 @@
 package com.joshgm3z.ping.ui.viewmodels
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,6 +37,7 @@ sealed class ChatInlineUiState {
     data object Empty : ChatInlineUiState()
     data class Reply(val chat: Chat, val fromUserName: String) : ChatInlineUiState()
     data class Image(val imageUrl: String) : ChatInlineUiState()
+    data class ImageUpload(val imageUri: Uri, val progress: Float = 0f) : ChatInlineUiState()
     data class WebUrl(val webUrl: String) : ChatInlineUiState()
 }
 
@@ -112,6 +114,10 @@ class ChatViewModel
 
                 chat.imageUrl.isNotEmpty() -> {
                     ChatInlineUiState.Image(chat.imageUrl)
+                }
+
+                chat.imageUploadUri.isNotEmpty() -> {
+                    ChatInlineUiState.ImageUpload(Uri.parse(chat.imageUploadUri), chat.imageUploadProgress)
                 }
 
                 else -> {

@@ -1,20 +1,16 @@
 package com.joshgm3z.ping.ui.screens.chat
 
-import androidx.compose.animation.AnimatedVisibility
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,15 +18,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,35 +29,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil3.compose.AsyncImage
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.model.Chat
-import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.getIfNotPreview
+import com.joshgm3z.ping.ui.theme.Gray40
+import com.joshgm3z.ping.ui.theme.Gray60
+import com.joshgm3z.ping.ui.theme.Gray80
 import com.joshgm3z.ping.ui.viewmodels.ChatInlineUiState
-import com.joshgm3z.ping.ui.viewmodels.ChatInputUiState
-import com.joshgm3z.ping.ui.viewmodels.ChatListState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.utils.getPrettyTime
 import kotlinx.coroutines.launch
 
 val chatBubbleRadius = 10.dp
-
-//@DarkPreview
-@Composable
-private fun PreviewScrollButton() {
-    PingTheme {
-        ScrollButton()
-    }
-}
 
 @Composable
 fun ChatList(
@@ -120,30 +98,6 @@ fun ChatList(
 }
 
 @Composable
-fun ScrollButton(visible: Boolean = true, onClick: () -> Unit = {}) {
-    AnimatedVisibility(visible) {
-        Row(
-            modifier = Modifier
-                .padding(bottom = 10.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(color = colorScheme.onPrimary)
-                .clickable { onClick() }
-                .padding(horizontal = 15.dp, vertical = 8.dp)
-        ) {
-            Icon(
-                Icons.Default.ArrowDownward, contentDescription = null,
-                tint = colorScheme.primary
-            )
-            Spacer(Modifier.size(10.dp))
-            Text(
-                text = "Scroll to bottom",
-                color = colorScheme.primary
-            )
-        }
-    }
-}
-
-@Composable
 private fun LazyListState.ScrollIfNeeded(scrollToChatId: String, chats: List<Chat>) {
     if (scrollToChatId.isEmpty()) return
     val index = chats.indexOfFirst { it.docId == scrollToChatId }
@@ -163,9 +117,10 @@ fun ChatItem(
     chat: Chat,
     onClick: (ChatInlineUiState) -> Unit = {},
     onLongClick: (ChatInlineUiState) -> Unit = {},
-    viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() }
+    viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() },
+    defaultUiStateForPreview: ChatInlineUiState = ChatInlineUiState.Empty,
 ) {
-    val previewState = viewModel?.getChatPreviewState(chat) ?: ChatInlineUiState.Empty
+    val previewState = viewModel?.getChatPreviewState(chat) ?: defaultUiStateForPreview
     Column(
         modifier = Modifier
             .padding(horizontal = 15.dp, vertical = 10.dp)
@@ -211,6 +166,7 @@ fun InlinePreview(
     Column(
         modifier = Modifier
             .padding(3.dp)
+            .fillMaxWidth()
             .clip(RoundedCornerShape(chatBubbleRadius))
             .background(
                 color = when {
@@ -220,64 +176,6 @@ fun InlinePreview(
             )
     ) {
         ReplyContent(uiState)
-    }
-}
-
-@Composable
-fun ReplyContent(
-    uiState: ChatInlineUiState,
-) {
-    val titleColor: Color = colorScheme.onBackground
-    val textColor: Color = colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-    when (uiState) {
-        is ChatInlineUiState.Reply -> Column(Modifier.padding(8.dp)) {
-            Text(
-                text = uiState.fromUserName,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold,
-                color = titleColor
-            )
-            Text(
-                text = uiState.chat.message,
-                fontSize = 17.sp,
-                color = textColor
-            )
-        }
-
-        is ChatInlineUiState.Image -> AsyncImage(
-            model = uiState.imageUrl,
-            error = painterResource(R.drawable.wallpaper2),
-            contentDescription = null,
-            modifier = Modifier
-                .height(150.dp)
-                .fillMaxWidth(),
-            contentScale = ContentScale.Crop,
-        )
-
-        is ChatInlineUiState.WebUrl -> {
-            AsyncImage(
-                model = null,
-                contentDescription = null,
-                error = painterResource(R.drawable.wallpaper2),
-                modifier = Modifier
-                    .height(100.dp)
-                    .fillMaxWidth(),
-                contentScale = ContentScale.Crop,
-            )
-            Column(Modifier.padding(8.dp)) {
-                Icon(
-                    Icons.Default.Link,
-                    contentDescription = null,
-                    tint = colorScheme.onSurface.copy(alpha = 0.5f),
-                    modifier = Modifier.size(30.dp)
-                )
-                Text("Search Google", color = titleColor)
-                Text("Search google for anything", color = textColor)
-            }
-        }
-
-        else -> {}
-
     }
 }
 
@@ -326,62 +224,54 @@ fun PreviewStatusIcon() {
     }
 }
 
-//@Preview
-@Composable
-fun PreviewChatList() {
-    LazyColumn(reverseLayout = true, modifier = Modifier.background(Color.Transparent)) {
-        items(items = getChatList()) {
-            ChatItem(chat = it)
-        }
-    }
-}
-
-//@Preview
-@Composable
-fun PreviewIncomingChat() {
-    PingTheme {
-        val chat = Chat.random("I just wanted to conform one thing")
-        chat.isOutwards = false
-        ChatItem(chat)
-    }
-}
-
-//@Preview
-@Composable
-fun PreviewOutgoingChat() {
-    PingTheme {
-        val chat = Chat.random("I just wanted to conform one thing")
-        chat.isOutwards = true
-        ChatItem(chat)
-    }
-}
-
 @DarkPreview
 @Composable
-fun PreviewOutgoingChatReply() {
+fun PreviewOutgoingChatReplyOutwards(outwards: Boolean = true) {
     PingTheme {
         val chat = Chat.random("me too")
         Column {
             ChatItem(chat.apply {
-                isOutwards = true
+                isOutwards = outwards
             })
+            ChatItem(
+                chat.apply {
+                    isOutwards = outwards
+                },
+                defaultUiStateForPreview = ChatInlineUiState.Reply(Chat.random(), "Alien")
+            )
+            ChatItem(
+                Chat("Hey wassup my maan hows it going").apply {
+                    isOutwards = outwards
+                },
+                defaultUiStateForPreview = ChatInlineUiState.Reply(Chat("ok"), "Alien")
+            )
+            ChatItem(
+                chat.apply {
+                    isOutwards = outwards
+                    imageUrl = "im going to movie"
+                },
+                defaultUiStateForPreview = ChatInlineUiState.Image("Alien")
+            )
+            ChatItem(
+                chat.apply {
+                    isOutwards = outwards
+                },
+                defaultUiStateForPreview = ChatInlineUiState.ImageUpload(Uri.parse(""))
+            )
+            ChatItem(
+                Chat("").apply {
+                    isOutwards = outwards
+                },
+                defaultUiStateForPreview = ChatInlineUiState.Image("Alien")
+            )
+            ChatItem(
+                Chat("https://www.google.com").apply {
+                    isOutwards = outwards
+                },
+                defaultUiStateForPreview = ChatInlineUiState.WebUrl("www.google.com")
+            )
             ChatItem(chat.apply {
-                isOutwards = true
-                replyToChatId = "im going to movie"
-            })
-            ChatItem(chat.apply {
-                isOutwards = true
-                imageUrl = "im going to movie"
-            })
-            ChatItem(Chat("").apply {
-                isOutwards = true
-                imageUrl = "true"
-            })
-            ChatItem(Chat("https://www.google.com").apply {
-                isOutwards = true
-            })
-            ChatItem(chat.apply {
-                isOutwards = true
+                isOutwards = outwards
             })
         }
     }
@@ -389,50 +279,6 @@ fun PreviewOutgoingChatReply() {
 
 @DarkPreview
 @Composable
-fun PreviewOutgoingChatReply2() {
-    PingTheme {
-        val chat = Chat.random("Im coming over very soon")
-        Column {
-            ChatItem(chat)
-            ChatItem(chat.apply {
-                isOutwards = false
-                replyToChatId = "im going to movie"
-            })
-            ChatItem(chat.apply {
-                isOutwards = false
-                imageUrl = "im going to movie"
-            })
-            /*            ChatItem(Chat("").apply {
-                            imageUrl = "true"
-                        })*/
-            ChatItem(Chat("https://www.google.com").apply {
-                isOutwards = false
-            })
-            ChatItem(chat.apply {
-                isOutwards = false
-            })
-        }
-    }
-}
-
-//@Preview
-@Composable
-fun PreviewIncomingChatReply() {
-    PingTheme {
-        val chat = Chat.random("me too")
-        chat.isOutwards = false
-        chat.replyToChatId = "im going to movie"
-        ChatItem(chat)
-    }
-}
-
-//@Preview
-@Composable
-fun PreviewIncomingChatImage() {
-    PingTheme {
-        val chat = Chat("")
-        chat.imageUrl = "im going to movie"
-        chat.isOutwards = false
-        ChatItem(chat)
-    }
+fun PreviewOutgoingChatReply() {
+    PreviewOutgoingChatReplyOutwards(false)
 }

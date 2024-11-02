@@ -65,7 +65,7 @@ class ChatInputViewModel
                 is ChatInputUiState.WebUrl -> {}
             }
             viewModelScope.launch {
-                Logger.debug("chat = [$newChat]")
+                Logger.debug("newChat = [$newChat]")
                 chatRepository.insertLocal(newChat)
             }
             if (this is ChatInputUiState.Image) {
