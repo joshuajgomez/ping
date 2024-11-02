@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.twotone.CameraAlt
 import androidx.compose.material3.Icon
@@ -53,9 +54,22 @@ import com.joshgm3z.ping.ui.viewmodels.ChatInputUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatInputViewModel
 import com.joshgm3z.utils.FileUtil
 
+data class PingSheetState(
+    val show: (Boolean) -> Unit = {},
+    val click: PingSheetClick = PingSheetClick.Empty,
+)
+
+sealed class PingSheetClick {
+    data object Empty : PingSheetClick()
+    data object Camera : PingSheetClick()
+    data object Gallery : PingSheetClick()
+    data object File : PingSheetClick()
+}
+
 @Composable
 fun InputBox(
-    viewModel: ChatInputViewModel? = getIfNotPreview { hiltViewModel() }
+    viewModel: ChatInputViewModel? = getIfNotPreview { hiltViewModel() },
+    sheetState: PingSheetState,
 ) {
     var text by remember { mutableStateOf("") }
     val topRadius = 20.dp
@@ -79,7 +93,8 @@ fun InputBox(
                 viewModel?.onSendButtonClick(text)
                 text = ""
             },
-            onUriReady = { viewModel?.updatePreviewState(ChatInputUiState.Image(it)) }
+            onUriReady = { viewModel?.updatePreviewState(ChatInputUiState.Image(it)) },
+            sheetState = sheetState,
         )
     }
 }
@@ -91,6 +106,7 @@ private fun MessageBox(
     onTextChange: (String) -> Unit,
     onSendClick: (String) -> Unit,
     onUriReady: (Uri) -> Unit,
+    sheetState: PingSheetState = PingSheetState(),
 ) {
     Row(
         modifier = Modifier
@@ -119,7 +135,10 @@ private fun MessageBox(
 
         )
 
-        CameraIcon(onUriReady)
+        CameraIcon(
+            onUriReady,
+            sheetState = sheetState
+        )
         AnimatedVisibility(isEnabled) {
             Spacer(Modifier.size(5.dp))
             IconButton(
@@ -141,14 +160,25 @@ private fun MessageBox(
 }
 
 @Composable
-fun CameraIcon(onUriReady: (Uri) -> Unit = {}) {
+fun CameraIcon(
+    onUriReady: (Uri) -> Unit = {},
+    sheetState: PingSheetState
+) {
     val cameraUri = getIfNotPreview { FileUtil.getUri(LocalContext.current) } ?: Uri.parse("")
     val cameraLauncher = getCameraLauncher {
         onUriReady(cameraUri)
     }
-    IconButton({ cameraLauncher.launch(cameraUri) }) {
+    when (sheetState.click) {
+        is PingSheetClick.Camera -> {
+            cameraLauncher.launch(cameraUri)
+        }
+
+        is PingSheetClick.Gallery -> {}
+        else -> {}
+    }
+    IconButton({ sheetState.show(true) }) {
         Icon(
-            Icons.TwoTone.CameraAlt,
+            Icons.Default.AttachFile,
             contentDescription = null,
             tint = colorScheme.primary
         )
@@ -253,7 +283,7 @@ fun AddImage(onClick: () -> Unit = {}) {
 fun PreviewInputBox() {
     PingTheme {
         Box(Modifier.padding(10.dp)) {
-            ReplyContent(ChatInlineUiState.Empty)
+            MessageBox("", true, {}, {}, {}, PingSheetState({}, PingSheetClick.Gallery))
         }
     }
 }
