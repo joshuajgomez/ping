@@ -288,7 +288,7 @@ fun Message(chat: Chat) {
             text = chat.message,
             color = when {
                 chat.isOutwards -> colorScheme.onSurface
-                else -> colorScheme.onSurface.copy(alpha = 0.9f)
+                else -> colorScheme.onPrimary
             },
             modifier = Modifier.padding(horizontal = 5.dp)
         )

@@ -16,8 +16,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.twotone.CameraAlt
 import androidx.compose.material3.Icon
@@ -42,8 +42,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
-import com.joshgm3z.data.model.Chat
-import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.randomChat
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
@@ -54,8 +52,6 @@ import com.joshgm3z.ping.ui.viewmodels.ChatInlineUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatInputUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatInputViewModel
 import com.joshgm3z.utils.FileUtil
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun InputBox(
@@ -70,11 +66,13 @@ fun InputBox(
             .background(colorScheme.surface)
             .padding(10.dp)
     ) {
+        val uiState = viewModel?.uiState?.collectAsState()
         InputPreview(
-            uiStateFlow = viewModel?.uiState ?: MutableStateFlow(ChatInputUiState.Empty),
+            uiState = uiState?.value ?: ChatInputUiState.Empty,
             onDeleteClick = { viewModel?.clearPreviewState() },
         )
         MessageBox(
+            isEnabled = (text.isNotEmpty() || uiState?.value != ChatInputUiState.Empty),
             text = text,
             onTextChange = { text = it },
             onSendClick = {
@@ -89,6 +87,7 @@ fun InputBox(
 @Composable
 private fun MessageBox(
     text: String,
+    isEnabled: Boolean,
     onTextChange: (String) -> Unit,
     onSendClick: (String) -> Unit,
     onUriReady: (Uri) -> Unit,
@@ -121,21 +120,22 @@ private fun MessageBox(
         )
 
         CameraIcon(onUriReady)
-        Spacer(Modifier.size(5.dp))
-        IconButton(
-            enabled = text.isNotEmpty(),
-            onClick = { onSendClick(text) },
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(25.dp)
-                .background(colorScheme.primary)
-                .padding(3.dp)
-        ) {
-            Icon(
-                Icons.AutoMirrored.Default.ArrowForward,
-                contentDescription = null,
-                tint = colorScheme.onPrimary
-            )
+        AnimatedVisibility(isEnabled) {
+            Spacer(Modifier.size(5.dp))
+            IconButton(
+                onClick = { onSendClick(text) },
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(25.dp)
+                    .background(colorScheme.primary)
+                    .padding(3.dp)
+            ) {
+                Icon(
+                    Icons.Default.ArrowUpward,
+                    contentDescription = null,
+                    tint = colorScheme.onPrimary
+                )
+            }
         }
     }
 }
@@ -157,11 +157,10 @@ fun CameraIcon(onUriReady: (Uri) -> Unit = {}) {
 
 @Composable
 private fun InputPreview(
-    uiStateFlow: StateFlow<ChatInputUiState>,
+    uiState: ChatInputUiState,
     onDeleteClick: () -> Unit = {}
 ) {
-    val uiState = uiStateFlow.collectAsState()
-    AnimatedVisibility(uiState.value !is ChatInputUiState.Empty) {
+    AnimatedVisibility(uiState !is ChatInputUiState.Empty) {
         Box(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -186,7 +185,7 @@ private fun InputPreview(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                with(uiState.value) {
+                with(uiState) {
                     when (this) {
                         is ChatInputUiState.Reply -> {
                             Text(
