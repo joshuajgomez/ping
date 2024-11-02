@@ -147,7 +147,11 @@ fun ChatItem(
         }
     )
     val interactionSource = remember { MutableInteractionSource() }
-    SwipeToDismissBox(state = state, backgroundContent = {}) {
+    SwipeToDismissBox(
+        state = state,
+        backgroundContent = {},
+        enableDismissFromEndToStart = false
+    ) {
         Column(
             modifier = Modifier
                 .padding(horizontal = 15.dp, vertical = 10.dp)
