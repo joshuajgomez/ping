@@ -11,6 +11,7 @@ import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.UserRepository
 import com.joshgm3z.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -33,13 +34,16 @@ class UserInfoViewModel
     private val _uiState = MutableStateFlow<UserInfoUiState>(UserInfoUiState.Empty)
     val uiState = _uiState.asStateFlow()
 
+    private val userId: String = savedStateHandle.toRoute<UserInfo>().userId
+    private var currentChats: List<Chat> = emptyList()
+
     init {
-        val userId = savedStateHandle.toRoute<UserInfo>().userId
         Logger.debug("userId = [$userId]")
         viewModelScope.launch {
             chatRepository.observeChatsForUserLocal(userId)
                 .combine(userRepository.getUserFlow(userId)) { chats, user ->
                     Logger.debug("chats = $chats, user = $user")
+                    currentChats = chats
                     val mediaChats = chats.filter {
                         it.imageUrl.isNotEmpty()
                     }
@@ -48,6 +52,28 @@ class UserInfoViewModel
                     Logger.debug("uiState = $it")
                     it.let { _uiState.value = it }
                 }
+        }
+    }
+
+    fun clearChats(
+        onClear: () -> Unit = {},
+        onError: () -> Unit = {},
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            chatRepository.clearChats(
+                userId,
+                currentChats,
+                onComplete = {
+                    viewModelScope.launch {
+                        onClear()
+                    }
+                },
+                onError = {
+                    viewModelScope.launch {
+                        onError()
+                    }
+                }
+            )
         }
     }
 

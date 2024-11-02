@@ -191,4 +191,22 @@ constructor(
     override suspend fun searchChat(query: String): List<Chat> {
         return chatDao.searchChats(query)
     }
+
+    override suspend fun clearChats(
+        userId: String,
+        chats: List<Chat>,
+        onComplete: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        firestoreDb.clearChatsFromOrToUser(
+            chats = chats,
+            onComplete = {
+                scope.launch {
+                    chatDao.clearChatsFromOrToUser(userId)
+                    onComplete()
+                }
+            },
+            onError = onError
+        )
+    }
 }

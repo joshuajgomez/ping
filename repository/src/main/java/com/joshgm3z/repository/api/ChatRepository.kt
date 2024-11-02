@@ -33,4 +33,11 @@ interface ChatRepository {
     suspend fun updateChatLocal(chat: Chat)
 
     suspend fun searchChat(query: String): List<Chat>
+
+    suspend fun clearChats(
+        userId: String,
+        chats: List<Chat>,
+        onComplete: () -> Unit,
+        onError: (String) -> Unit,
+    )
 }

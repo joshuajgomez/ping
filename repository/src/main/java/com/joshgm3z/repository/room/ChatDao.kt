@@ -39,4 +39,7 @@ interface ChatDao {
 
     @Query("select * from Chat where message like '%' || :query || '%'")
     fun searchChats(query: String): List<Chat>
+
+    @Query("delete from Chat where fromUserId = :userId or toUserId = :userId")
+    fun clearChatsFromOrToUser(userId: String)
 }

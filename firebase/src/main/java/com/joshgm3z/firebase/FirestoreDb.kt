@@ -212,4 +212,22 @@ constructor(
                 Logger.warn("error updating chat status")
             }
     }
+
+    fun clearChatsFromOrToUser(
+        chats: List<Chat>,
+        onComplete: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        firestore.runTransaction {
+            chats.forEach { chat ->
+                it.delete(
+                    firestore.collection(keyCollectionChatList).document(chat.docId)
+                )
+            }
+        }.addOnSuccessListener {
+            onComplete()
+        }.addOnFailureListener {
+            onError(it.message.toString())
+        }
+    }
 }

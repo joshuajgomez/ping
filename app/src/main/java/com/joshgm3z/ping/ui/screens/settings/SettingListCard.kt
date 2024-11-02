@@ -107,7 +107,7 @@ private fun SettingItem(
         modifier = Modifier
             .clickable(setting.enabled) { setting.action() }
             .fillMaxWidth()
-            .padding(vertical = 10.dp)
+            .padding(vertical = 15.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

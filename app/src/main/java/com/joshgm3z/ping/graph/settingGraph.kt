@@ -4,8 +4,11 @@ import androidx.compose.material3.Text
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.joshgm3z.ping.ui.screens.settings.EditScreen
+import com.joshgm3z.ping.ui.screens.settings.PingDialog
 import com.joshgm3z.ping.ui.screens.settings.ProfileSettings
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.screens.settings.SignOutSetting
@@ -31,7 +34,25 @@ fun NavGraphBuilder.settingGraph(
             )
         }
         composable<UserInfo>(enterTransition = slideIn) {
-            UserInfo(onGoBackClick = onBackClick)
+            UserInfo(
+                onGoBackClick = onBackClick,
+                showClearSuccess = {
+                    navController.navigate(
+                        PingDialogRoute(
+                            "Clear chats",
+                            "Chats with this user is cleared"
+                        )
+                    )
+                },
+                showClearError = {
+                    navController.navigate(
+                        PingDialogRoute(
+                            "Clear chats",
+                            "Failed to clear chats"
+                        )
+                    )
+                },
+            )
         }
         composable<ChatSettings>(enterTransition = slideIn) {
             SettingContainer("Chat Settings", onCloseClick = onBackClick) {

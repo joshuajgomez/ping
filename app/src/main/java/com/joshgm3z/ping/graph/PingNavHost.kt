@@ -41,7 +41,7 @@ data object AllSearch
 data class ChatScreen(val userId: String, val chatId: String = "")
 
 @Serializable
-data class PingDialog(val title: String, val message: String)
+data class PingDialogRoute(val title: String, val message: String)
 
 @Serializable
 data object SettingRoute

@@ -77,6 +77,8 @@ fun NavController.navigateToUserInfo(
 fun UserInfo(
     viewModel: UserInfoViewModel? = getIfNotPreview { hiltViewModel() },
     onGoBackClick: () -> Unit = {},
+    showClearSuccess: () -> Unit = {},
+    showClearError: () -> Unit = {},
     openImageViewer: (chat: Chat) -> Unit = {},
 ) {
     val uiState = viewModel?.uiState?.collectAsState()
@@ -86,7 +88,13 @@ fun UserInfo(
                 user,
                 mediaChats,
                 onGoBackClick,
-                openImageViewer
+                openImageViewer = openImageViewer,
+                clearChats = {
+                    viewModel?.clearChats(
+                        onClear = showClearSuccess,
+                        onError = showClearError
+                    )
+                },
             )
 
             else -> {}
@@ -101,6 +109,7 @@ fun UserInfoContent(
     user: User = randomUser(),
     mediaChats: List<Chat> = getChatList(),
     onGoBackClick: () -> Unit = {},
+    clearChats: () -> Unit = {},
     openImageViewer: (chat: Chat) -> Unit = {},
 ) {
     SettingContainer(
@@ -140,7 +149,8 @@ fun UserInfoContent(
                 Setting(
                     "Clear chat",
                     icon = Icons.Default.Delete,
-                    textColor = Red20
+                    textColor = Red20,
+                    action = clearChats,
                 ),
                 Setting(
                     "Report user",
