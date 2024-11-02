@@ -52,6 +52,7 @@ import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.viewmodels.ChatInlineUiState
+import com.joshgm3z.ping.ui.viewmodels.ChatInputUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatListState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.utils.getPrettyTime
@@ -70,26 +71,38 @@ private fun PreviewScrollButton() {
 @Composable
 fun ChatList(
     chats: List<Chat> = emptyList(),
-    onImageClick: (String) -> Unit = {},
+    onImageClick: (chatId: String) -> Unit = {},
     onReplyClick: (Chat) -> Unit = {},
     scrollToChatId: String = "",
     viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() }
 ) {
     Box(contentAlignment = Alignment.BottomCenter) {
         val listState = rememberLazyListState()
+        val scope = rememberCoroutineScope()
         LazyColumn(
             state = listState,
             reverseLayout = true,
             modifier = Modifier.fillMaxSize(),
         ) {
-            items(items = chats) {
+            items(items = chats) { chat ->
                 ChatItem(
-                    chat = it,
-                    onClick = {
-                        if (it.imageUploadUri.isNotEmpty()) onImageClick(it.docId)
+                    chat = chat,
+                    onClick = { it ->
+                        when (it) {
+                            is ChatInlineUiState.Image -> onImageClick(chat.docId)
+                            is ChatInlineUiState.Reply -> {
+                                scope.launch {
+                                    listState.scrollToItem(
+                                        chats.indexOfFirst { it.docId == chat.docId }
+                                    )
+                                }
+                            }
+
+                            else -> {}
+                        }
                     },
                     onLongClick = {
-                        onReplyClick(it)
+                        onReplyClick(chat)
                     },
                     viewModel = viewModel,
                 )
@@ -148,17 +161,18 @@ private fun LazyListState.ScrollIfNeeded(scrollToChatId: String, chats: List<Cha
 @Composable
 fun ChatItem(
     chat: Chat,
-    onClick: () -> Unit = {},
-    onLongClick: () -> Unit = {},
+    onClick: (ChatInlineUiState) -> Unit = {},
+    onLongClick: (ChatInlineUiState) -> Unit = {},
     viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() }
 ) {
+    val previewState = viewModel?.getChatPreviewState(chat) ?: ChatInlineUiState.Empty
     Column(
         modifier = Modifier
             .padding(horizontal = 15.dp, vertical = 10.dp)
             .fillMaxWidth()
             .combinedClickable(
-                onLongClick = onLongClick,
-                onClick = onClick
+                onLongClick = { onLongClick(previewState) },
+                onClick = { onClick(previewState) }
             ),
         horizontalAlignment = when {
             chat.isOutwards -> Alignment.End
@@ -181,7 +195,7 @@ fun ChatItem(
                 else -> Alignment.Start
             }
         ) {
-            InlinePreview(chat, viewModel)
+            InlinePreview(chat, previewState)
             Message(chat)
         }
         Details(chat)
@@ -191,11 +205,9 @@ fun ChatItem(
 @Composable
 fun InlinePreview(
     chat: Chat,
-    viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() }
+    uiState: ChatInlineUiState,
 ) {
-    val uiState = viewModel?.getChatPreviewState(chat)
     if (uiState is ChatInlineUiState.Empty) return
-
     Column(
         modifier = Modifier
             .padding(3.dp)
@@ -207,7 +219,7 @@ fun InlinePreview(
                 }
             )
     ) {
-        ReplyContent(uiState ?: ChatInlineUiState.Empty)
+        ReplyContent(uiState)
     }
 }
 

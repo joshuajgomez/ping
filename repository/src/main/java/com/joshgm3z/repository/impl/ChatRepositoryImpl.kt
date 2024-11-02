@@ -58,35 +58,6 @@ constructor(
     override fun createChatDocId(): String =
         firestoreDb.createChatDocId()
 
-    override fun uploadChat(
-        chat: Chat,
-        onError: () -> Unit,
-        onUploaded: (String) -> Unit,
-    ) {
-        Logger.debug("chat = [${chat}]")
-        chat.status = Chat.SENT
-        firestoreDb.registerChat(
-            chat,
-            onIdSet = {
-                // chat added to firestore
-                onUploaded(it)
-            },
-            onError = {
-                // error adding chat
-                Logger.warn("error adding chat")
-                scope.launch {
-                    chat.status = Chat.SAVED
-                    chatDao.insert(chat)
-                }
-                onError()
-            }
-        )
-        scope.launch {
-            Thread.sleep(5000)
-            addDummyChat(chat)
-        }
-    }
-
     override fun uploadChatWithId(
         chat: Chat,
         onError: () -> Unit,
@@ -126,6 +97,9 @@ constructor(
         dummy.sentTime = System.currentTimeMillis()
         dummy.status = Chat.SENT
         dummy.imageUrl = chat.imageUrl
+        if (chat.message.contains("reply")) {
+            dummy.replyToChatId = chat.docId
+        }
         firestoreDb.registerChat(dummy, {}, {})
     }
 

@@ -6,12 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository {
 
-    fun uploadChat(
-        chat: Chat,
-        onError: () -> Unit = {},
-        onUploaded: (String) -> Unit,
-    )
-
     fun uploadChatWithId(
         chat: Chat,
         onError: () -> Unit = {},
