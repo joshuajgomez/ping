@@ -10,13 +10,12 @@ import com.joshgm3z.utils.Logger
 @Composable
 fun getCameraLauncher(
     onUriReady: () -> Unit
-): ManagedActivityResultLauncher<Uri, Boolean> =
-    rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture(),
-        onResult = { success ->
-            Logger.debug("onResult success=$success")
-            if (success) {
-                onUriReady()
-            }
+): ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.TakePicture(),
+    onResult = { success ->
+        Logger.debug("onResult success=$success")
+        if (success) {
+            onUriReady()
         }
-    )
+    }
+)

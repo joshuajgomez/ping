@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
+import com.joshgm3z.ping.ui.screens.chat.FileType
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.api.ImageRepository
@@ -20,6 +21,8 @@ sealed class ChatInputUiState {
     data object Empty : ChatInputUiState()
     data class Reply(val chat: Chat, val fromName: String) : ChatInputUiState()
     data class Image(val imageUri: Uri) : ChatInputUiState()
+    data class File(val fileUri: Uri) : ChatInputUiState()
+    data class Pdf(val fileUri: Uri) : ChatInputUiState()
     data class WebUrl(val url: String) : ChatInputUiState()
 }
 
@@ -61,8 +64,7 @@ class ChatInputViewModel
                     newChat.imageUploadUri = imageUri.toString()
                 }
 
-                is ChatInputUiState.Empty -> {}
-                is ChatInputUiState.WebUrl -> {}
+                else -> {}
             }
             viewModelScope.launch {
                 Logger.debug("newChat = [$newChat]")
@@ -104,7 +106,7 @@ class ChatInputViewModel
         updatePreviewState(ChatInputUiState.Empty)
     }
 
-    fun updatePreviewState(uiState: ChatInputUiState) {
+    private fun updatePreviewState(uiState: ChatInputUiState) {
         Logger.debug("uiState = [${uiState}]")
         _uiState.value = uiState
     }
@@ -117,4 +119,16 @@ class ChatInputViewModel
         _uiState.value = ChatInputUiState.Reply(chat, fromName)
     }
 
+    fun updatePreviewStateWithFile(uri: Uri, fileType: FileType) {
+        when (fileType) {
+            FileType.Image -> {
+                _uiState.value = ChatInputUiState.Image(uri)
+            }
+
+            else -> {
+                _uiState.value = ChatInputUiState.File(uri)
+            }
+        }
+
+    }
 }

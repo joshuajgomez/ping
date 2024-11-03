@@ -52,6 +52,7 @@ import com.joshgm3z.ping.ui.common.dashedBorder
 import com.joshgm3z.ping.ui.common.getCameraLauncher
 import com.joshgm3z.ping.ui.common.getGalleryLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
+import com.joshgm3z.ping.ui.common.launchImagePicker
 import com.joshgm3z.ping.ui.screens.settings.Setting
 import com.joshgm3z.ping.ui.screens.settings.SettingListCard
 import com.joshgm3z.ping.ui.theme.PingTheme
@@ -192,7 +193,7 @@ fun PickerDropDownMenu(
         Setting(
             "Open gallery",
             icon = Icons.Default.PermMedia
-        ) { galleryLauncher.launch("image/*") },
+        ) { galleryLauncher.launchImagePicker() },
         Setting(
             "Choose an icon",
             icon = Icons.Default.EmojiEmotions

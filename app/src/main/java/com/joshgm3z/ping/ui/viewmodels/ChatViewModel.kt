@@ -37,6 +37,8 @@ sealed class ChatInlineUiState {
     data object Empty : ChatInlineUiState()
     data class Reply(val chat: Chat, val fromUserName: String) : ChatInlineUiState()
     data class Image(val imageUrl: String) : ChatInlineUiState()
+    data class File(val fileUrl: String) : ChatInlineUiState()
+    data class Pdf(val fileUrl: String) : ChatInlineUiState()
     data class ImageUpload(val imageUri: Uri, val progress: Float = 0f) : ChatInlineUiState()
     data class WebUrl(val webUrl: String) : ChatInlineUiState()
 }

@@ -44,6 +44,7 @@ import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getCameraLauncher
 import com.joshgm3z.ping.ui.common.getGalleryLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
+import com.joshgm3z.ping.ui.common.launchImagePicker
 import com.joshgm3z.ping.ui.screens.settings.Setting
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.ping.ui.screens.settings.SettingListCard
@@ -158,7 +159,7 @@ fun ImagePickerContent(
                     "Open Gallery", "Select a picture from your gallery",
                     Icons.Default.PhotoLibrary
                 ) {
-                    galleryLauncher.launch("image/*")
+                    galleryLauncher.launchImagePicker()
                 },
                 Setting(
                     "Take a picture", "Open device camera for a selfie",
