@@ -52,7 +52,7 @@ class ImagePickerViewModel
         Logger.debug("imageUrl = [${imageUri}]")
         _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
-            imageRepository.uploadImage(
+            imageRepository.uploadFile(
                 folderName = FirestoreKey.keyProfilePicture,
                 fileName = "profile_${me.docId}.jpg",
                 localUri = imageUri,

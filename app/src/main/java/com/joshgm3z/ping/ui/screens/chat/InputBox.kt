@@ -19,7 +19,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.AttachFile
-import androidx.compose.material.icons.filled.FilePresent
+import androidx.compose.material.icons.filled.AudioFile
+import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.VideoFile
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,11 +55,9 @@ import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.common.launchFilePicker
 import com.joshgm3z.ping.ui.common.launchImagePicker
 import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.viewmodels.ChatInlineUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatInputUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatInputViewModel
 import com.joshgm3z.utils.FileUtil
-import java.io.File
 
 data class PingSheetState(
     val show: (Boolean) -> Unit = {},
@@ -98,8 +98,8 @@ fun InputBox(
                 viewModel?.onSendButtonClick(text)
                 text = ""
             },
-            onUriReady = { uri, fileType ->
-                viewModel?.updatePreviewStateWithFile(uri, fileType)
+            onUriReady = {
+                viewModel?.updatePreviewStateWithFile(it)
             },
             sheetState = sheetState,
         )
@@ -112,7 +112,7 @@ private fun MessageBox(
     isEnabled: Boolean,
     onTextChange: (String) -> Unit,
     onSendClick: (String) -> Unit,
-    onUriReady: (Uri, FileType) -> Unit,
+    onUriReady: (Uri) -> Unit,
     sheetState: PingSheetState = PingSheetState(),
 ) {
     Row(
@@ -168,7 +168,7 @@ private fun MessageBox(
 
 @Composable
 fun AttachIcon(
-    onUriReady: (Uri, FileType) -> Unit = { _, _ -> },
+    onUriReady: (Uri) -> Unit = {},
     sheetState: PingSheetState
 ) {
     HandleClickEvent(sheetState.click, onUriReady)
@@ -181,25 +181,18 @@ fun AttachIcon(
     }
 }
 
-enum class FileType {
-    Image,
-    Video,
-    Audio,
-    File,
-}
-
 @Composable
-fun HandleClickEvent(click: PingSheetClick, onUriReady: (Uri, FileType) -> Unit) {
+fun HandleClickEvent(click: PingSheetClick, onUriReady: (Uri) -> Unit) {
     val filePicker = getGalleryLauncher {
-        onUriReady(it, FileType.File)
+        onUriReady(it)
     }
     val imagePicker = getGalleryLauncher {
-        onUriReady(it, FileType.Image)
+        onUriReady(it)
     }
     val cameraUri =
         getIfNotPreview { FileUtil.getUri(LocalContext.current) } ?: Uri.parse("")
     val cameraLauncher = getCameraLauncher {
-        onUriReady(cameraUri, FileType.Image)
+        onUriReady(cameraUri)
     }
 
     when (click) {
@@ -253,7 +246,7 @@ private fun InputPreview(
                     when (this) {
                         is ChatInputUiState.Reply -> ReplyPreviewInline(chat, fromName)
                         is ChatInputUiState.Image -> ImagePreviewInline(imageUri)
-                        is ChatInputUiState.File -> FilePreviewInline(fileUri)
+                        is ChatInputUiState.File -> FilePreviewInline(this)
 
                         else -> {}
                     }
@@ -264,15 +257,25 @@ private fun InputPreview(
 }
 
 @Composable
-fun FilePreviewInline(fileUri: Uri) {
+private fun FilePreviewInline(
+    uiState: ChatInputUiState.File
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
+            .padding(end = 30.dp)
             .background(colorScheme.surfaceContainerHigh, RoundedCornerShape(10.dp))
             .padding(start = 10.dp, end = 15.dp, top = 10.dp, bottom = 10.dp)
+            .fillMaxWidth()
     ) {
         Icon(
-            Icons.Default.FilePresent, contentDescription = null,
+            when (FileUtil.getFileTypeString(LocalContext.current, uiState.fileUri)) {
+                "pdf" -> Icons.Default.PictureAsPdf
+                "mp3" -> Icons.Default.AudioFile
+                "mpeg" -> Icons.Default.VideoFile
+                else -> Icons.Default.AttachFile
+            },
+            contentDescription = null,
             modifier = Modifier
                 .size(40.dp)
                 .background(
@@ -284,23 +287,16 @@ fun FilePreviewInline(fileUri: Uri) {
         )
         Spacer(Modifier.size(15.dp))
         Column {
-            val file = File(fileUri.path)
-            Text(file.name.ifEmpty { "Unknown File" }, color = colorScheme.onSurface)
             Text(
-                getFileSizeString(file.length()),
+                FileUtil.getFileName(LocalContext.current, uiState.fileUri).ifEmpty { "Unknown file" },
+                color = colorScheme.onSurface
+            )
+            Text(
+                FileUtil.getFileSizeString(LocalContext.current, uiState.fileUri).ifEmpty { "100 MB" },
                 fontSize = 15.sp,
                 color = colorScheme.onSurface.copy(alpha = .5f)
             )
         }
-    }
-}
-
-fun getFileSizeString(fileLength: Long): String {
-    val fileSizeInKB = fileLength / 1024
-    return if (fileSizeInKB >= 1024) {
-        "${fileSizeInKB / 1024} MB"
-    } else {
-        "$fileSizeInKB KB"
     }
 }
 
@@ -364,7 +360,7 @@ fun AddImage(onClick: () -> Unit = {}) {
 fun PreviewInputBox() {
     PingTheme {
         Box(Modifier.padding(10.dp)) {
-            MessageBox("", true, {}, {}, { _, _ -> }, PingSheetState({}, PingSheetClick.Gallery))
+            MessageBox("", true, {}, {}, {}, PingSheetState({}, PingSheetClick.Gallery))
         }
     }
 }
@@ -374,7 +370,7 @@ fun PreviewInputBox() {
 fun PreviewInputBoxImage() {
     PingTheme {
         Box(Modifier.padding(10.dp)) {
-            ReplyContent(ChatInlineUiState.Image(""))
+//            ReplyContent(ChatInlineUiState.Image(""))
         }
     }
 }

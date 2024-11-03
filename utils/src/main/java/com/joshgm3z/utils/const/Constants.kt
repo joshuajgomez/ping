@@ -12,6 +12,9 @@ class FirestoreKey {
             const val status = "status"
             const val sentTime = "sentTime"
             const val replyToChatId = "replyToChatId"
+            const val fileName = "fileName"
+            const val fileSize = "fileSize"
+            const val fileType = "fileType"
         }
     }
 
@@ -26,7 +29,7 @@ class FirestoreKey {
     }
 
     companion object {
-        val keyChatImages = "chat_images"
+        val keyChatFiles = "chat_files"
         val keyProfilePicture = "profile_pictures"
     }
 }

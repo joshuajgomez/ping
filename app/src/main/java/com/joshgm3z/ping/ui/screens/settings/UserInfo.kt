@@ -225,7 +225,7 @@ fun MediaItem(
 ) {
     Box(Modifier.clickable { openImageViewer() }) {
         AsyncImage(
-            chat.imageUrl,
+            chat.fileOnlineUrl,
             error = painterResource(R.drawable.default_user),
             contentDescription = null,
             contentScale = ContentScale.Crop,

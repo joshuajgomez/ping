@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
-import com.joshgm3z.ping.ui.screens.chat.FileType
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.api.ImageRepository
+import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
 import com.joshgm3z.utils.const.FirestoreKey
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +22,6 @@ sealed class ChatInputUiState {
     data class Reply(val chat: Chat, val fromName: String) : ChatInputUiState()
     data class Image(val imageUri: Uri) : ChatInputUiState()
     data class File(val fileUri: Uri) : ChatInputUiState()
-    data class Pdf(val fileUri: Uri) : ChatInputUiState()
     data class WebUrl(val url: String) : ChatInputUiState()
 }
 
@@ -30,6 +29,7 @@ sealed class ChatInputUiState {
 class ChatInputViewModel
 @Inject constructor(
     currentUserInfo: CurrentUserInfo,
+    private val fileUtil: FileUtil,
     private val chatRepository: ChatRepository,
     private val imageRepository: ImageRepository,
 ) : ViewModel() {
@@ -61,7 +61,17 @@ class ChatInputViewModel
                 }
 
                 is ChatInputUiState.Image -> {
-                    newChat.imageUploadUri = imageUri.toString()
+                    newChat.fileName = fileUtil.getFileName(imageUri)
+                    newChat.fileSize = fileUtil.getFileSizeString(imageUri)
+                    newChat.fileType = fileUtil.getFileTypeString(imageUri)
+                    newChat.fileLocalUri = imageUri.toString()
+                }
+
+                is ChatInputUiState.File -> {
+                    newChat.fileName = fileUtil.getFileName(fileUri)
+                    newChat.fileSize = fileUtil.getFileSizeString(fileUri)
+                    newChat.fileType = fileUtil.getFileTypeString(fileUri)
+                    newChat.fileLocalUri = fileUri.toString()
                 }
 
                 else -> {}
@@ -70,7 +80,9 @@ class ChatInputViewModel
                 Logger.debug("newChat = [$newChat]")
                 chatRepository.insertLocal(newChat)
             }
-            if (this is ChatInputUiState.Image) {
+            if (this is ChatInputUiState.Image
+                || this is ChatInputUiState.File
+            ) {
                 uploadChatImage(newChat)
             } else {
                 chatRepository.uploadChatWithId(newChat, {}, {})
@@ -79,11 +91,13 @@ class ChatInputViewModel
     }
 
     private fun uploadChatImage(chat: Chat) {
-        val imageFileName = "chat_${chat.fromUserId}_${System.currentTimeMillis()}.jpg"
-        imageRepository.uploadImage(
-            folderName = FirestoreKey.keyChatImages,
-            fileName = imageFileName,
-            localUri = Uri.parse(chat.imageUploadUri),
+        val fileName =
+            "chat_${chat.fromUserId}_${fileUtil.getFileName(Uri.parse(chat.fileLocalUri))}"
+        Logger.debug("fileName = [$fileName]")
+        imageRepository.uploadFile(
+            folderName = FirestoreKey.keyChatFiles,
+            fileName = fileName,
+            localUri = Uri.parse(chat.fileLocalUri),
             onProgress = { progress ->
                 chat.imageUploadProgress = progress
                 viewModelScope.launch {
@@ -91,12 +105,12 @@ class ChatInputViewModel
                 }
             },
             onSuccess = {
-                chat.imageUploadUri = ""
+                chat.fileLocalUri = ""
                 chat.imageUploadProgress = 0f
                 viewModelScope.launch {
                     chatRepository.updateChatLocal(chat)
                 }
-                chat.imageUrl = it
+                chat.fileOnlineUrl = it
                 chatRepository.uploadChatWithId(chat, {}, {})
             }
         )
@@ -119,9 +133,9 @@ class ChatInputViewModel
         _uiState.value = ChatInputUiState.Reply(chat, fromName)
     }
 
-    fun updatePreviewStateWithFile(uri: Uri, fileType: FileType) {
-        when (fileType) {
-            FileType.Image -> {
+    fun updatePreviewStateWithFile(uri: Uri) {
+        when (fileUtil.getFileTypeString(uri)) {
+            "jpeg", "jpg" -> {
                 _uiState.value = ChatInputUiState.Image(uri)
             }
 

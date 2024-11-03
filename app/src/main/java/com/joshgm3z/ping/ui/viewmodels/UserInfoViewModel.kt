@@ -45,7 +45,7 @@ class UserInfoViewModel
                     Logger.debug("chats = $chats, user = $user")
                     currentChats = chats
                     val mediaChats = chats.filter {
-                        it.imageUrl.isNotEmpty()
+                        it.fileOnlineUrl.isNotEmpty()
                     }
                     UserInfoUiState.Ready(user, mediaChats)
                 }.collect {

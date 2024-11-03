@@ -1,7 +1,6 @@
 package com.joshgm3z.ping.ui.screens.chat
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,16 +28,16 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 fun InlineImagePreview(
     chat: Chat,
 ) {
-    if (chat.imageUrl.isEmpty() && chat.imageUploadUri.isEmpty()) return
-    val uploadOngoing = chat.imageUploadUri.isNotEmpty()
+    if (chat.fileOnlineUrl.isEmpty() && chat.fileLocalUri.isEmpty()) return
+    val uploadOngoing = chat.fileLocalUri.isNotEmpty()
     Box(
         contentAlignment = Alignment.Center
     ) {
         ChatImage(
             modifier = Modifier.fillMaxSize(),
             imageUrl = when {
-                chat.imageUrl.isNotEmpty() -> chat.imageUrl
-                else -> chat.imageUploadUri
+                chat.fileOnlineUrl.isNotEmpty() -> chat.fileOnlineUrl
+                else -> chat.fileLocalUri
             },
             placeHolderColor = when {
                 chat.isOutwards -> colorScheme.surfaceContainerHighest
@@ -93,7 +92,7 @@ fun InlineImagePreview(
 fun PreviewSendingChatImage() {
     PingTheme {
         val chat = Chat("")
-        chat.imageUploadUri = "aa"
+        chat.fileLocalUri = "aa"
         ChatItem(chat)
     }
 }

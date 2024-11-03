@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.ui.viewmodels
 
-import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,10 +35,10 @@ data class ChatUiState(
 sealed class ChatInlineUiState {
     data object Empty : ChatInlineUiState()
     data class Reply(val chat: Chat, val fromUserName: String) : ChatInlineUiState()
-    data class Image(val imageUrl: String) : ChatInlineUiState()
-    data class File(val fileUrl: String) : ChatInlineUiState()
-    data class Pdf(val fileUrl: String) : ChatInlineUiState()
-    data class ImageUpload(val imageUri: Uri, val progress: Float = 0f) : ChatInlineUiState()
+    data class Image(val chat: Chat) : ChatInlineUiState()
+    data class File(val chat: Chat) : ChatInlineUiState()
+    data class ImageUpload(val chat: Chat) : ChatInlineUiState()
+    data class FileUpload(val chat: Chat) : ChatInlineUiState()
     data class WebUrl(val webUrl: String) : ChatInlineUiState()
 }
 
@@ -114,12 +113,18 @@ class ChatViewModel
                     ChatInlineUiState.WebUrl(chat.webUrl)
                 }
 
-                chat.imageUrl.isNotEmpty() -> {
-                    ChatInlineUiState.Image(chat.imageUrl)
+                chat.fileOnlineUrl.isNotEmpty() -> {
+                    when (chat.fileType) {
+                        "jpeg", "jpg" -> ChatInlineUiState.Image(chat)
+                        else -> ChatInlineUiState.File(chat)
+                    }
                 }
 
-                chat.imageUploadUri.isNotEmpty() -> {
-                    ChatInlineUiState.ImageUpload(Uri.parse(chat.imageUploadUri), chat.imageUploadProgress)
+                chat.fileLocalUri.isNotEmpty() -> {
+                    when (chat.fileType) {
+                        "jpeg", "jpg" -> ChatInlineUiState.ImageUpload(chat)
+                        else -> ChatInlineUiState.FileUpload(chat)
+                    }
                 }
 
                 else -> {

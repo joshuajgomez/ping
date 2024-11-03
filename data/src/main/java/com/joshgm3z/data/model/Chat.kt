@@ -18,9 +18,13 @@ data class Chat(
     var toUserId: String = ""
     var replyToChatId: String = ""
     var status: Long = SAVED
-    var imageUrl: String = ""
     var isOutwards: Boolean = false
-    var imageUploadUri: String = ""
+
+    var fileLocalUri: String = ""
+    var fileOnlineUrl: String = ""
+    var fileName: String = ""
+    var fileSize: String = ""
+    var fileType: String = ""
     var imageUploadProgress: Float = 0f
 
     @get:Ignore
@@ -60,8 +64,8 @@ data class Chat(
                 " isOutwards=$isOutwards," +
                 " replyToChatId=$replyToChatId," +
                 " status=${textStatus(status)}," +
-                " imageUrl=${imageUrl}," +
-                " imageUpload=[${imageUploadProgress}]>>${imageUploadUri}," +
+                " imageUrl=${fileOnlineUrl}," +
+                " imageUpload=[${imageUploadProgress}]>>${fileLocalUri}," +
                 ")"
     }
 
@@ -87,9 +91,9 @@ data class Chat(
         if (toUserId != other.toUserId) return false
         if (replyToChatId != other.replyToChatId) return false
         if (status != other.status) return false
-        if (imageUrl != other.imageUrl) return false
+        if (fileOnlineUrl != other.fileOnlineUrl) return false
         if (isOutwards != other.isOutwards) return false
-        if (imageUploadUri != other.imageUploadUri) return false
+        if (fileLocalUri != other.fileLocalUri) return false
         if (imageUploadProgress != other.imageUploadProgress) return false
 
         return true
@@ -103,9 +107,9 @@ data class Chat(
         result = 31 * result + toUserId.hashCode()
         result = 31 * result + replyToChatId.hashCode()
         result = 31 * result + status.hashCode()
-        result = 31 * result + imageUrl.hashCode()
+        result = 31 * result + fileOnlineUrl.hashCode()
         result = 31 * result + isOutwards.hashCode()
-        result = 31 * result + imageUploadUri.hashCode()
+        result = 31 * result + fileLocalUri.hashCode()
         result = 31 * result + imageUploadProgress.hashCode()
         return result
     }

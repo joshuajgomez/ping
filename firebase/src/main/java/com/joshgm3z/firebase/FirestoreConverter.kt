@@ -16,9 +16,12 @@ class FirestoreConverter {
                 FirestoreKey.Chat.fromUserId to chat.fromUserId,
                 FirestoreKey.Chat.toUserId to chat.toUserId,
                 FirestoreKey.Chat.message to chat.message,
-                FirestoreKey.Chat.imageUrl to chat.imageUrl,
                 FirestoreKey.Chat.status to chat.status,
                 FirestoreKey.Chat.replyToChatId to chat.replyToChatId,
+                FirestoreKey.Chat.imageUrl to chat.fileOnlineUrl,
+                FirestoreKey.Chat.fileName to chat.fileName,
+                FirestoreKey.Chat.fileSize to chat.fileSize,
+                FirestoreKey.Chat.fileType to chat.fileType,
             )
         }
 
@@ -33,8 +36,11 @@ class FirestoreConverter {
                             fromUserId = get(FirestoreKey.Chat.fromUserId).toString()
                             toUserId = get(FirestoreKey.Chat.toUserId).toString()
                             status = get(FirestoreKey.Chat.status) as Long
-                            imageUrl = get(FirestoreKey.Chat.imageUrl).toString()
                             replyToChatId = get(FirestoreKey.Chat.replyToChatId).toString()
+                            fileOnlineUrl = get(FirestoreKey.Chat.imageUrl).toString()
+                            fileName = get(FirestoreKey.Chat.fileName).toString()
+                            fileSize = get(FirestoreKey.Chat.fileSize).toString()
+                            fileType = get(FirestoreKey.Chat.fileType).toString()
                             chatList.add(this)
                         }
                     } catch (e: Exception) {

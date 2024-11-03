@@ -1,6 +1,7 @@
 package com.joshgm3z.ping.ui.screens.chat
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,10 +10,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AttachFile
+import androidx.compose.material.icons.filled.AudioFile
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.VideoFile
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -23,11 +28,68 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.R
+import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.common.SendingBar
+import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.ChatInlineUiState
+
+@DarkPreview
+@Composable
+private fun PreviewReplyContentUploading(
+    uiState: ChatInlineUiState = ChatInlineUiState.FileUpload(Chat("").apply {
+        fileType = "pdf"
+        fileName = "yoyo.pdf"
+        fileSize = "30 MB"
+        fileLocalUri = "llkk"
+    }
+    ),
+) {
+    PingTheme {
+        Box(modifier = Modifier.width(250.dp)) {
+            ReplyContent(uiState)
+        }
+    }
+}
+
+@DarkPreview
+@Composable
+private fun PreviewReplyContentUploading2(
+    uiState: ChatInlineUiState = ChatInlineUiState.FileUpload(Chat("").apply {
+        fileType = "pdf"
+        fileName = "yoyo.pdf yoyo yoyo.pdf yoyo.pdf yoyo.pdf yoyo.pdf yoyo.pdf.pdf"
+        fileSize = "30 MB"
+        fileLocalUri = "llkk"
+    }
+    ),
+) {
+    PingTheme {
+        Box(modifier = Modifier.width(250.dp)) {
+            ReplyContent(uiState)
+        }
+    }
+}
+
+@DarkPreview
+@Composable
+private fun PreviewReplyContent(
+    uiState: ChatInlineUiState = ChatInlineUiState.File(Chat("").apply {
+        fileType = "pdf"
+        fileName = "yoyo.pdf"
+        fileSize = "30 MB"
+        fileOnlineUrl = "llkk"
+    }
+    ),
+) {
+    PingTheme {
+        PreviewReplyContentUploading(uiState)
+    }
+}
 
 @Composable
 fun ReplyContent(
@@ -51,7 +113,7 @@ fun ReplyContent(
         }
 
         is ChatInlineUiState.Image -> AsyncImage(
-            model = uiState.imageUrl,
+            model = uiState.chat.fileOnlineUrl,
             error = painterResource(R.drawable.wallpaper2),
             contentDescription = null,
             modifier = Modifier
@@ -60,45 +122,19 @@ fun ReplyContent(
             contentScale = ContentScale.Crop,
         )
 
+        is ChatInlineUiState.File -> FilePreview(uiState.chat)
+        is ChatInlineUiState.FileUpload -> FilePreview(uiState.chat)
         is ChatInlineUiState.ImageUpload -> Box(contentAlignment = Alignment.BottomEnd) {
-            val imageHeight = 150.dp
             AsyncImage(
-                model = uiState.imageUri,
+                model = uiState.chat.fileLocalUri,
                 error = painterResource(R.drawable.wallpaper2),
                 contentDescription = null,
                 modifier = Modifier
-                    .height(imageHeight)
+                    .height(150.dp)
                     .fillMaxWidth(),
                 contentScale = ContentScale.Crop,
             )
-            Row(
-                Modifier
-                    .padding(10.dp)
-                    .background(
-                        Color.Black.copy(alpha = 0.5f),
-                        RoundedCornerShape(10.dp)
-                    )
-                    .padding(horizontal = 15.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val color = colorScheme.onSurface.copy(alpha = 0.8f)
-                when (uiState.progress) {
-                    0f -> {
-                        CircularProgressIndicator(
-                            color = color,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-
-                    else -> CircularProgressIndicator(
-                        progress = { uiState.progress / 100 },
-                        color = color,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-                Spacer(Modifier.size(10.dp))
-                Text("Sending", color = color)
-            }
+            SendingBar(uiState.chat.imageUploadProgress)
         }
 
         is ChatInlineUiState.WebUrl -> {
@@ -125,5 +161,59 @@ fun ReplyContent(
 
         else -> {}
 
+    }
+}
+
+@Composable
+private fun FilePreview(
+    chat: Chat
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .background(colorScheme.surfaceContainerHigh, RoundedCornerShape(10.dp))
+            .padding(start = 5.dp, end = 5.dp, top = 5.dp, bottom = 5.dp)
+            .fillMaxWidth()
+    ) {
+        Icon(
+            when (chat.fileType) {
+                "pdf" -> Icons.Default.PictureAsPdf
+                "mp3" -> Icons.Default.AudioFile
+                "mpeg" -> Icons.Default.VideoFile
+                else -> Icons.Default.AttachFile
+            },
+            contentDescription = null,
+            modifier = Modifier
+                .size(30.dp)
+                .background(
+                    colorScheme.surface,
+                    RoundedCornerShape(10.dp)
+                )
+                .padding(5.dp),
+            tint = colorScheme.primary
+        )
+        Spacer(Modifier.size(5.dp))
+        Column(Modifier.weight(1f)) {
+            Text(
+                chat.fileName,
+                maxLines = 2,
+                fontSize = 14.sp,
+                overflow = TextOverflow.Ellipsis,
+                color = colorScheme.onSurface
+            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    chat.fileSize,
+                    fontSize = 12.sp,
+                    color = colorScheme.onSurface.copy(alpha = .5f)
+                )
+                if (chat.fileLocalUri.isNotEmpty()) {
+                    SendingBar(chat.imageUploadProgress)
+                }
+            }
+        }
     }
 }

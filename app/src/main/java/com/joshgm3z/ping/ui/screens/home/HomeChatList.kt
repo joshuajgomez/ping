@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Forum
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -35,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,7 +48,6 @@ import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.theme.Gray60
 import com.joshgm3z.ping.utils.getPrettyTime
@@ -85,7 +82,7 @@ fun PreviewHomeSentChat() {
         val homeChat = HomeChat.random()
         homeChat.lastChat.status = Chat.READ
         homeChat.lastChat.isOutwards = true
-        homeChat.lastChat.imageUrl = "true"
+        homeChat.lastChat.fileOnlineUrl = "true"
         HomeChatItem(homeChat)
     }
 }
@@ -96,7 +93,7 @@ fun PreviewHomeReceivedChat() {
     PingTheme {
         val homeChat = HomeChat.random()
         homeChat.lastChat.isOutwards = false
-        homeChat.lastChat.imageUrl = "true"
+        homeChat.lastChat.fileOnlineUrl = "true"
         HomeChatItem(homeChat)
     }
 }
@@ -261,7 +258,7 @@ fun HomeChatItem(
 
 @Composable
 fun MediaIcon(homeChat: HomeChat) {
-    if (homeChat.lastChat.imageUrl.isNotEmpty()) {
+    if (homeChat.lastChat.fileOnlineUrl.isNotEmpty()) {
         Icon(
             Icons.Default.CameraAlt,
             contentDescription = null,

@@ -96,7 +96,10 @@ constructor(
         dummy.fromUserId = chat.toUserId
         dummy.sentTime = System.currentTimeMillis()
         dummy.status = Chat.SENT
-        dummy.imageUrl = chat.imageUrl
+        dummy.fileOnlineUrl = chat.fileOnlineUrl
+        dummy.fileName = chat.fileName
+        dummy.fileSize = chat.fileSize
+        dummy.fileType = chat.fileType
         if (chat.message.contains("reply")) {
             dummy.replyToChatId = chat.docId
         }

@@ -25,7 +25,7 @@ class ImageRepositoryImpl
 constructor(
     private val firebaseStorage: FirebaseStorage,
 ) : ImageRepository {
-    override fun uploadImage(
+    override fun uploadFile(
         folderName: String,
         fileName: String,
         localUri: Uri,

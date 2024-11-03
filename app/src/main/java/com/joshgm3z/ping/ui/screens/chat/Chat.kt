@@ -1,7 +1,6 @@
 package com.joshgm3z.ping.ui.screens.chat
 
 import android.net.Uri
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -20,9 +19,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.Reply
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -31,11 +27,8 @@ import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,13 +40,9 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.getIfNotPreview
-import com.joshgm3z.ping.ui.theme.Gray40
-import com.joshgm3z.ping.ui.theme.Gray60
-import com.joshgm3z.ping.ui.theme.Gray80
 import com.joshgm3z.ping.ui.viewmodels.ChatInlineUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
 import com.joshgm3z.ping.utils.getPrettyTime
-import com.joshgm3z.utils.Logger
 import kotlinx.coroutines.launch
 
 val chatBubbleRadius = 10.dp
@@ -274,6 +263,37 @@ fun PreviewOutgoingChatReplyOutwards(outwards: Boolean = true) {
                 defaultUiStateForPreview = ChatInlineUiState.Reply(Chat.random(), "Alien")
             )
             ChatItem(
+                chat.apply {
+                    isOutwards = outwards
+                },
+                defaultUiStateForPreview = ChatInlineUiState.FileUpload(
+                    chat.apply {
+                        fileType = "exe"
+                        fileLocalUri = "1111"
+                        fileName = "qqww"
+                    }
+                )
+            )
+            ChatItem(
+                chat.apply {
+                    isOutwards = outwards
+                },
+                defaultUiStateForPreview = ChatInlineUiState.File(chat.apply {
+                    fileType = "pdf"
+                    fileOnlineUrl = "1122"
+                    fileName = "Yoyo.pdf"
+                })
+            )
+            ChatItem(
+                chat.apply {
+                    isOutwards = outwards
+                },
+                defaultUiStateForPreview = ChatInlineUiState.File(chat.apply {
+                    fileType = "exe"
+                    fileOnlineUrl = "11"
+                })
+            )
+            ChatItem(
                 Chat("Hey wassup my maan hows it going").apply {
                     isOutwards = outwards
                 },
@@ -282,21 +302,30 @@ fun PreviewOutgoingChatReplyOutwards(outwards: Boolean = true) {
             ChatItem(
                 chat.apply {
                     isOutwards = outwards
-                    imageUrl = "im going to movie"
+                    fileOnlineUrl = "im going to movie"
                 },
-                defaultUiStateForPreview = ChatInlineUiState.Image("Alien")
+                defaultUiStateForPreview = ChatInlineUiState.Image(chat.apply {
+                    fileType = "jpg"
+                    fileOnlineUrl = "qq"
+                })
             )
             ChatItem(
                 chat.apply {
                     isOutwards = outwards
                 },
-                defaultUiStateForPreview = ChatInlineUiState.ImageUpload(Uri.parse(""))
+                defaultUiStateForPreview = ChatInlineUiState.ImageUpload(chat.apply {
+                    fileType = "jpg"
+                    fileLocalUri = "qq"
+                })
             )
             ChatItem(
                 Chat("").apply {
                     isOutwards = outwards
                 },
-                defaultUiStateForPreview = ChatInlineUiState.Image("Alien")
+                defaultUiStateForPreview = ChatInlineUiState.Image(chat.apply {
+                    fileType = "jpg"
+                    fileOnlineUrl = "ww"
+                })
             )
             ChatItem(
                 Chat("https://www.google.com").apply {
