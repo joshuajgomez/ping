@@ -141,7 +141,7 @@ fun HomeScreenContainer(
                         navController.navigate(ChatScreen(chat.otherGuy.docId))
                     },
                     onGoToUsersClicked = {
-                        navController.navigateToUsers()
+                        homeNavController.navigateToUsers()
                     },
                     onSearchClick = onSearchClick
                 )

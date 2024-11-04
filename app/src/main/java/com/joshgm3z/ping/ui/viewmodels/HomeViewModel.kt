@@ -47,12 +47,11 @@ constructor(
             val me = currentUserInfo.currentUser
             val users = userRepository.getUsers()
             chatRepository.observeChatsForUserHomeLocal().collectLatest {
-                if (it.isNotEmpty() && users.isEmpty()) {
-                    Logger.warn("users list not fetched")
-                    _uiState.value = HomeUiState.Empty("Fetching users")
-                }
                 val homeChats = dataUtil.buildHomeChats(me.docId, it, users)
-                _uiState.value = HomeUiState.Ready(homeChats)
+                _uiState.value = when {
+                    homeChats.isEmpty() -> HomeUiState.Empty("Fetching users")
+                    else -> HomeUiState.Ready(homeChats)
+                }
             }
         }
     }
