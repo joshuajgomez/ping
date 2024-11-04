@@ -68,7 +68,7 @@ fun FrxContainer(
             Column(
                 Modifier
                     .fillMaxSize()
-                    .padding(top = 120.dp)
+                    .padding(top = 50.dp)
             ) {
                 Logo()
                 Spacer(Modifier.height(10.dp))
