@@ -97,7 +97,9 @@ private fun SettingTitle(
         expandedHeight = 150.dp,
         title = {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(top = 15.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 15.dp),
             ) {
                 IconButton(
                     onCloseClick,
@@ -107,7 +109,10 @@ private fun SettingTitle(
                         Icons.Default.Close,
                         contentDescription = null,
                         modifier = Modifier.size(30.dp),
-                        tint = colorScheme.onSurface
+                        tint = when {
+                            isCloseEnabled -> colorScheme.onSurface
+                            else -> colorScheme.onSurface.copy(alpha = 0.5f)
+                        }
                     )
                 }
                 Spacer(Modifier.weight(1f))

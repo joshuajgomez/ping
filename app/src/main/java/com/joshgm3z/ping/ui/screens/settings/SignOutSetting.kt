@@ -34,9 +34,11 @@ fun SignOutSetting(
     onBackClick: () -> Unit = {},
     onLoggedOut: () -> Unit = {},
 ) {
+    val uiState = viewModel?.uiState?.collectAsState()
     SettingContainer(
         title = "Sign out",
         onCloseClick = onBackClick,
+        isCloseEnabled = uiState?.value == SignOutUiState.Initial,
     ) {
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
@@ -47,26 +49,23 @@ fun SignOutSetting(
                 color = colorScheme.onSurface,
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
-            val uiState = viewModel?.uiState?.collectAsState()
-            with(uiState?.value) {
-                when (this) {
-                    is SignOutUiState.SignedOut -> Text(
-                        "Good bye! You are now signed out.",
-                        modifier = Modifier
-                            .padding(bottom = 30.dp)
-                            .fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
+            when {
+                uiState?.value is SignOutUiState.SignedOut -> Text(
+                    "Good bye! You are now signed out.",
+                    modifier = Modifier
+                        .padding(bottom = 30.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
 
-                    else -> TwoPingButtons(
-                        text1 = "Sign out",
-                        loading1 = this is SignOutUiState.Loading,
-                        onClick1 = {
-                            viewModel?.onSignOutClicked(onLoggedOut)
-                        },
-                        onClick2 = onBackClick
-                    )
-                }
+                else -> TwoPingButtons(
+                    text1 = "Sign out",
+                    loading1 = uiState?.value is SignOutUiState.Loading,
+                    onClick1 = {
+                        viewModel?.onSignOutClicked(onLoggedOut)
+                    },
+                    onClick2 = onBackClick
+                )
             }
         }
     }
