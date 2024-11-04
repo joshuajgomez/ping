@@ -32,7 +32,11 @@ data class Loading(val message: String)
 @Serializable
 data object Home
 
-fun NavController.navigateToHome() = navigate(Home)
+fun NavController.navigateToHome() = navigate(Home){
+    popUpTo(graph.id) {
+        inclusive = true
+    }
+}
 
 @Serializable
 data object AllSearch
