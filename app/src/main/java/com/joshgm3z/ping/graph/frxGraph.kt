@@ -20,7 +20,7 @@ fun NavGraphBuilder.frxGraph(navController: NavHostController) {
             val name = it.toRoute<Welcome>().name
             WelcomeScreen(
                 name,
-                onUserSyncComplete = navController::navigateToHome
+                onButtonClick = navController::navigateToHome
             )
         }
         composable<GoodBye> {
