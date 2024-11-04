@@ -45,22 +45,28 @@ fun PreviewFullSignInInput() {
 fun SignInContent(
     signInViewModel: SignInViewModel? = getIfNotPreview { hiltViewModel() },
     onSignInComplete: (String) -> Unit = {},
+    disableControls: (Boolean) -> Unit = {},
 ) {
     var name by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
+    val showLoading: (Boolean) -> Unit = {
+        isLoading = it
+        disableControls(it)
+    }
+
     val onSignInClick: () -> Unit = {
         when {
             name.isNotEmpty() -> {
                 error = ""
-                isLoading = true
+                showLoading(true)
                 signInViewModel?.onSignInClick(
                     name,
                     onSignInComplete = onSignInComplete,
                     onNewUser = {
-                        isLoading = false
+                        showLoading(false)
                         error = "User not found"
                     },
                     onError = {

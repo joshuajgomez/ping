@@ -74,6 +74,7 @@ fun SignUpContent(
     signUpViewModel: SignUpViewModel? = getIfNotPreview { hiltViewModel() },
     onSignUpComplete: (String) -> Unit = {},
     showPicker: () -> Unit = {},
+    disableControls: (Boolean) -> Unit = {},
 ) {
     Column {
         var name by remember { mutableStateOf(inputName) }
@@ -83,10 +84,15 @@ fun SignUpContent(
         var error by remember { mutableStateOf("") }
         var isShowLoading by remember { mutableStateOf(false) }
 
+        val showLoading: (Boolean) -> Unit = {
+            isShowLoading = it
+            disableControls(it)
+        }
+
         val onSignUpClick: () -> Unit = {
             when {
                 name.isNotEmpty() -> {
-                    isShowLoading = true
+                    showLoading(true)
                     signUpViewModel?.onSignUpClick(
                         name,
                         inputImage,
@@ -94,7 +100,7 @@ fun SignUpContent(
                         onSignUpComplete = onSignUpComplete,
                         onSignUpError = {
                             error = it
-                            isShowLoading = false
+                            showLoading(false)
                         },
                     )
                 }

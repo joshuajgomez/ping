@@ -61,6 +61,7 @@ fun FrxContainer(
 
     PingWallpaper {
         var isSignIn by remember { mutableStateOf(default) }
+        var disableControls by remember { mutableStateOf(false) }
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -79,7 +80,10 @@ fun FrxContainer(
                     SignInCard(
                         isSignIn,
                         onClickExpand = { isSignIn = true },
-                        onSignInComplete = onSignInComplete
+                        onSignInComplete = onSignInComplete,
+                        disableControls = {
+                            disableControls = it
+                        }
                     )
                     if (!isSignIn) {
                         HorizontalDivider()
@@ -92,6 +96,9 @@ fun FrxContainer(
                         showPicker = {
                             showDropDownMenu = true
                         },
+                        disableControls = {
+                            disableControls = it
+                        }
                     )
                 }
             }
@@ -121,6 +128,12 @@ fun FrxContainer(
                         showIconGrid = true
                     })
             }
+            if (disableControls) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .clickable { }) {}
+            }
         }
 
     }
@@ -142,6 +155,7 @@ private fun SignInCard(
     expanded: Boolean,
     onClickExpand: () -> Unit,
     onSignInComplete: (String) -> Unit,
+    disableControls: (Boolean) -> Unit = {},
 ) {
     Column {
         FrxItem("Sign in", expanded, onClickExpand)
@@ -150,7 +164,8 @@ private fun SignInCard(
             modifier = Modifier.padding(horizontal = 10.dp)
         ) {
             SignInContent(
-                onSignInComplete = onSignInComplete
+                onSignInComplete = onSignInComplete,
+                disableControls = disableControls
             )
         }
     }
@@ -163,6 +178,7 @@ private fun SignUpCard(
     onClickExpand: () -> Unit,
     showPicker: () -> Unit = {},
     onSignInComplete: (String) -> Unit = {},
+    disableControls: (Boolean) -> Unit = {},
 ) {
     Column {
         FrxItem("Create a new account", expanded, onClickExpand)
@@ -173,7 +189,8 @@ private fun SignUpCard(
             SignUpContent(
                 inputImage = imageUrl,
                 onSignUpComplete = onSignInComplete,
-                showPicker = showPicker
+                showPicker = showPicker,
+                disableControls = disableControls
             )
         }
     }
