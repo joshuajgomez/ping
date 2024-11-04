@@ -105,7 +105,7 @@ class ChatInputViewModel
                 }
             },
             onSuccess = {
-                chat.fileLocalUri = ""
+//                chat.fileLocalUri = ""
                 chat.imageUploadProgress = 0f
                 viewModelScope.launch {
                     chatRepository.updateChatLocal(chat)

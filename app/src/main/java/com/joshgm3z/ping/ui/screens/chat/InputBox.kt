@@ -75,6 +75,7 @@ sealed class PingSheetClick {
 fun InputBox(
     viewModel: ChatInputViewModel? = getIfNotPreview { hiltViewModel() },
     sheetState: PingSheetState,
+    onPreviewClick: (ChatInputUiState) -> Unit,
 ) {
     var text by remember { mutableStateOf("") }
     val topRadius = 20.dp
@@ -89,6 +90,11 @@ fun InputBox(
         InputPreview(
             uiState = uiState?.value ?: ChatInputUiState.Empty,
             onDeleteClick = { viewModel?.clearPreviewState() },
+            onClick = {
+                uiState?.value?.let {
+                    onPreviewClick(it)
+                }
+            }
         )
         MessageBox(
             isEnabled = (text.isNotEmpty() || uiState?.value != ChatInputUiState.Empty),
@@ -215,12 +221,14 @@ fun HandleClickEvent(click: PingSheetClick, onUriReady: (Uri) -> Unit) {
 @Composable
 private fun InputPreview(
     uiState: ChatInputUiState,
-    onDeleteClick: () -> Unit = {}
+    onDeleteClick: () -> Unit = {},
+    onClick: () -> Unit = {},
 ) {
     AnimatedVisibility(uiState !is ChatInputUiState.Empty) {
         Box(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .clickable { onClick() },
             contentAlignment = Alignment.TopEnd
         ) {
             Icon(
@@ -288,11 +296,13 @@ private fun FilePreviewInline(
         Spacer(Modifier.size(15.dp))
         Column {
             Text(
-                FileUtil.getFileName(LocalContext.current, uiState.fileUri).ifEmpty { "Unknown file" },
+                FileUtil.getFileName(LocalContext.current, uiState.fileUri)
+                    .ifEmpty { "Unknown file" },
                 color = colorScheme.onSurface
             )
             Text(
-                FileUtil.getFileSizeString(LocalContext.current, uiState.fileUri).ifEmpty { "100 MB" },
+                FileUtil.getFileSizeString(LocalContext.current, uiState.fileUri)
+                    .ifEmpty { "100 MB" },
                 fontSize = 15.sp,
                 color = colorScheme.onSurface.copy(alpha = .5f)
             )

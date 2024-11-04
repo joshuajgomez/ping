@@ -27,6 +27,7 @@ import com.joshgm3z.ping.ui.common.PingBottomSheet
 import com.joshgm3z.ping.ui.common.PingWallpaper
 import com.joshgm3z.ping.ui.common.SheetOption
 import com.joshgm3z.ping.ui.common.getIfNotPreview
+import com.joshgm3z.ping.ui.viewmodels.ChatInputUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatInputViewModel
 import com.joshgm3z.ping.ui.viewmodels.ChatListState
 import com.joshgm3z.ping.ui.viewmodels.ChatViewModel
@@ -63,6 +64,7 @@ fun ChatScreenContainer(
     viewModel: ChatViewModel = hiltViewModel(),
     onUserInfoClick: (String) -> Unit = {},
     onImageClick: (String) -> Unit = {},
+    onPdfClick: (String) -> Unit = {},
     scrollToChatId: String = "",
 ) {
     with(viewModel.uiState.collectAsState().value) {
@@ -70,6 +72,7 @@ fun ChatScreenContainer(
             ChatScreen(
                 chatListState = chatListState,
                 scrollToChatId = scrollToChatId,
+                onPdfClick = onPdfClick,
                 user = it,
                 onUserInfoClick = { onUserInfoClick(you.docId) },
                 onBackClick = {
@@ -90,6 +93,7 @@ fun ChatScreen(
     onUserInfoClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
     onImageClick: (String) -> Unit = { },
+    onPdfClick: (String) -> Unit = { },
     scrollToChatId: String = "",
     viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() },
     inputViewModel: ChatInputViewModel? = getIfNotPreview { hiltViewModel() },
@@ -129,7 +133,21 @@ fun ChatScreen(
                 onBackClick = onBackClick
             )
         },
-        bottomBar = { InputBox(viewModel = inputViewModel, sheetState = pingSheetState) }
+        bottomBar = {
+            InputBox(
+                viewModel = inputViewModel,
+                sheetState = pingSheetState,
+                onPreviewClick = {
+                    when (it) {
+                        is ChatInputUiState.File -> {
+                            onPdfClick(it.fileUri.toString())
+                        }
+
+                        else -> {}
+                    }
+                }
+            )
+        }
     ) { paddingValues ->
         PingWallpaper {
             Box(
@@ -140,6 +158,7 @@ fun ChatScreen(
                         chats = chatListState.chats,
                         onImageClick = onImageClick,
                         scrollToChatId = scrollToChatId,
+                        onPdfClick = onPdfClick,
                         onReplyClick = {
                             inputViewModel?.updateReplyPreviewState(it)
                         },

@@ -51,6 +51,7 @@ val chatBubbleRadius = 10.dp
 fun ChatList(
     chats: List<Chat> = emptyList(),
     onImageClick: (chatId: String) -> Unit = {},
+    onPdfClick: (String) -> Unit = {},
     onReplyClick: (Chat) -> Unit = {},
     scrollToChatId: String = "",
     viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() }
@@ -76,6 +77,8 @@ fun ChatList(
                                     )
                                 }
                             }
+
+                            is ChatInlineUiState.File -> onPdfClick(uiState.chat.fileLocalUri)
 
                             else -> {}
                         }

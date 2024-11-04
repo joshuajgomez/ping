@@ -4,6 +4,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.joshgm3z.ping.ui.common.PdfViewer
+import com.joshgm3z.ping.ui.common.navigateToPdfViewer
 import com.joshgm3z.ping.ui.screens.chat.ChatImageViewer
 import com.joshgm3z.ping.ui.screens.chat.ChatScreenContainer
 import com.joshgm3z.ping.ui.screens.chat.ImageViewer
@@ -16,10 +18,16 @@ fun NavGraphBuilder.chatGraph(navController: NavHostController) {
             goHome = navController::goBack,
             onUserInfoClick = navController::navigateToUserInfo,
             onImageClick = navController::navigateToImageViewer,
+            onPdfClick = navController::navigateToPdfViewer,
             scrollToChatId = it.toRoute<ChatScreen>().chatId,
         )
     }
     composable<ChatImageViewer> {
         ImageViewer(onBackClick = navController::goBack)
+    }
+    composable<PdfViewerRoute> {
+        PdfViewer(
+            onBackClick = navController::goBack
+        )
     }
 }

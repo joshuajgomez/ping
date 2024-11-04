@@ -37,6 +37,7 @@ import coil3.compose.AsyncImage
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.common.PingTopBar
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.ImageViewerViewModel
@@ -150,40 +151,4 @@ fun ImageBox(
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PingTopBar(
-    title: String,
-    subTitle: String,
-    onBackClick: () -> Unit
-) {
-    CenterAlignedTopAppBar(
-        title = {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = title,
-                    color = colorScheme.onSurface,
-                    fontSize = 20.sp,
-                )
-                Text(
-                    text = subTitle,
-                    color = colorScheme.onSurface,
-                    fontSize = 15.sp,
-                )
-            }
-        },
-        navigationIcon = {
-            IconButton(onBackClick) {
-                Icon(
-                    Icons.AutoMirrored.Default.ArrowBack,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .padding(5.dp)
-                )
-            }
-        }
-    )
 }
