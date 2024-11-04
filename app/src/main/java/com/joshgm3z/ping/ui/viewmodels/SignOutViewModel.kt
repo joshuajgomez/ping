@@ -34,7 +34,7 @@ constructor(
             userRepository.signOutUser()
             delay(3.seconds)
             _uiState.value = SignOutUiState.SignedOut
-            delay(1.seconds)
+            delay(2.seconds)
             viewModelScope.launch {
                 onSignOutComplete()
             }
