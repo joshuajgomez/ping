@@ -20,6 +20,7 @@ data class Chat(
     var status: Long = SAVED
     var isOutwards: Boolean = false
 
+    var fileLocalUriToUpload: String = ""
     var fileLocalUri: String = ""
     var fileOnlineUrl: String = ""
     var fileName: String = ""
@@ -65,7 +66,7 @@ data class Chat(
                 " replyToChatId=$replyToChatId," +
                 " status=${textStatus(status)}," +
                 " imageUrl=${fileOnlineUrl}," +
-                " imageUpload=[${imageUploadProgress}]>>${fileLocalUri}," +
+                " fileUpload=[${imageUploadProgress}]>>${fileLocalUriToUpload}," +
                 ")"
     }
 

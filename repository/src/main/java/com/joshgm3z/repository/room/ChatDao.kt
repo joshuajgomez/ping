@@ -24,6 +24,9 @@ interface ChatDao {
     @Update
     suspend fun update(chat: Chat)
 
+    @Query("update Chat set fileLocalUri = :destinationUrl where docId = :chatId")
+    suspend fun updateLocalUrl(chatId: String, destinationUrl: String)
+
     @Transaction
     suspend fun insertAll(chats: List<Chat>) {
         for (chat in chats) {

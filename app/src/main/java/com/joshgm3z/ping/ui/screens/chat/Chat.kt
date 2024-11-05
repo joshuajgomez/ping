@@ -78,7 +78,7 @@ fun ChatList(
                                 }
                             }
 
-                            is ChatInlineUiState.File -> onPdfClick(uiState.chat.fileLocalUri)
+                            is ChatInlineUiState.File -> onPdfClick(uiState.chat.fileLocalUriToUpload)
 
                             else -> {}
                         }
@@ -272,7 +272,7 @@ fun PreviewOutgoingChatReplyOutwards(outwards: Boolean = true) {
                 defaultUiStateForPreview = ChatInlineUiState.FileUpload(
                     chat.apply {
                         fileType = "exe"
-                        fileLocalUri = "1111"
+                        fileLocalUriToUpload = "1111"
                         fileName = "qqww"
                     }
                 )
@@ -318,7 +318,7 @@ fun PreviewOutgoingChatReplyOutwards(outwards: Boolean = true) {
                 },
                 defaultUiStateForPreview = ChatInlineUiState.ImageUpload(chat.apply {
                     fileType = "jpg"
-                    fileLocalUri = "qq"
+                    fileLocalUriToUpload = "qq"
                 })
             )
             ChatItem(

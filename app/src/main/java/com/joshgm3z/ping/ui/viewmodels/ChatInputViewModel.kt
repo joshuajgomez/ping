@@ -64,14 +64,14 @@ class ChatInputViewModel
                     newChat.fileName = fileUtil.getFileName(imageUri)
                     newChat.fileSize = fileUtil.getFileSizeString(imageUri)
                     newChat.fileType = fileUtil.getFileTypeString(imageUri)
-                    newChat.fileLocalUri = imageUri.toString()
+                    newChat.fileLocalUriToUpload = imageUri.toString()
                 }
 
                 is ChatInputUiState.File -> {
                     newChat.fileName = fileUtil.getFileName(fileUri)
                     newChat.fileSize = fileUtil.getFileSizeString(fileUri)
                     newChat.fileType = fileUtil.getFileTypeString(fileUri)
-                    newChat.fileLocalUri = fileUri.toString()
+                    newChat.fileLocalUriToUpload = fileUri.toString()
                 }
 
                 else -> {}
@@ -92,12 +92,12 @@ class ChatInputViewModel
 
     private fun uploadChatImage(chat: Chat) {
         val fileName =
-            "chat_${chat.fromUserId}_${fileUtil.getFileName(Uri.parse(chat.fileLocalUri))}"
+            "chat_${chat.fromUserId}_${fileUtil.getFileName(Uri.parse(chat.fileLocalUriToUpload))}"
         Logger.debug("fileName = [$fileName]")
         imageRepository.uploadFile(
             folderName = FirestoreKey.keyChatFiles,
             fileName = fileName,
-            localUri = Uri.parse(chat.fileLocalUri),
+            localUri = Uri.parse(chat.fileLocalUriToUpload),
             onProgress = { progress ->
                 chat.imageUploadProgress = progress
                 viewModelScope.launch {
@@ -105,7 +105,7 @@ class ChatInputViewModel
                 }
             },
             onSuccess = {
-//                chat.fileLocalUri = ""
+                chat.fileLocalUriToUpload = ""
                 chat.imageUploadProgress = 0f
                 viewModelScope.launch {
                     chatRepository.updateChatLocal(chat)

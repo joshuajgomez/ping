@@ -120,7 +120,7 @@ class ChatViewModel
                     }
                 }
 
-                chat.fileLocalUri.isNotEmpty() -> {
+                chat.fileLocalUriToUpload.isNotEmpty() -> {
                     when (chat.fileType) {
                         "jpeg", "jpg" -> ChatInlineUiState.ImageUpload(chat)
                         else -> ChatInlineUiState.FileUpload(chat)

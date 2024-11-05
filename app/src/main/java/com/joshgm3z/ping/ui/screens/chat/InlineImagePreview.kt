@@ -28,8 +28,8 @@ import com.joshgm3z.ping.ui.theme.PingTheme
 fun InlineImagePreview(
     chat: Chat,
 ) {
-    if (chat.fileOnlineUrl.isEmpty() && chat.fileLocalUri.isEmpty()) return
-    val uploadOngoing = chat.fileLocalUri.isNotEmpty()
+    if (chat.fileOnlineUrl.isEmpty() && chat.fileLocalUriToUpload.isEmpty()) return
+    val uploadOngoing = chat.fileLocalUriToUpload.isNotEmpty()
     Box(
         contentAlignment = Alignment.Center
     ) {
@@ -37,7 +37,7 @@ fun InlineImagePreview(
             modifier = Modifier.fillMaxSize(),
             imageUrl = when {
                 chat.fileOnlineUrl.isNotEmpty() -> chat.fileOnlineUrl
-                else -> chat.fileLocalUri
+                else -> chat.fileLocalUriToUpload
             },
             placeHolderColor = when {
                 chat.isOutwards -> colorScheme.surfaceContainerHighest
@@ -92,7 +92,7 @@ fun InlineImagePreview(
 fun PreviewSendingChatImage() {
     PingTheme {
         val chat = Chat("")
-        chat.fileLocalUri = "aa"
+        chat.fileLocalUriToUpload = "aa"
         ChatItem(chat)
     }
 }

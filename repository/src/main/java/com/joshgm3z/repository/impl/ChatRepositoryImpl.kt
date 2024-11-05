@@ -3,6 +3,7 @@ package com.joshgm3z.repository.impl
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.firebase.FirestoreDb
+import com.joshgm3z.repository.DownloadManager
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.room.ChatDao
@@ -32,7 +33,6 @@ abstract class ChatRepositoryProvider {
 
 }
 
-@Singleton
 class ChatRepositoryImpl
 @Inject
 constructor(
@@ -150,7 +150,6 @@ constructor(
                             isOutwards = true
                             fromUserName = "You"
                         }
-                        downloadManager()
                     }
                 }
                 firestoreDb.updateChatList(firestoreList, FirestoreKey.Chat.status, Chat.DELIVERED)

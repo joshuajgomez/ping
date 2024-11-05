@@ -46,7 +46,7 @@ private fun PreviewReplyContentUploading(
         fileType = "pdf"
         fileName = "yoyo.pdf"
         fileSize = "30 MB"
-        fileLocalUri = "llkk"
+        fileLocalUriToUpload = "llkk"
     }
     ),
 ) {
@@ -64,7 +64,7 @@ private fun PreviewReplyContentUploading2(
         fileType = "pdf"
         fileName = "yoyo.pdf yoyo yoyo.pdf yoyo.pdf yoyo.pdf yoyo.pdf yoyo.pdf.pdf"
         fileSize = "30 MB"
-        fileLocalUri = "llkk"
+        fileLocalUriToUpload = "llkk"
     }
     ),
 ) {
@@ -126,7 +126,7 @@ fun ReplyContent(
         is ChatInlineUiState.FileUpload -> FilePreview(uiState.chat)
         is ChatInlineUiState.ImageUpload -> Box(contentAlignment = Alignment.BottomEnd) {
             AsyncImage(
-                model = uiState.chat.fileLocalUri,
+                model = uiState.chat.fileLocalUriToUpload,
                 error = painterResource(R.drawable.wallpaper2),
                 contentDescription = null,
                 modifier = Modifier
@@ -210,7 +210,7 @@ private fun FilePreview(
                     fontSize = 12.sp,
                     color = colorScheme.onSurface.copy(alpha = .5f)
                 )
-                if (chat.fileLocalUri.isNotEmpty()) {
+                if (chat.fileLocalUriToUpload.isNotEmpty()) {
                     SendingBar(chat.imageUploadProgress)
                 }
             }

@@ -2,11 +2,7 @@ package com.joshgm3z.repository.download
 
 import android.app.DownloadManager
 import android.content.Context
-import android.os.Environment
-import com.joshgm3z.downloader.model.retrofit.DownloadService
-import com.joshgm3z.downloader.model.room.data.DownloadState
-import com.joshgm3z.downloader.model.room.data.DownloadTask
-import com.joshgm3z.downloader.utils.Logger
+import com.joshgm3z.utils.Logger
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +26,23 @@ class DownloadManagerModule {
         context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 }
 
+data class DownloadTask(
+    val chatId: String,
+    val url: String,
+    val destinationUrl: String,
+    var downloadState: DownloadState = DownloadState.Pending,
+    val downloadedSize: Long = 0,
+    val totalSize: Long = 0,
+)
+
+enum class DownloadState {
+    Pending,
+    Started,
+    Finished,
+    Stopped,
+    Failed,
+}
+
 @Singleton
 class DownloadWorker @Inject constructor(
     private val scope: CoroutineScope,
@@ -45,7 +58,7 @@ class DownloadWorker @Inject constructor(
             if (value) {
                 _downloadTaskFlow.update {
                     it?.copy(
-                        state = DownloadState.STOPPED
+                        downloadState = DownloadState.Stopped
                     )
                 }
             }
@@ -59,29 +72,21 @@ class DownloadWorker @Inject constructor(
         scope.launch {
             downloadService
                 .downloadFile(downloadTask.url)
-                .saveFile(getFilePath(downloadTask))
+                .saveFile(downloadTask.destinationUrl)
         }
-    }
-
-    private fun getFilePath(downloadTask: DownloadTask): String {
-        val downloads = Environment
-            .getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS
-            )
-            .path
-        return "$downloads/${downloadTask.filename}"
     }
 
     private fun notifyProgress(currentSize: Long) {
         _downloadTaskFlow.update {
-            val progress =
+            /*val progress =
                 if (it!!.totalSize > 0)
                     ((currentSize * 100) / it.totalSize)
                 else 0
             it.copy(
                 progress = progress,
-                currentSize = currentSize
-            )
+                down = currentSize
+            )*/
+            it?.copy(downloadedSize = currentSize)
         }
     }
 
@@ -111,7 +116,7 @@ class DownloadWorker @Inject constructor(
                     return
                 }
             }
-            notifyCompletion(currentSize, destinationPath)
+            notifyCompletion(currentSize)
         } catch (e: Exception) {
             Logger.error(e.message ?: "Download failed with exception")
             notifyFailure()
@@ -122,8 +127,7 @@ class DownloadWorker @Inject constructor(
         Logger.entry()
         _downloadTaskFlow.update {
             it?.copy(
-                state = DownloadState.RUNNING,
-                timeStarted = System.currentTimeMillis()
+                downloadState = DownloadState.Started,
             )
         }
     }
@@ -132,20 +136,17 @@ class DownloadWorker @Inject constructor(
         Logger.entry()
         _downloadTaskFlow.update {
             it?.copy(
-                state = DownloadState.FAILED,
-                timeCompleted = System.currentTimeMillis()
+                downloadState = DownloadState.Failed,
             )
         }
     }
 
-    private fun notifyCompletion(totalBytes: Long, path: String) {
+    private fun notifyCompletion(totalBytes: Long) {
         Logger.debug("totalBytes = [${totalBytes}]")
         _downloadTaskFlow.update {
             it?.copy(
-                state = DownloadState.COMPLETED,
+                downloadState = DownloadState.Finished,
                 totalSize = totalBytes,
-                localPath = path,
-                timeCompleted = System.currentTimeMillis()
             )
         }
     }

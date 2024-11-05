@@ -1,12 +1,12 @@
 package com.joshgm3z.repository
 
-import androidx.compose.runtime.mutableStateMapOf
-import com.joshgm3z.downloader.model.room.dao.DownloadTaskDao
-import com.joshgm3z.downloader.model.room.data.DownloadState
-import com.joshgm3z.downloader.model.room.data.DownloadTask
-import com.joshgm3z.downloader.utils.Logger
+import android.os.Environment
+import com.joshgm3z.data.model.Chat
+import com.joshgm3z.repository.download.DownloadState
+import com.joshgm3z.repository.download.DownloadTask
 import com.joshgm3z.repository.download.DownloadWorker
 import com.joshgm3z.repository.room.ChatDao
+import com.joshgm3z.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -23,58 +23,55 @@ class DownloadManager @Inject constructor(
 
     private var runningTask: DownloadTask? = null
 
-    private val downloadTasksQueue = HashMap<Int, DownloadTask>()
+    private val downloadTasksQueue = HashMap<String, DownloadTask>()
+
+    private val destinationFolder = Environment.getExternalStoragePublicDirectory(
+        Environment.DIRECTORY_DOWNLOADS
+    ).path + "/ping_downloads/"
+
+    private fun addToDownloads(chatList: List<Chat>) {
+        chatList.forEach {
+            if (!downloadTasksQueue.contains(it.docId)) {
+                val task = DownloadTask(
+                    it.docId,
+                    it.fileOnlineUrl,
+                    destinationFolder + it.fileName,
+                )
+                downloadTasksQueue[it.docId] = task
+            }
+        }
+    }
 
     init {
         Logger.entry()
         scope.launch {
-            downloadTaskDao.getAll().collectLatest {
-                Logger.debug("downloadTasks = [${it}]")
-                checkNewDownloads(it)
+            chatDao.getAllChatsTimeAsc().collectLatest { it ->
+                val newDownloads = it.filter {
+                    it.fileOnlineUrl.isNotEmpty() && it.fileLocalUri.isEmpty()
+                }
+                addToDownloads(newDownloads)
+                doNextTask()
             }
         }
+
         scope.launch {
             downloadWorker.downloadTaskFlow.collectLatest {
-                if (it == null) {
-                    Logger.warn("DownloadTask is null")
-                    return@collectLatest
-                }
+                when {
+                    it == null -> {
+                        Logger.warn("DownloadTask is null")
+                    }
 
-                if (it.state == DownloadState.COMPLETED) {
-                    // prepare queue for next download
-                    downloadTasksQueue.remove(it.id)
-                    runningTask = null
-                    doNextTask()
-                    downloadTaskDao.update(it)
-                }
-            }
-        }
-    }
-
-    private fun checkNewDownloads(downloadTasks: List<DownloadTask>) {
-        Logger.debug("downloadTasks = [${downloadTasks}]")
-        downloadTasks.forEach {
-            if (it.state == DownloadState.PENDING) {
-                if (!isInQueue(it)) {
-                    Logger.debug("Adding to queue: ${it.id}")
-                    addTaskToQueue(it)
+                    it.downloadState == DownloadState.Finished -> {
+                        // prepare queue for next download
+                        downloadTasksQueue.remove(it.chatId)
+                        runningTask = null
+                        chatDao.updateLocalUrl(it.chatId, it.destinationUrl)
+                        doNextTask()
+                    }
                 }
             }
         }
     }
-
-    private fun addTaskToQueue(downloadTask: DownloadTask) {
-        if (isInQueue(downloadTask)) {
-            Logger.warn("Already in queue: $downloadTask")
-            return
-        }
-        Logger.debug("downloadTask = [${downloadTask}]")
-        downloadTasksQueue[downloadTask.id] = downloadTask
-        doNextTask()
-    }
-
-    private fun isInQueue(downloadTask: DownloadTask): Boolean =
-        downloadTasksQueue.contains(downloadTask.id)
 
     private fun doNextTask() {
         Logger.entry()
@@ -91,5 +88,5 @@ class DownloadManager @Inject constructor(
         downloadWorker.download(downloadTask)
     }
 
-    override fun taskUpdates(): StateFlow<DownloadTask?> = downloadWorker.downloadTaskFlow
+    fun taskUpdates(): StateFlow<DownloadTask?> = downloadWorker.downloadTaskFlow
 }
