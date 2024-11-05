@@ -20,19 +20,23 @@ interface ChatRepository {
 
     fun observeChatsForUserHomeLocal(): Flow<List<Chat>>
 
+    fun observeChatsForFileDownload(): Flow<List<Chat>>
+
     fun observerChatsForMeFromServer(): Job
 
     fun updateChatStatusToServer(newStatus: Long, chats: List<Chat>)
 
     suspend fun getChat(chatId: String): Chat
 
-    suspend fun updateChat(chatId: String, key: String, value: String)
+    fun updateChat(chatId: String, key: String, value: String)
 
-    suspend fun insertLocal(chat: Chat)
+    fun insertLocal(chat: Chat)
 
-    suspend fun updateChatLocal(chat: Chat)
+    fun updateChatLocal(chat: Chat)
 
-    suspend fun updateLocalFileUrl(chatId: String, fileUrl: String)
+    fun updateProgress(chatId: String, progress: Float)
+
+    fun updateLocalFileUrl(chatId: String, fileUrl: String)
 
     suspend fun searchChat(query: String): List<Chat>
 

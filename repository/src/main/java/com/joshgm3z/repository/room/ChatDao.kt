@@ -21,6 +21,9 @@ interface ChatDao {
     @Query("select * from Chat order by sentTime asc")
     fun getAllChatsTimeAsc(): Flow<List<Chat>>
 
+    @Query("select * from Chat where fileOnlineUrl is not '' and fileLocalUri is '' and fileName is not ''")
+    fun getAllChatsForDownload(): Flow<List<Chat>>
+
     @Update
     suspend fun update(chat: Chat)
 
@@ -35,14 +38,17 @@ interface ChatDao {
     }
 
     @Query("delete from Chat")
-    fun clearChats()
+    suspend fun clearChats()
 
     @Query("select * from Chat where docId = :chatId")
     fun getChat(chatId: String): Flow<List<Chat>>
 
     @Query("select * from Chat where message like '%' || :query || '%'")
-    fun searchChats(query: String): List<Chat>
+    suspend fun searchChats(query: String): List<Chat>
 
     @Query("delete from Chat where fromUserId = :userId or toUserId = :userId")
-    fun clearChatsFromOrToUser(userId: String)
+    suspend fun clearChatsFromOrToUser(userId: String)
+
+    @Query("update Chat set fileUploadProgress = :progress where docId = :chatId")
+    suspend fun updateProgress(chatId: String, progress: Float)
 }

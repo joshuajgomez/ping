@@ -113,16 +113,16 @@ class ChatViewModel
                     ChatInlineUiState.WebUrl(chat.webUrl)
                 }
 
-                chat.fileOnlineUrl.isNotEmpty() -> {
+                chat.fileOnlineUrl.isNotEmpty() || chat.fileLocalUri.isNotEmpty() -> {
                     when (chat.fileType) {
-                        "jpeg", "jpg" -> ChatInlineUiState.Image(chat)
+                        "jpeg", "jpg", "png" -> ChatInlineUiState.Image(chat)
                         else -> ChatInlineUiState.File(chat)
                     }
                 }
 
                 chat.fileLocalUriToUpload.isNotEmpty() -> {
                     when (chat.fileType) {
-                        "jpeg", "jpg" -> ChatInlineUiState.ImageUpload(chat)
+                        "jpeg", "jpg", "png" -> ChatInlineUiState.ImageUpload(chat)
                         else -> ChatInlineUiState.FileUpload(chat)
                     }
                 }

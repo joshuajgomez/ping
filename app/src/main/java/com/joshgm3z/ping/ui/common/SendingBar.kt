@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 fun SendingBar(progress: Float) {
     Row(
         Modifier
-            .padding(top = 3.dp)
+            .padding(top = 6.dp)
             .background(
                 Color.Black.copy(alpha = 0.5f),
                 RoundedCornerShape(5.dp)

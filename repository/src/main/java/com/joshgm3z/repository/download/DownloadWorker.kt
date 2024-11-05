@@ -10,7 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
@@ -29,7 +29,7 @@ class DownloadManagerModule {
 data class DownloadTask(
     val chatId: String,
     val url: String,
-    val destinationUrl: String,
+    val file: File,
     var downloadState: DownloadState = DownloadState.Pending,
     val downloadedSize: Long = 0,
     val totalSize: Long = 0,
@@ -50,7 +50,7 @@ class DownloadWorker @Inject constructor(
 ) {
 
     private val _downloadTaskFlow = MutableStateFlow<DownloadTask?>(null)
-    val downloadTaskFlow: StateFlow<DownloadTask?> = _downloadTaskFlow
+    val downloadTaskFlow = _downloadTaskFlow.asStateFlow()
 
     private var isStopped = false
         set(value) {
@@ -72,26 +72,25 @@ class DownloadWorker @Inject constructor(
         scope.launch {
             downloadService
                 .downloadFile(downloadTask.url)
-                .saveFile(downloadTask.destinationUrl)
+                .saveFile(downloadTask.file)
         }
     }
 
     private fun notifyProgress(currentSize: Long) {
-        _downloadTaskFlow.update {
-            /*val progress =
+        /*_downloadTaskFlow.update {
+            *//*val progress =
                 if (it!!.totalSize > 0)
                     ((currentSize * 100) / it.totalSize)
                 else 0
             it.copy(
                 progress = progress,
                 down = currentSize
-            )*/
+            )*//*
             it?.copy(downloadedSize = currentSize)
-        }
+        }*/
     }
 
-    private fun ResponseBody.saveFile(destinationPath: String) {
-        val file = File(destinationPath)
+    private fun ResponseBody.saveFile(file: File) {
         var currentSize: Long = 0
         notifyStart()
         try {

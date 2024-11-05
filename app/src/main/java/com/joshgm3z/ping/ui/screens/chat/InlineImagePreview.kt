@@ -56,7 +56,7 @@ fun InlineImagePreview(
                     )
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    with(chat.imageUploadProgress / 100) {
+                    with(chat.fileUploadProgress / 100) {
                         when {
                             this == 0f -> CircularProgressIndicator(
                                 color = colorScheme.primary,

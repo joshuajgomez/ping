@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -31,6 +32,7 @@ abstract class ChatRepositoryProvider {
 
 }
 
+@Singleton
 class ChatRepositoryImpl
 @Inject
 constructor(
@@ -117,6 +119,10 @@ constructor(
         return chatDao.getAllChatsTimeAsc()
     }
 
+    override fun observeChatsForFileDownload(): Flow<List<Chat>> {
+        return chatDao.getAllChatsForDownload()
+    }
+
     override fun observerChatsForMeFromServer() = scope.launch {
         if (!currentUserInfo.isSignedIn) {
             Logger.error("user not signed in")
@@ -176,21 +182,34 @@ constructor(
     override suspend fun getChat(chatId: String): Chat =
         chatDao.getChat(chatId).first().first()
 
-    override suspend fun updateChat(chatId: String, key: String, value: String) {
+    override fun updateChat(chatId: String, key: String, value: String) {
         firestoreDb.updateChat(chatId, key, value)
     }
 
-    override suspend fun insertLocal(chat: Chat) {
+    override fun insertLocal(chat: Chat) {
         Logger.debug("chat = [${chat}]")
-        chatDao.insert(chat)
+        scope.launch {
+            chatDao.insert(chat)
+        }
     }
 
-    override suspend fun updateChatLocal(chat: Chat) {
-        chatDao.update(chat)
+    override fun updateChatLocal(chat: Chat) {
+        scope.launch {
+            chatDao.update(chat)
+        }
     }
 
-    override suspend fun updateLocalFileUrl(chatId: String, fileUrl: String) {
-        chatDao.updateLocalUrl(chatId, fileUrl)
+    override fun updateProgress(chatId: String, progress: Float) {
+        scope.launch {
+            chatDao.updateProgress(chatId, progress)
+        }
+    }
+
+    override fun updateLocalFileUrl(chatId: String, fileUrl: String) {
+        Logger.debug("chatId = [${chatId}], fileUrl = [${fileUrl}]")
+        scope.launch {
+            chatDao.updateLocalUrl(chatId, fileUrl)
+        }
     }
 
     override suspend fun searchChat(query: String): List<Chat> {

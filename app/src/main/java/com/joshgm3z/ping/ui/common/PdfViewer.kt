@@ -3,6 +3,7 @@ package com.joshgm3z.ping.ui.common
 import android.graphics.Bitmap
 import android.widget.Space
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Icon
@@ -26,6 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -76,31 +84,37 @@ fun PdfViewer(
 
 @Composable
 fun ErrorContent(fileUrl: String = "") {
-    Column(
+    Row(
         Modifier
-            .fillMaxSize()
-            .padding(top = 50.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Icon(
-                Icons.Default.Error,
-                null,
-                tint = colorScheme.error
+            .padding(40.dp)
+            .fillMaxWidth()
+            .background(
+                color = colorScheme.surfaceContainerHigh,
+                shape = RoundedCornerShape(10.dp)
             )
-            Spacer(Modifier.size(10.dp))
-            Text("Error reading pdf")
-        }
-        Spacer(Modifier.size(20.dp))
-        Text(
-            "File URL: $fileUrl",
-            color = colorScheme.onSurface.copy(alpha = 0.5f),
-            fontSize = 12.sp
+            .padding(10.dp)
+    ) {
+        Icon(
+            Icons.Default.Error,
+            null,
+            tint = colorScheme.error
         )
+        Spacer(Modifier.size(10.dp))
+        Column {
+            Text("Error reading pdf")
+            Spacer(Modifier.size(5.dp))
+            Text(
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("File URL:\n")
+                    }
+                    append(fileUrl)
+                },
+                color = colorScheme.onSurface.copy(alpha = 0.5f),
+                fontSize = 12.sp,
+                lineHeight = 15.sp,
+            )
+        }
     }
 }
 

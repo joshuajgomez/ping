@@ -25,7 +25,9 @@ class FileViewerViewModel
 @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val fileUrl: String = savedStateHandle.toRoute<PdfViewerRoute>().fileLocalUrl
+    private val fileUrl: String = savedStateHandle
+        .toRoute<PdfViewerRoute>()
+        .fileLocalUrl
 
     private val _uiState = MutableStateFlow<FileViewerUiState>(FileViewerUiState.Empty(fileUrl))
     val uiState = _uiState.asStateFlow()

@@ -26,7 +26,7 @@ data class Chat(
     var fileName: String = ""
     var fileSize: String = ""
     var fileType: String = ""
-    var imageUploadProgress: Float = 0f
+    var fileUploadProgress: Float = 0f
 
     @get:Ignore
     val webUrl: String
@@ -76,7 +76,7 @@ data class Chat(
                 "fileName='$fileName', " +
                 "fileSize='$fileSize', " +
                 "fileType='$fileType', " +
-                "imageUploadProgress=$imageUploadProgress" +
+                "imageUploadProgress=$fileUploadProgress" +
                 ")"
     }
 
@@ -101,7 +101,7 @@ data class Chat(
         if (fileName != other.fileName) return false
         if (fileSize != other.fileSize) return false
         if (fileType != other.fileType) return false
-        if (imageUploadProgress != other.imageUploadProgress) return false
+        if (fileUploadProgress != other.fileUploadProgress) return false
 
         return true
     }
@@ -122,7 +122,7 @@ data class Chat(
         result = 31 * result + fileName.hashCode()
         result = 31 * result + fileSize.hashCode()
         result = 31 * result + fileType.hashCode()
-        result = 31 * result + imageUploadProgress.hashCode()
+        result = 31 * result + fileUploadProgress.hashCode()
         return result
     }
 

@@ -23,7 +23,7 @@ class DbProvider {
 
 @Database(
     entities = [Chat::class, User::class],
-    version = 17,
+    version = 18,
     exportSchema = false
 )
 abstract class PingDb : RoomDatabase() {

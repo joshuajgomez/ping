@@ -12,6 +12,7 @@ import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
 import com.joshgm3z.utils.const.FirestoreKey
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -99,14 +100,14 @@ class ChatInputViewModel
             fileName = fileName,
             localUri = Uri.parse(chat.fileLocalUriToUpload),
             onProgress = { progress ->
-                chat.imageUploadProgress = progress
+                chat.fileUploadProgress = progress
                 viewModelScope.launch {
-                    chatRepository.updateChatLocal(chat)
+                    chatRepository.updateProgress(chat.docId, progress)
                 }
             },
             onSuccess = {
                 chat.fileLocalUriToUpload = ""
-                chat.imageUploadProgress = 0f
+                chat.fileUploadProgress = 0f
                 viewModelScope.launch {
                     chatRepository.updateChatLocal(chat)
                 }
@@ -135,7 +136,7 @@ class ChatInputViewModel
 
     fun updatePreviewStateWithFile(uri: Uri) {
         when (fileUtil.getFileTypeString(uri)) {
-            "jpeg", "jpg" -> {
+            "jpeg", "jpg", "png" -> {
                 _uiState.value = ChatInputUiState.Image(uri)
             }
 
