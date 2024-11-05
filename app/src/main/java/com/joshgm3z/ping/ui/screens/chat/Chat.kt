@@ -78,7 +78,11 @@ fun ChatList(
                                 }
                             }
 
-                            is ChatInlineUiState.File -> onPdfClick(uiState.chat.fileLocalUriToUpload)
+                            is ChatInlineUiState.File -> {
+                                if (uiState.chat.fileLocalUri.isNotEmpty()) {
+                                    onPdfClick(uiState.chat.fileLocalUri)
+                                }
+                            }
 
                             else -> {}
                         }

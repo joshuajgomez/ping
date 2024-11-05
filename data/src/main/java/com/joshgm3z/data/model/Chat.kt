@@ -60,23 +60,24 @@ data class Chat(
     }
 
     override fun toString(): String {
-        return "Chat(message='$message', docId='$docId'," +
-                " sentTime=$sentTime, fromUserId=$fromUserId, toUserId=$toUserId," +
-                " isOutwards=$isOutwards," +
-                " replyToChatId=$replyToChatId," +
-                " status=${textStatus(status)}," +
-                " imageUrl=${fileOnlineUrl}," +
-                " fileUpload=[${imageUploadProgress}]>>${fileLocalUriToUpload}," +
+        return "Chat(" +
+                "message='$message', " +
+                "docId='$docId', " +
+                "sentTime=$sentTime, " +
+                "fromUserId='$fromUserId', " +
+                "fromUserName='$fromUserName', " +
+                "toUserId='$toUserId', " +
+                "replyToChatId='$replyToChatId', " +
+                "status=$status, " +
+                "isOutwards=$isOutwards, " +
+                "fileLocalUriToUpload='$fileLocalUriToUpload', " +
+                "fileLocalUri='$fileLocalUri', " +
+                "fileOnlineUrl='$fileOnlineUrl', " +
+                "fileName='$fileName', " +
+                "fileSize='$fileSize', " +
+                "fileType='$fileType', " +
+                "imageUploadProgress=$imageUploadProgress" +
                 ")"
-    }
-
-    private fun textStatus(status: Long): String {
-        return when (status) {
-            SENT -> "SENT"
-            DELIVERED -> "DELIVERED"
-            READ -> "READ"
-            else -> "SAVED"
-        }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -89,12 +90,17 @@ data class Chat(
         if (docId != other.docId) return false
         if (sentTime != other.sentTime) return false
         if (fromUserId != other.fromUserId) return false
+        if (fromUserName != other.fromUserName) return false
         if (toUserId != other.toUserId) return false
         if (replyToChatId != other.replyToChatId) return false
         if (status != other.status) return false
-        if (fileOnlineUrl != other.fileOnlineUrl) return false
         if (isOutwards != other.isOutwards) return false
+        if (fileLocalUriToUpload != other.fileLocalUriToUpload) return false
         if (fileLocalUri != other.fileLocalUri) return false
+        if (fileOnlineUrl != other.fileOnlineUrl) return false
+        if (fileName != other.fileName) return false
+        if (fileSize != other.fileSize) return false
+        if (fileType != other.fileType) return false
         if (imageUploadProgress != other.imageUploadProgress) return false
 
         return true
@@ -105,12 +111,17 @@ data class Chat(
         result = 31 * result + docId.hashCode()
         result = 31 * result + sentTime.hashCode()
         result = 31 * result + fromUserId.hashCode()
+        result = 31 * result + fromUserName.hashCode()
         result = 31 * result + toUserId.hashCode()
         result = 31 * result + replyToChatId.hashCode()
         result = 31 * result + status.hashCode()
-        result = 31 * result + fileOnlineUrl.hashCode()
         result = 31 * result + isOutwards.hashCode()
+        result = 31 * result + fileLocalUriToUpload.hashCode()
         result = 31 * result + fileLocalUri.hashCode()
+        result = 31 * result + fileOnlineUrl.hashCode()
+        result = 31 * result + fileName.hashCode()
+        result = 31 * result + fileSize.hashCode()
+        result = 31 * result + fileType.hashCode()
         result = 31 * result + imageUploadProgress.hashCode()
         return result
     }
