@@ -150,6 +150,7 @@ constructor(
                             isOutwards = true
                             fromUserName = "You"
                         }
+                        downloadManager()
                     }
                 }
                 firestoreDb.updateChatList(firestoreList, FirestoreKey.Chat.status, Chat.DELIVERED)
