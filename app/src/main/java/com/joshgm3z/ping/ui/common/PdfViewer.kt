@@ -1,9 +1,11 @@
 package com.joshgm3z.ping.ui.common
 
 import android.graphics.Bitmap
+import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.joshgm3z.ping.graph.PdfViewerRoute
@@ -63,6 +66,7 @@ fun PdfViewer(
             with(uiState?.value) {
                 when (this) {
                     is FileViewerUiState.Ready -> PdfContent(bitmapList)
+                    is FileViewerUiState.Empty -> ErrorContent(fileUrl)
                     else -> ErrorContent()
                 }
             }
@@ -71,21 +75,32 @@ fun PdfViewer(
 }
 
 @Composable
-fun ErrorContent() {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxWidth()
+fun ErrorContent(fileUrl: String = "") {
+    Column(
+        Modifier
+            .fillMaxSize()
             .padding(top = 50.dp)
     ) {
-        Icon(
-            Icons.Default.Error,
-            null,
-            tint = colorScheme.error
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Icon(
+                Icons.Default.Error,
+                null,
+                tint = colorScheme.error
+            )
+            Spacer(Modifier.size(10.dp))
+            Text("Error reading pdf")
+        }
+        Spacer(Modifier.size(20.dp))
+        Text(
+            "File URL: $fileUrl",
+            color = colorScheme.onSurface.copy(alpha = 0.5f),
+            fontSize = 12.sp
         )
-        Spacer(Modifier.size(10.dp))
-        Text("Error reading pdf")
     }
 }
 

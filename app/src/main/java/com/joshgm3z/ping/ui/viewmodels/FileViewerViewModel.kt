@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 sealed class FileViewerUiState {
-    data object Empty : FileViewerUiState()
+    data class Empty(val fileUrl: String = "") : FileViewerUiState()
     data class Ready(val bitmapList: List<Bitmap>) : FileViewerUiState()
 }
 
@@ -27,7 +27,7 @@ class FileViewerViewModel
 ) : ViewModel() {
     private val fileUrl: String = savedStateHandle.toRoute<PdfViewerRoute>().fileLocalUrl
 
-    private val _uiState = MutableStateFlow<FileViewerUiState>(FileViewerUiState.Empty)
+    private val _uiState = MutableStateFlow<FileViewerUiState>(FileViewerUiState.Empty(fileUrl))
     val uiState = _uiState.asStateFlow()
 
     fun fetchBitmapList(
@@ -54,10 +54,10 @@ class FileViewerViewModel
                     renderer.close()
                     it.close()
                     FileViewerUiState.Ready(bitmapList)
-                } ?: FileViewerUiState.Empty
+                } ?: FileViewerUiState.Empty(fileUrl)
         } catch (e: Exception) {
             Logger.error(e.stackTraceToString())
-            FileViewerUiState.Empty
+            FileViewerUiState.Empty(fileUrl)
         }
     }
 }
