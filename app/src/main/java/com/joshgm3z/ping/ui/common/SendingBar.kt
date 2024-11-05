@@ -25,7 +25,7 @@ fun SendingBar(progress: Float) {
                 Color.Black.copy(alpha = 0.5f),
                 RoundedCornerShape(5.dp)
             )
-            .padding(horizontal = 8.dp, vertical = 2.dp),
+            .padding(horizontal = 5.dp, vertical = 1.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         val color = colorScheme.onSurface.copy(alpha = 0.8f)

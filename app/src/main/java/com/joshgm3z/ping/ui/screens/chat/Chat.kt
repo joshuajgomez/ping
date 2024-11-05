@@ -1,6 +1,5 @@
 package com.joshgm3z.ping.ui.screens.chat
 
-import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -205,7 +204,7 @@ fun InlinePreview(
                 }
             )
     ) {
-        ReplyContent(uiState)
+        InlinePreviewContent(uiState)
     }
 }
 

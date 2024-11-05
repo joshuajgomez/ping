@@ -1,11 +1,8 @@
-package com.joshgm3z.repository
+package com.joshgm3z.repository.download
 
 import android.os.Environment
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.repository.api.ChatRepository
-import com.joshgm3z.repository.download.DownloadState
-import com.joshgm3z.repository.download.DownloadTask
-import com.joshgm3z.repository.download.DownloadWorker
 import com.joshgm3z.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow

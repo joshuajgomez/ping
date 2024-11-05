@@ -4,7 +4,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
-import com.joshgm3z.repository.DownloadManager
+import com.joshgm3z.repository.download.DownloadManager
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.utils.Logger
 import dagger.hilt.android.AndroidEntryPoint

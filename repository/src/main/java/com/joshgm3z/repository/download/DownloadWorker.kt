@@ -52,7 +52,7 @@ class DownloadWorker @Inject constructor(
     private val _downloadTaskFlow = MutableStateFlow<DownloadTask?>(null)
     val downloadTaskFlow: StateFlow<DownloadTask?> = _downloadTaskFlow
 
-    var isStopped = false
+    private var isStopped = false
         set(value) {
             field = value
             if (value) {

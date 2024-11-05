@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.AudioFile
+import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.VideoFile
@@ -44,7 +45,7 @@ import com.joshgm3z.ping.ui.viewmodels.ChatInlineUiState
 private fun PreviewReplyContentUploading(
     uiState: ChatInlineUiState = ChatInlineUiState.FileUpload(Chat("").apply {
         fileType = "pdf"
-        fileName = "yoyo.pdf"
+        fileName = "Soyo.pdf"
         fileSize = "30 MB"
         fileLocalUriToUpload = "llkk"
     }
@@ -52,7 +53,7 @@ private fun PreviewReplyContentUploading(
 ) {
     PingTheme {
         Box(modifier = Modifier.width(250.dp)) {
-            ReplyContent(uiState)
+            InlinePreviewContent(uiState)
         }
     }
 }
@@ -62,7 +63,7 @@ private fun PreviewReplyContentUploading(
 private fun PreviewReplyContentUploading2(
     uiState: ChatInlineUiState = ChatInlineUiState.FileUpload(Chat("").apply {
         fileType = "pdf"
-        fileName = "yoyo.pdf yoyo yoyo.pdf yoyo.pdf yoyo.pdf yoyo.pdf yoyo.pdf.pdf"
+        fileName = "Woyo.pdf yoyo yoyo.pdf yoyo.pdf yoyo.pdf yoyo.pdf yoyo.pdf.pdf"
         fileSize = "30 MB"
         fileLocalUriToUpload = "llkk"
     }
@@ -70,7 +71,7 @@ private fun PreviewReplyContentUploading2(
 ) {
     PingTheme {
         Box(modifier = Modifier.width(250.dp)) {
-            ReplyContent(uiState)
+            InlinePreviewContent(uiState)
         }
     }
 }
@@ -80,7 +81,7 @@ private fun PreviewReplyContentUploading2(
 private fun PreviewReplyContent(
     uiState: ChatInlineUiState = ChatInlineUiState.File(Chat("").apply {
         fileType = "pdf"
-        fileName = "yoyo.pdf"
+        fileName = "Moyo.pdf"
         fileSize = "30 MB"
         fileOnlineUrl = "llkk"
     }
@@ -91,8 +92,24 @@ private fun PreviewReplyContent(
     }
 }
 
+@DarkPreview
 @Composable
-fun ReplyContent(
+private fun PreviewReplyContentLocalEmpty(
+    uiState: ChatInlineUiState = ChatInlineUiState.File(Chat("").apply {
+        fileType = "pdf"
+        fileName = "Royo.pdf"
+        fileSize = "30 MB"
+        fileLocalUri = ""
+    }
+    ),
+) {
+    PingTheme {
+        PreviewReplyContentUploading(uiState)
+    }
+}
+
+@Composable
+fun InlinePreviewContent(
     uiState: ChatInlineUiState,
 ) {
     val titleColor: Color = colorScheme.onBackground
@@ -169,7 +186,6 @@ private fun FilePreview(
     chat: Chat
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .background(colorScheme.surfaceContainerHigh, RoundedCornerShape(10.dp))
             .padding(start = 5.dp, end = 5.dp, top = 5.dp, bottom = 5.dp)
@@ -184,15 +200,15 @@ private fun FilePreview(
             },
             contentDescription = null,
             modifier = Modifier
-                .size(30.dp)
+                .size(35.dp)
                 .background(
                     colorScheme.surface,
-                    RoundedCornerShape(10.dp)
+                    RoundedCornerShape(5.dp)
                 )
                 .padding(5.dp),
             tint = colorScheme.primary
         )
-        Spacer(Modifier.size(5.dp))
+        Spacer(Modifier.size(7.dp))
         Column(Modifier.weight(1f)) {
             Text(
                 chat.fileName,
@@ -210,10 +226,23 @@ private fun FilePreview(
                     fontSize = 12.sp,
                     color = colorScheme.onSurface.copy(alpha = .5f)
                 )
-                if (chat.fileLocalUriToUpload.isNotEmpty()) {
-                    SendingBar(chat.imageUploadProgress)
+                when {
+                    chat.fileLocalUriToUpload.isNotEmpty() -> SendingBar(chat.imageUploadProgress)
+                    chat.fileLocalUri.isEmpty() -> DownloadIcon()
                 }
             }
         }
     }
+}
+
+@Composable
+fun DownloadIcon() {
+    Icon(
+        Icons.Default.CloudDownload,
+        contentDescription = null,
+        tint = colorScheme.onSurface.copy(alpha = 0.5f),
+        modifier = Modifier
+            .padding(end = 5.dp)
+            .size(20.dp)
+    )
 }
