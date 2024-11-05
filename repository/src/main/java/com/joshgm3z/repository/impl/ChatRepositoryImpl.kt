@@ -191,6 +191,10 @@ constructor(
         chatDao.update(chat)
     }
 
+    override suspend fun updateLocalFileUrl(chatId: String, fileUrl: String) {
+        chatDao.updateLocalUrl(chatId, fileUrl)
+    }
+
     override suspend fun searchChat(query: String): List<Chat> {
         return chatDao.searchChats(query)
     }

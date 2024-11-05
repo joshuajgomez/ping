@@ -2,10 +2,10 @@ package com.joshgm3z.repository
 
 import android.os.Environment
 import com.joshgm3z.data.model.Chat
+import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.download.DownloadState
 import com.joshgm3z.repository.download.DownloadTask
 import com.joshgm3z.repository.download.DownloadWorker
-import com.joshgm3z.repository.room.ChatDao
 import com.joshgm3z.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +18,7 @@ import javax.inject.Singleton
 class DownloadManager @Inject constructor(
     scope: CoroutineScope,
     private val downloadWorker: DownloadWorker,
-    private val chatDao: ChatDao,
+    private val chatRepository: ChatRepository,
 ) {
 
     private var runningTask: DownloadTask? = null
@@ -45,7 +45,7 @@ class DownloadManager @Inject constructor(
     init {
         Logger.entry()
         scope.launch {
-            chatDao.getAllChatsTimeAsc().collectLatest { it ->
+            chatRepository.observeChatsForUserHomeLocal().collectLatest { it ->
                 val newDownloads = it.filter {
                     it.fileOnlineUrl.isNotEmpty() && it.fileLocalUri.isEmpty()
                 }
@@ -65,7 +65,7 @@ class DownloadManager @Inject constructor(
                         // prepare queue for next download
                         downloadTasksQueue.remove(it.chatId)
                         runningTask = null
-                        chatDao.updateLocalUrl(it.chatId, it.destinationUrl)
+                        chatRepository.updateLocalFileUrl(it.chatId, it.destinationUrl)
                         doNextTask()
                     }
                 }

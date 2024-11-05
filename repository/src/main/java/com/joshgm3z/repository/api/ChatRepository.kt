@@ -32,6 +32,8 @@ interface ChatRepository {
 
     suspend fun updateChatLocal(chat: Chat)
 
+    suspend fun updateLocalFileUrl(chatId: String, fileUrl: String)
+
     suspend fun searchChat(query: String): List<Chat>
 
     suspend fun clearChats(
