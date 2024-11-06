@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import androidx.core.graphics.createBitmap
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
@@ -13,6 +14,7 @@ import com.joshgm3z.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.io.File
 import javax.inject.Inject
 
 sealed class FileViewerUiState {
@@ -37,7 +39,7 @@ class FileViewerViewModel
     ) {
         Logger.debug("fileUrl = [$fileUrl]")
         _uiState.value = try {
-            context.contentResolver.openFileDescriptor((Uri.parse(fileUrl)), "r")
+            context.contentResolver.openFileDescriptor((File(fileUrl).toUri()), "r")
                 ?.let {
                     val renderer = PdfRenderer(it)
                     val bitmapList = mutableListOf<Bitmap>()

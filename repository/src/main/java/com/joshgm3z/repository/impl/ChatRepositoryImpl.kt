@@ -50,6 +50,12 @@ constructor(
         get() = db.userDao()
 
     init {
+        firestoreDb.checkIfChatCollectionIsCleared {
+            scope.launch {
+                Logger.warn("chats_list cleared in server, clearing same in local db")
+                chatDao.clearChats()
+            }
+        }
         scope.launch {
             observerChatsForMeFromServer()
         }

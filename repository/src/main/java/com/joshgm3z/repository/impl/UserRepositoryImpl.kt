@@ -40,6 +40,15 @@ constructor(
     private val userDao: UserDao
         get() = db.userDao()
 
+    init {
+        firestoreDb.checkIfUserCollectionIsCleared {
+            scope.launch {
+                Logger.warn("users_list cleared in server, clearing same in local db")
+                userDao.clearUsers()
+            }
+        }
+    }
+
     override suspend fun getUsers(): List<User> = userDao.getAll()
 
     override suspend fun searchUsers(query: String): List<User> = userDao.searchUsers(query)

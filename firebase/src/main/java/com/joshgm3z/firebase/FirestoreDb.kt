@@ -230,4 +230,20 @@ constructor(
             onError(it.message.toString())
         }
     }
+
+    fun checkIfChatCollectionIsCleared(isCleared: () -> Unit) {
+        firestore.collection(keyCollectionChatList).addSnapshotListener { value, error ->
+            if (value?.isEmpty == true) {
+                isCleared()
+            }
+        }
+    }
+
+    fun checkIfUserCollectionIsCleared(isCleared: () -> Unit) {
+        firestore.collection(keyCollectionUserList).addSnapshotListener { value, error ->
+            if (value?.isEmpty == true) {
+                isCleared()
+            }
+        }
+    }
 }
