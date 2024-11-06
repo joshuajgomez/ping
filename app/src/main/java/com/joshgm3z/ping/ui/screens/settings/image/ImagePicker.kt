@@ -39,17 +39,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joshgm3z.common.IconPicker
 import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getCameraLauncher
 import com.joshgm3z.ping.ui.common.getGalleryLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.common.launchImagePicker
-import com.joshgm3z.ping.ui.screens.settings.Setting
+import com.joshgm3z.common.Setting
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
-import com.joshgm3z.ping.ui.screens.settings.SettingListCard
-import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.theme.Red20
+import com.joshgm3z.common.SettingListCard
+import com.joshgm3z.common.theme.PingTheme
+import com.joshgm3z.common.theme.Red20
 import com.joshgm3z.ping.ui.viewmodels.ImagePickerUiState
 import com.joshgm3z.ping.ui.viewmodels.ImagePickerViewModel
 import com.joshgm3z.utils.FileUtil
@@ -140,7 +140,7 @@ fun ImagePickerContent(
                 modifier = Modifier.size(200.dp),
                 contentAlignment = Alignment.Center
             ) {
-                UserImage(
+                com.joshgm3z.common.UserImage(
                     imageUrl = uiState.imageUrl
                 )
                 if (uiState.loading) {

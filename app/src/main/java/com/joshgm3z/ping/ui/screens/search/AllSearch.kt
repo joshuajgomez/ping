@@ -47,9 +47,9 @@ import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.util.randomUsers
 import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.UserImage
+import com.joshgm3z.common.UserImage
 import com.joshgm3z.ping.ui.screens.home.HomeChatItem
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.AllSearchUiState
 import com.joshgm3z.ping.ui.viewmodels.AllSearchViewModel
 import com.joshgm3z.ping.ui.viewmodels.Message
@@ -267,7 +267,7 @@ fun UserSearchItem(
             .padding(vertical = 10.dp, horizontal = commonHorizontalPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        UserImage(modifier = Modifier.size(30.dp))
+        com.joshgm3z.common.UserImage(modifier = Modifier.size(30.dp))
         Spacer(Modifier.size(20.dp))
         Text(user.name, modifier = Modifier.weight(1f))
         ArrowForward()

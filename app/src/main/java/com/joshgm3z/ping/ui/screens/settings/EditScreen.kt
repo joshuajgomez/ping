@@ -34,7 +34,7 @@ import com.joshgm3z.ping.ui.common.PingButton
 import com.joshgm3z.ping.ui.common.PingButtonState
 import com.joshgm3z.ping.ui.common.TwoPingButtons
 import com.joshgm3z.ping.ui.common.getIfNotPreview
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.EditScreenUiState
 import com.joshgm3z.ping.ui.viewmodels.EditScreenViewModel
 import com.joshgm3z.ping.ui.viewmodels.EditType

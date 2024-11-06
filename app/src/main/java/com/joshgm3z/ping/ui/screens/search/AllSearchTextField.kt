@@ -26,8 +26,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.theme.Gray60
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.Gray60
+import com.joshgm3z.common.theme.PingTheme
 
 @DarkPreview
 @Composable

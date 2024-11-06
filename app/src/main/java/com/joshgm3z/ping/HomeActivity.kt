@@ -12,7 +12,7 @@ import com.joshgm3z.ping.graph.Frx
 import com.joshgm3z.ping.graph.Home
 import com.joshgm3z.ping.graph.PingNavHost
 import com.joshgm3z.ping.service.PingService
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.utils.const.OPEN_CHAT_USER
 import dagger.hilt.android.AndroidEntryPoint

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.AudioFile
-import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.VideoFile
 import androidx.compose.material3.CircularProgressIndicator
@@ -29,13 +28,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.FilePdf
+import com.joshgm3z.common.FilePreview
+import com.joshgm3z.common.SendingBar
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.R
-import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.FilePdf
-import com.joshgm3z.ping.ui.common.FilePreview
-import com.joshgm3z.ping.ui.common.SendingBar
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.ChatInlineUiState
 
 @DarkPreview
@@ -177,63 +176,4 @@ fun InlinePreviewContent(
         else -> {}
 
     }
-}
-
-@Composable
-fun FileSendingBar(progress: Float) {
-    Row(
-        Modifier
-            .padding(top = 3.dp)
-            .padding(horizontal = 5.dp, vertical = 1.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        val color = colorScheme.onSurface.copy(alpha = 0.8f)
-        when (progress) {
-            0f -> {
-                CircularProgressIndicator(
-                    color = color,
-                    modifier = Modifier.size(15.dp),
-
-                )
-            }
-
-            else -> CircularProgressIndicator(
-                progress = { progress / 100 },
-                color = color,
-                modifier = Modifier.size(15.dp),
-            )
-        }
-        Spacer(Modifier.size(5.dp))
-        Text("Sending", color = color, fontSize = 13.sp)
-    }
-}
-
-@Composable
-fun FileIcon(fileType: String) {
-    val modifier = Modifier
-        .padding(top = 3.dp)
-        .size(35.dp)
-    Icon(
-        imageVector = when (fileType) {
-            "pdf" -> FilePdf
-            "mp3" -> Icons.Default.AudioFile
-            "mpeg" -> Icons.Default.VideoFile
-            else -> Icons.Default.AttachFile
-        },
-        contentDescription = null,
-        modifier = modifier,
-        tint = colorScheme.primary,
-    )
-}
-
-@Composable
-fun DownloadIcon() {
-    Icon(
-        Icons.Default.CloudDownload,
-        contentDescription = null,
-        tint = colorScheme.onSurface.copy(alpha = 0.5f),
-        modifier = Modifier
-            .padding(end = 5.dp)
-            .size(20.dp)
-    )
 }

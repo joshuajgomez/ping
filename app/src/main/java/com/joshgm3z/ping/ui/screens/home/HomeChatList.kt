@@ -19,8 +19,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AttachFile
-import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -42,16 +40,15 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.ping.ui.screens.chat.StatusIcon
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeUiState
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.HomeChat
-import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.MessageBrief
-import com.joshgm3z.ping.ui.common.UserImage
-import com.joshgm3z.ping.ui.theme.Gray60
+import com.joshgm3z.common.UserImage
+import com.joshgm3z.common.theme.Gray60
 import com.joshgm3z.ping.utils.getPrettyTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -196,7 +193,7 @@ fun HomeChatItem(
 ) {
     ConstraintLayout(modifier = Modifier.clickable { onChatClick(homeChat) }) {
         val (message, user, count, image, line, time) = createRefs()
-        UserImage(
+        com.joshgm3z.common.UserImage(
             modifier = Modifier
                 .clip(shape = CircleShape)
                 .size(45.dp)

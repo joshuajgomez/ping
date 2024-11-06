@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -21,14 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.joshgm3z.data.model.User
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.data.util.randomUser
-import com.joshgm3z.ping.ui.common.UserImage
+import com.joshgm3z.common.UserImage
 
 @Preview
 @Composable
@@ -73,7 +69,7 @@ fun ChatAppBar(
                 .weight(1f),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            UserImage(
+            com.joshgm3z.common.UserImage(
                 modifier = Modifier
                     .size(45.dp),
                 imageUrl = user.imagePath

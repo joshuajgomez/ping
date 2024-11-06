@@ -39,7 +39,7 @@ import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.PingTopBar
 import com.joshgm3z.ping.ui.common.getIfNotPreview
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.ImageViewerViewModel
 import com.joshgm3z.ping.utils.getPrettyTime
 import kotlinx.serialization.Serializable

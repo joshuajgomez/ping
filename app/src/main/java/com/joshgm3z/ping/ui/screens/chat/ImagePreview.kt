@@ -16,7 +16,7 @@ import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.TwoPingButtons
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 
 @DarkPreview
 @Composable

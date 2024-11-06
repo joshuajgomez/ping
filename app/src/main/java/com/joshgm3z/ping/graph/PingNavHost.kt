@@ -48,11 +48,6 @@ data class ChatScreen(val userId: String, val chatId: String = "")
 data class PingDialogRoute(val title: String, val message: String)
 
 @Serializable
-data class PdfViewerRoute(
-    val fileLocalUrl: String,
-)
-
-@Serializable
 data object SettingRoute
 
 @Serializable

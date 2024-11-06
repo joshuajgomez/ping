@@ -32,7 +32,7 @@ import com.joshgm3z.ping.graph.ChatScreen
 import com.joshgm3z.ping.ui.screens.search.UserContainer
 import com.joshgm3z.ping.ui.screens.search.UserList
 import com.joshgm3z.ping.ui.screens.settings.MainSettingsScreen
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable

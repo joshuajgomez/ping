@@ -20,12 +20,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joshgm3z.common.Setting
+import com.joshgm3z.common.SettingListCard
 import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getIfNotPreview
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.EditType
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 import com.joshgm3z.ping.utils.getPrettyTime
@@ -92,7 +93,7 @@ fun ImageSetting(
                 .fillMaxWidth()
                 .padding(15.dp)
         ) {
-            UserImage(
+            com.joshgm3z.common.UserImage(
                 imageUrl = user.imagePath,
                 modifier = Modifier.size(80.dp)
             )

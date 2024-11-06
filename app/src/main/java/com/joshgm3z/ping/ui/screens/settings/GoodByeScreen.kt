@@ -18,8 +18,8 @@ import androidx.navigation.compose.rememberNavController
 import com.joshgm3z.ping.graph.Frx
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.PingButton
-import com.joshgm3z.ping.ui.theme.PingTheme
-import com.joshgm3z.ping.ui.theme.Red20
+import com.joshgm3z.common.theme.PingTheme
+import com.joshgm3z.common.theme.Red20
 
 @DarkPreview
 @Composable

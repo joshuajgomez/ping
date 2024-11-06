@@ -25,17 +25,18 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.joshgm3z.common.Setting
+import com.joshgm3z.common.SettingListCard
 import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.graph.ChatSettings
 import com.joshgm3z.ping.graph.Notifications
 import com.joshgm3z.ping.graph.Profile
 import com.joshgm3z.ping.graph.SignOut
 import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
 import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
 
 @DarkPreview
@@ -123,7 +124,7 @@ fun ProfileView(
                 .padding(vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            UserImage(
+            com.joshgm3z.common.UserImage(
                 imageUrl = user.imagePath,
                 modifier = Modifier
                     .size(130.dp)

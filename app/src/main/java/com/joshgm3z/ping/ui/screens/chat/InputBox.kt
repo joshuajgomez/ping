@@ -57,7 +57,7 @@ import com.joshgm3z.ping.ui.common.getGalleryLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.ping.ui.common.launchFilePicker
 import com.joshgm3z.ping.ui.common.launchImagePicker
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.ChatInputUiState
 import com.joshgm3z.ping.ui.viewmodels.ChatInputViewModel
 import com.joshgm3z.utils.FileUtil

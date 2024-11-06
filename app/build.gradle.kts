@@ -56,6 +56,9 @@ dependencies {
     implementation(project(":utils"))
     implementation(project(":repository"))
 
+    implementation(project(":screens:frx"))
+    implementation(project(":screens:common"))
+
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
@@ -91,6 +94,6 @@ dependencies {
     implementation(libs.guava)
 
     implementation(libs.coil.compose)
-    implementation (libs.kotlinx.serialization.json)
     implementation(libs.coil.network.okhttp)
+    implementation (libs.kotlinx.serialization.json)
 }

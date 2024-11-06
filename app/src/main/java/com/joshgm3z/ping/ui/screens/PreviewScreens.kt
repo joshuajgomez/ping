@@ -12,7 +12,7 @@ import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.screens.chat.ChatScreen
 import com.joshgm3z.ping.ui.screens.chat.ImagePreview
 import com.joshgm3z.ping.ui.screens.chat.ImageViewer
-import com.joshgm3z.ping.ui.screens.frx.FrxContainer
+import com.joshgm3z.frx.FrxContainer
 import com.joshgm3z.ping.ui.screens.home.HomeAppBar
 import com.joshgm3z.ping.ui.screens.home.HomeChatList
 import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
@@ -20,7 +20,7 @@ import com.joshgm3z.ping.ui.screens.settings.MainSettingsScreen
 import com.joshgm3z.ping.ui.screens.settings.ProfileSettings
 import com.joshgm3z.ping.ui.screens.settings.SignOutSetting
 import com.joshgm3z.ping.ui.screens.settings.UserInfoContent
-import com.joshgm3z.ping.ui.theme.PingTheme
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.ChatListState
 import com.joshgm3z.ping.ui.viewmodels.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
