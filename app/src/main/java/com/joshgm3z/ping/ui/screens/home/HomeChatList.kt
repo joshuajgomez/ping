@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material3.HorizontalDivider
@@ -48,13 +49,14 @@ import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.common.MessageBrief
 import com.joshgm3z.ping.ui.common.UserImage
 import com.joshgm3z.ping.ui.theme.Gray60
 import com.joshgm3z.ping.utils.getPrettyTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-@DarkPreview
+//@DarkPreview
 @Composable
 fun PreviewHomeChatList() {
     PingTheme {
@@ -77,11 +79,11 @@ fun PreviewHomeChatList() {
 
 @Preview
 @Composable
-fun PreviewHomeSentChat() {
+fun PreviewHomeSentChat(isOutwards: Boolean = true) {
     PingTheme {
         val homeChat = HomeChat.random()
         homeChat.lastChat.status = Chat.READ
-        homeChat.lastChat.isOutwards = true
+        homeChat.lastChat.isOutwards = isOutwards
         homeChat.lastChat.fileOnlineUrl = "true"
         HomeChatItem(homeChat)
     }
@@ -94,6 +96,32 @@ fun PreviewHomeReceivedChat() {
         val homeChat = HomeChat.random()
         homeChat.lastChat.isOutwards = false
         homeChat.lastChat.fileOnlineUrl = "true"
+        HomeChatItem(homeChat)
+    }
+}
+
+@Preview
+@Composable
+fun PreviewHomeReceivedChat2() {
+    PingTheme {
+        val homeChat = HomeChat.random()
+        homeChat.lastChat.message = ""
+        homeChat.lastChat.isOutwards = false
+        homeChat.lastChat.fileName = "Some file.pdf"
+        homeChat.lastChat.fileType = "pdf"
+        HomeChatItem(homeChat)
+    }
+}
+
+@Preview
+@Composable
+fun PreviewHomeReceivedChat3() {
+    PingTheme {
+        val homeChat = HomeChat.random()
+        homeChat.lastChat.message = ""
+        homeChat.lastChat.isOutwards = false
+        homeChat.lastChat.fileName = "Some file.png"
+        homeChat.lastChat.fileType = "png"
         HomeChatItem(homeChat)
     }
 }
@@ -207,15 +235,7 @@ fun HomeChatItem(
                         .size(17.dp)
                 )
             }
-            MediaIcon(homeChat)
-            Text(
-                text = homeChat.lastChat.message,
-                color = colorScheme.onSurfaceVariant,
-                fontSize = 15.sp,
-                modifier = Modifier.widthIn(max = 260.dp),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            MessageBrief(homeChat.lastChat)
         }
         Text(
             text = getPrettyTime(homeChat.lastChat.sentTime),
@@ -256,21 +276,7 @@ fun HomeChatItem(
     }
 }
 
-@Composable
-fun MediaIcon(homeChat: HomeChat) {
-    if (homeChat.lastChat.fileOnlineUrl.isNotEmpty()) {
-        Icon(
-            Icons.Default.CameraAlt,
-            contentDescription = null,
-            tint = colorScheme.onSurface,
-            modifier = Modifier
-                .padding(end = 3.dp)
-                .size(17.dp)
-        )
-    }
-}
-
-@Preview
+//@Preview
 @Composable
 fun PreviewEmptyScreen() {
     PingTheme {

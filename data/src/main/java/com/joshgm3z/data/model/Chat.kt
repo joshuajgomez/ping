@@ -8,7 +8,7 @@ import kotlin.random.Random
 
 @Entity
 data class Chat(
-    val message: String,
+    var message: String,
 ) {
     @PrimaryKey
     var docId: String = ""

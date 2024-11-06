@@ -1,7 +1,5 @@
 package com.joshgm3z.ping.ui.screens.chat
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,13 +9,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.AudioFile
 import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.VideoFile
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -27,11 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -39,6 +33,7 @@ import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.ping.ui.common.FilePdf
+import com.joshgm3z.ping.ui.common.FilePreview
 import com.joshgm3z.ping.ui.common.SendingBar
 import com.joshgm3z.ping.ui.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.ChatInlineUiState
@@ -181,46 +176,6 @@ fun InlinePreviewContent(
 
         else -> {}
 
-    }
-}
-
-@Composable
-private fun FilePreview(
-    chat: Chat
-) {
-    Row(
-        modifier = Modifier
-            .background(colorScheme.surfaceContainerHigh, RoundedCornerShape(10.dp))
-            .padding(start = 5.dp, end = 5.dp, top = 5.dp, bottom = 5.dp)
-            .fillMaxWidth()
-    ) {
-        FileIcon(chat.fileType)
-        Spacer(Modifier.size(7.dp))
-        Column(Modifier.weight(1f)) {
-            Text(
-                chat.fileName,
-                maxLines = 2,
-                fontSize = 14.sp,
-                overflow = TextOverflow.Ellipsis,
-                color = colorScheme.onSurface,
-                lineHeight = 22.sp
-            )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    chat.fileSize,
-                    fontSize = 12.sp,
-                    color = colorScheme.onSurface.copy(alpha = .5f),
-                    lineHeight = 17.sp
-                )
-                when {
-                    chat.fileLocalUriToUpload.isNotEmpty() -> FileSendingBar(chat.fileUploadProgress)
-                    chat.fileLocalUri.isEmpty() -> DownloadIcon()
-                }
-            }
-        }
     }
 }
 

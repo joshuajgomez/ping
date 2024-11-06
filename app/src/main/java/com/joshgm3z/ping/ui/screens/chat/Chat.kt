@@ -124,7 +124,7 @@ fun ChatItem(
     chat: Chat,
     onClick: (ChatInlineUiState) -> Unit = {},
     onLongClick: (ChatInlineUiState) -> Unit = {},
-    onSwipeRight: (ChatInlineUiState) -> Unit = {},
+    onSwipeRight: () -> Unit = {},
     viewModel: ChatViewModel? = getIfNotPreview { hiltViewModel() },
     defaultUiStateForPreview: ChatInlineUiState = ChatInlineUiState.Empty,
 ) {
@@ -133,7 +133,7 @@ fun ChatItem(
         confirmValueChange = { value ->
             when (value) {
                 SwipeToDismissBoxValue.StartToEnd -> {
-                    onSwipeRight(previewState)
+                    onSwipeRight()
                 }
 
                 else -> {}

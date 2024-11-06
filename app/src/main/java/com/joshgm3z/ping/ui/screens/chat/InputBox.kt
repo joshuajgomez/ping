@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -49,6 +50,8 @@ import coil3.compose.AsyncImage
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.R
 import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.ping.ui.common.FilePreview
+import com.joshgm3z.ping.ui.common.MessageBrief
 import com.joshgm3z.ping.ui.common.getCameraLauncher
 import com.joshgm3z.ping.ui.common.getGalleryLauncher
 import com.joshgm3z.ping.ui.common.getIfNotPreview
@@ -74,8 +77,8 @@ sealed class PingSheetClick {
 @Composable
 fun InputBox(
     viewModel: ChatInputViewModel? = getIfNotPreview { hiltViewModel() },
-    sheetState: PingSheetState,
-    onPreviewClick: (ChatInputUiState) -> Unit,
+    sheetState: PingSheetState = PingSheetState(),
+    onPreviewClick: (ChatInputUiState) -> Unit = {},
 ) {
     var text by remember { mutableStateOf("") }
     val topRadius = 20.dp
@@ -87,15 +90,17 @@ fun InputBox(
             .padding(10.dp)
     ) {
         val uiState = viewModel?.uiState?.collectAsState()
-        InputPreview(
-            uiState = uiState?.value ?: ChatInputUiState.Empty,
-            onDeleteClick = { viewModel?.clearPreviewState() },
-            onClick = {
-                uiState?.value?.let {
-                    onPreviewClick(it)
+        AnimatedVisibility(uiState?.value !is ChatInputUiState.Empty) {
+            InputPreview(
+                uiState = uiState?.value ?: ChatInputUiState.Empty,
+                onDeleteClick = { viewModel?.clearPreviewState() },
+                onClick = {
+                    uiState?.value?.let {
+                        onPreviewClick(it)
+                    }
                 }
-            }
-        )
+            )
+        }
         MessageBox(
             isEnabled = (text.isNotEmpty() || uiState?.value != ChatInputUiState.Empty),
             text = text,
@@ -224,87 +229,33 @@ private fun InputPreview(
     onDeleteClick: () -> Unit = {},
     onClick: () -> Unit = {},
 ) {
-    AnimatedVisibility(uiState !is ChatInputUiState.Empty) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onClick() },
-            contentAlignment = Alignment.TopEnd
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 10.dp,bottom = 10.dp),
+    ) {
+        Box(modifier = Modifier
+            .weight(1f)
+            .clip(RoundedCornerShape(10.dp))
+            .clickable { onClick() }) {
+            with(uiState) {
+                when (this) {
+                    is ChatInputUiState.Reply -> ReplyPreviewInline(chat, fromName)
+                    is ChatInputUiState.Image -> ImagePreviewInline(imageUri)
+                    is ChatInputUiState.File -> FilePreview(fileUri)
+
+                    else -> {}
+                }
+            }
+        }
+        IconButton(
+            onDeleteClick,
+            modifier = Modifier.padding(2.dp)
         ) {
             Icon(
                 Icons.Rounded.Close,
                 contentDescription = null,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(color = colorScheme.surface)
-                    .padding(3.dp)
-                    .clickable { onDeleteClick() },
-                tint = colorScheme.onSurface
-            )
-            Column(
-                modifier = Modifier
-                    .padding(
-                        bottom = 15.dp,
-                        start = 10.dp, end = 10.dp,
-                    )
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                with(uiState) {
-                    when (this) {
-                        is ChatInputUiState.Reply -> ReplyPreviewInline(chat, fromName)
-                        is ChatInputUiState.Image -> ImagePreviewInline(imageUri)
-                        is ChatInputUiState.File -> FilePreviewInline(this)
-
-                        else -> {}
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun FilePreviewInline(
-    uiState: ChatInputUiState.File
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(end = 30.dp)
-            .background(colorScheme.surfaceContainerHigh, RoundedCornerShape(10.dp))
-            .padding(start = 10.dp, end = 15.dp, top = 10.dp, bottom = 10.dp)
-            .fillMaxWidth()
-    ) {
-        Icon(
-            when (FileUtil.getFileTypeString(LocalContext.current, uiState.fileUri)) {
-                "pdf" -> Icons.Default.PictureAsPdf
-                "mp3" -> Icons.Default.AudioFile
-                "mpeg" -> Icons.Default.VideoFile
-                else -> Icons.Default.AttachFile
-            },
-            contentDescription = null,
-            modifier = Modifier
-                .size(40.dp)
-                .background(
-                    colorScheme.surface,
-                    RoundedCornerShape(10.dp)
-                )
-                .padding(5.dp),
-            tint = colorScheme.primary
-        )
-        Spacer(Modifier.size(15.dp))
-        Column {
-            Text(
-                FileUtil.getFileName(LocalContext.current, uiState.fileUri)
-                    .ifEmpty { "Unknown file" },
-                color = colorScheme.onSurface
-            )
-            Text(
-                FileUtil.getFileSizeString(LocalContext.current, uiState.fileUri)
-                    .ifEmpty { "100 MB" },
-                fontSize = 15.sp,
-                color = colorScheme.onSurface.copy(alpha = .5f)
+                tint = colorScheme.onSurface.copy(alpha = 0.5f),
             )
         }
     }
@@ -312,83 +263,58 @@ private fun FilePreviewInline(
 
 @Composable
 fun ImagePreviewInline(imageUri: Uri) {
-    Text(
-        "Send image",
-        fontWeight = FontWeight.Bold,
-        color = colorScheme.primary
+    AsyncImage(
+        model = imageUri,
+        contentDescription = null,
+        error = painterResource(R.drawable.wallpaper2),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+            .clip(RoundedCornerShape(chatBubbleRadius)),
+        contentScale = ContentScale.Crop,
     )
-    Spacer(Modifier.size(2.dp))
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        AsyncImage(
-            model = imageUri,
-            contentDescription = null,
-            error = painterResource(R.drawable.wallpaper2),
-            modifier = Modifier
-                .size(120.dp)
-                .clip(RoundedCornerShape(chatBubbleRadius)),
-            contentScale = ContentScale.Crop,
-        )
-        Spacer(Modifier.size(20.dp))
-        AddImage()
-    }
 }
 
 @Composable
 fun ReplyPreviewInline(chat: Chat, fromName: String) {
-    Text(
-        text = fromName,
-        fontWeight = FontWeight.Bold,
-        color = colorScheme.primary
-    )
-    Text(
-        text = chat.message,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        color = colorScheme.onSurface
-    )
-}
-
-@Composable
-fun AddImage(onClick: () -> Unit = {}) {
-    IconButton(
-        onClick = onClick,
+    Column(
         modifier = Modifier
-            .clip(CircleShape)
-            .background(colorScheme.primary)
+            .background(colorScheme.surfaceContainerHigh, RoundedCornerShape(10.dp))
+            .padding(10.dp)
+            .fillMaxWidth()
     ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = null,
-            tint = colorScheme.onPrimary,
-            modifier = Modifier.size(60.dp)
+        Text(
+            text = fromName,
+            fontWeight = FontWeight.Bold,
+            color = colorScheme.primary,
+            fontSize = 15.sp
         )
+        MessageBrief(chat)
     }
 }
 
 //@DarkPreview
 @Composable
-fun PreviewInputBox() {
+fun PreviewInputPreviewImage() {
     PingTheme {
         Box(Modifier.padding(10.dp)) {
-            MessageBox("", true, {}, {}, {}, PingSheetState({}, PingSheetClick.Gallery))
+            InputPreview(ChatInputUiState.Image(Uri.parse("")))
         }
     }
 }
 
 //@DarkPreview
 @Composable
-fun PreviewInputBoxImage() {
-    PingTheme {
-        Box(Modifier.padding(10.dp)) {
-//            ReplyContent(ChatInlineUiState.Image(""))
-        }
-    }
-}
-
-@DarkPreview
-@Composable
-fun PreviewInputBoxFile() {
+fun PreviewInputPreviewFile() {
     PingTheme {
         InputPreview(ChatInputUiState.File(Uri.parse("")))
+    }
+}
+
+//@DarkPreview
+@Composable
+fun PreviewInputPreviewReply() {
+    PingTheme {
+        InputPreview(ChatInputUiState.Reply(Chat(""), "This guy"))
     }
 }
