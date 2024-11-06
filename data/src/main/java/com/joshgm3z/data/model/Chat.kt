@@ -3,6 +3,8 @@ package com.joshgm3z.data.model
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import com.joshgm3z.data.util.FileType
+import com.joshgm3z.data.util.getFileType
 import com.joshgm3z.data.util.randomMessage
 import kotlin.random.Random
 
@@ -27,6 +29,8 @@ data class Chat(
     var fileSize: String = ""
     var fileType: String = ""
     var fileUploadProgress: Float = 0f
+
+    fun fileType(): FileType? = getFileType(fileType)
 
     @get:Ignore
     val webUrl: String
@@ -125,6 +129,5 @@ data class Chat(
         result = 31 * result + fileUploadProgress.hashCode()
         return result
     }
-
 
 }

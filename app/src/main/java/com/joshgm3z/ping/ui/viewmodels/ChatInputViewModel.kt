@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
+import com.joshgm3z.data.util.FileType
+import com.joshgm3z.data.util.getFileType
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.api.ImageRepository
@@ -12,7 +14,6 @@ import com.joshgm3z.utils.FileUtil
 import com.joshgm3z.utils.Logger
 import com.joshgm3z.utils.const.FirestoreKey
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -135,8 +136,8 @@ class ChatInputViewModel
     }
 
     fun updatePreviewStateWithFile(uri: Uri) {
-        when (fileUtil.getFileTypeString(uri)) {
-            "jpeg", "jpg", "png" -> {
+        when (getFileType(fileUtil.getFileTypeString(uri))) {
+            FileType.Image -> {
                 _uiState.value = ChatInputUiState.Image(uri)
             }
 

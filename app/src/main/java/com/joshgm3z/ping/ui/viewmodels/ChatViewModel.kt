@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
+import com.joshgm3z.data.util.FileType
 import com.joshgm3z.ping.graph.ChatScreen
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.CurrentUserInfo
@@ -114,15 +115,15 @@ class ChatViewModel
                 }
 
                 chat.fileOnlineUrl.isNotEmpty() || chat.fileLocalUri.isNotEmpty() -> {
-                    when (chat.fileType) {
-                        "jpeg", "jpg", "png" -> ChatInlineUiState.Image(chat)
+                    when (chat.fileType()) {
+                        is FileType.Image -> ChatInlineUiState.Image(chat)
                         else -> ChatInlineUiState.File(chat)
                     }
                 }
 
                 chat.fileLocalUriToUpload.isNotEmpty() -> {
-                    when (chat.fileType) {
-                        "jpeg", "jpg", "png" -> ChatInlineUiState.ImageUpload(chat)
+                    when (chat.fileType()) {
+                        is FileType.Image -> ChatInlineUiState.ImageUpload(chat)
                         else -> ChatInlineUiState.FileUpload(chat)
                     }
                 }
