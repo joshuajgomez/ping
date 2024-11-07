@@ -10,13 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowOutward
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -24,7 +21,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -34,11 +30,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.PingTopBar
+import com.joshgm3z.common.getIfNotPreview
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.ping.R
-import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.PingTopBar
-import com.joshgm3z.ping.ui.common.getIfNotPreview
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.ImageViewerViewModel
 import com.joshgm3z.ping.utils.getPrettyTime

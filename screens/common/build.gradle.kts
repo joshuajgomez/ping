@@ -1,9 +1,10 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.org.jetbrains.kotlin.android)
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.org.jetbrains.kotlin.serialization)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -11,11 +12,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.joshgm3z.common"
-        minSdk = 34
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = 33
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -35,6 +32,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+    buildFeatures {
+        compose = true
     }
 }
 

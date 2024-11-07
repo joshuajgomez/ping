@@ -20,8 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.data.model.Chat
-import com.joshgm3z.ping.ui.common.DarkPreview
 import com.joshgm3z.common.theme.PingTheme
 
 @Composable

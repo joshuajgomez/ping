@@ -12,9 +12,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.TwoPingButtons
 import com.joshgm3z.ping.R
-import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.TwoPingButtons
 import com.joshgm3z.ping.ui.screens.settings.SettingContainer
 import com.joshgm3z.common.theme.PingTheme
 

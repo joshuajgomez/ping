@@ -42,12 +42,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.util.randomUsers
-import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.common.UserImage
 import com.joshgm3z.ping.ui.screens.home.HomeChatItem
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.AllSearchUiState

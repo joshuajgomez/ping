@@ -5,10 +5,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.LoadingContainer
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.util.getHomeChatList
-import com.joshgm3z.ping.ui.common.DarkPreview
-import com.joshgm3z.ping.ui.common.LoadingContainer
 import com.joshgm3z.ping.ui.screens.chat.ChatScreen
 import com.joshgm3z.ping.ui.screens.chat.ImagePreview
 import com.joshgm3z.ping.ui.screens.chat.ImageViewer

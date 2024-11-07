@@ -6,8 +6,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import com.joshgm3z.ping.ui.common.CoolButton
-import com.joshgm3z.ping.ui.common.DarkPreview
+import com.joshgm3z.common.CoolButton
+import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.theme.Green50
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.utils.Logger

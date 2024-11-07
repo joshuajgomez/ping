@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.joshgm3z.ping.ui.common.LoadingContainer
+import com.joshgm3z.common.LoadingContainer
 import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
 import com.joshgm3z.ping.ui.screens.search.AllSearchContainer
 import com.joshgm3z.ping.ui.viewmodels.EditType
