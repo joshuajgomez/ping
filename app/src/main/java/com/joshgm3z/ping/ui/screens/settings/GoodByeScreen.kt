@@ -17,7 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.PingButton
-import com.joshgm3z.ping.graph.Frx
+import com.joshgm3z.ping.navigation.Frx
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.common.theme.Red20
 
@@ -33,7 +33,7 @@ fun PreviewGoodByeScreen() {
 fun GoodByeScreen(
     navController: NavHostController = rememberNavController(),
     onClick: () -> Unit = {
-        navController.navigate(Frx)
+        navController.navigate(com.joshgm3z.ping.navigation.Frx)
     }
 ) {
     Column(

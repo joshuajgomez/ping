@@ -39,14 +39,16 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.Setting
+import com.joshgm3z.common.SettingContainer
 import com.joshgm3z.common.SettingListCard
+import com.joshgm3z.common.UserImage
 import com.joshgm3z.common.getIfNotPreview
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.ping.R
-import com.joshgm3z.ping.graph.UserInfo
+import com.joshgm3z.ping.navigation.UserInfo
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.common.theme.Red20
 import com.joshgm3z.ping.ui.viewmodels.UserInfoUiState
@@ -71,7 +73,7 @@ private fun PreviewUserInfo() {
 fun NavController.navigateToUserInfo(
     userId: String,
 ) = navigate(
-    UserInfo(userId)
+    com.joshgm3z.ping.navigation.UserInfo(userId)
 )
 
 @Composable
@@ -118,7 +120,7 @@ fun UserInfoContent(
         onCloseClick = onGoBackClick
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            com.joshgm3z.common.UserImage(
+            UserImage(
                 imageUrl = user.imagePath,
                 modifier = Modifier.size(150.dp)
             )

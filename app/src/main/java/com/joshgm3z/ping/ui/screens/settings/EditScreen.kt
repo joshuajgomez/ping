@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
@@ -29,16 +27,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.joshgm3z.common.CustomTextField
 import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.SettingContainer
 import com.joshgm3z.common.TwoPingButtons
 import com.joshgm3z.common.getIfNotPreview
-import com.joshgm3z.ping.graph.EditScreen
+import com.joshgm3z.ping.navigation.EditScreen
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.EditScreenUiState
 import com.joshgm3z.ping.ui.viewmodels.EditScreenViewModel
 import com.joshgm3z.ping.ui.viewmodels.EditType
 
 fun NavController.navigateToEditScreen(editType: EditType) =
-    navigate(EditScreen(editType))
+    navigate(com.joshgm3z.ping.navigation.EditScreen(editType))
 
 @DarkPreview
 @Composable

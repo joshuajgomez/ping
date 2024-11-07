@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
-import com.joshgm3z.ping.graph.UserInfo
+import com.joshgm3z.ping.navigation.UserInfo
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.UserRepository
 import com.joshgm3z.utils.Logger
@@ -34,7 +34,7 @@ class UserInfoViewModel
     private val _uiState = MutableStateFlow<UserInfoUiState>(UserInfoUiState.Empty)
     val uiState = _uiState.asStateFlow()
 
-    private val userId: String = savedStateHandle.toRoute<UserInfo>().userId
+    private val userId: String = savedStateHandle.toRoute<com.joshgm3z.ping.navigation.UserInfo>().userId
     private var currentChats: List<Chat> = emptyList()
 
     init {

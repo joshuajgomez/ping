@@ -58,6 +58,7 @@ dependencies {
 
     implementation(project(":screens:frx"))
     implementation(project(":screens:common"))
+    implementation(project(":screens:navigation"))
 
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -9,9 +9,9 @@ import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.LoadingContainer
 import com.joshgm3z.data.util.getChatList
 import com.joshgm3z.data.util.getHomeChatList
-import com.joshgm3z.ping.ui.screens.chat.ChatScreen
-import com.joshgm3z.ping.ui.screens.chat.ImagePreview
-import com.joshgm3z.ping.ui.screens.chat.ImageViewer
+import com.joshgm3z.ping.chat.ChatScreen
+import com.joshgm3z.ping.chat.ImagePreview
+import com.joshgm3z.ping.chat.ImageViewer
 import com.joshgm3z.frx.FrxContainer
 import com.joshgm3z.ping.ui.screens.home.HomeAppBar
 import com.joshgm3z.ping.ui.screens.home.HomeChatList
@@ -21,7 +21,7 @@ import com.joshgm3z.ping.ui.screens.settings.ProfileSettings
 import com.joshgm3z.ping.ui.screens.settings.SignOutSetting
 import com.joshgm3z.ping.ui.screens.settings.UserInfoContent
 import com.joshgm3z.common.theme.PingTheme
-import com.joshgm3z.ping.ui.viewmodels.ChatListState
+import com.joshgm3z.ping.chat.viewmodels.ChatListState
 import com.joshgm3z.ping.ui.viewmodels.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -90,8 +90,8 @@ fun PreviewHomeScreenSettings() {
 @Composable
 private fun PreviewChatScreen() {
     PingTheme {
-        ChatScreen(
-            chatListState = ChatListState.Ready(getChatList()),
+        com.joshgm3z.ping.chat.ChatScreen(
+            chatListState = com.joshgm3z.ping.chat.viewmodels.ChatListState.Ready(getChatList()),
         )
     }
 }
@@ -100,7 +100,7 @@ private fun PreviewChatScreen() {
 @Composable
 private fun PreviewChatScreenEmpty() {
     PingTheme {
-        ChatScreen(chatListState = ChatListState.Empty)
+        com.joshgm3z.ping.chat.ChatScreen(chatListState = com.joshgm3z.ping.chat.viewmodels.ChatListState.Empty)
     }
 }
 
@@ -108,7 +108,7 @@ private fun PreviewChatScreenEmpty() {
 @Composable
 private fun PreviewChatScreenLoading() {
     PingTheme {
-        ChatScreen(chatListState = ChatListState.Loading)
+        com.joshgm3z.ping.chat.ChatScreen(chatListState = com.joshgm3z.ping.chat.viewmodels.ChatListState.Loading)
     }
 }
 
@@ -124,7 +124,7 @@ private fun PreviewUserInfo() {
 @Composable
 private fun PreviewImagePreview() {
     PingTheme {
-        ImagePreview()
+        com.joshgm3z.ping.chat.ImagePreview()
     }
 }
 
@@ -132,7 +132,7 @@ private fun PreviewImagePreview() {
 @Composable
 private fun PreviewImageViewer() {
     PingTheme {
-        ImageViewer()
+        com.joshgm3z.ping.chat.ImageViewer()
     }
 }
 

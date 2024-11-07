@@ -30,10 +30,10 @@ import com.joshgm3z.common.Setting
 import com.joshgm3z.common.SettingListCard
 import com.joshgm3z.common.getIfNotPreview
 import com.joshgm3z.data.util.randomUser
-import com.joshgm3z.ping.graph.ChatSettings
-import com.joshgm3z.ping.graph.Notifications
-import com.joshgm3z.ping.graph.Profile
-import com.joshgm3z.ping.graph.SignOut
+import com.joshgm3z.ping.navigation.ChatSettings
+import com.joshgm3z.ping.navigation.Notifications
+import com.joshgm3z.ping.navigation.Profile
+import com.joshgm3z.ping.navigation.SignOut
 import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
 import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
 import com.joshgm3z.common.theme.PingTheme
@@ -66,19 +66,19 @@ fun MainSettingsScreen(
             "Profile",
             "Edit profile details"
         ) {
-            navController.navigate(Profile)
+            navController.navigate(com.joshgm3z.ping.navigation.Profile)
         },
         Setting(
             "Chat Settings",
             "Change chat settings"
         ) {
-            navController.navigate(ChatSettings)
+            navController.navigate(com.joshgm3z.ping.navigation.ChatSettings)
         },
         Setting(
             "Notifications",
             "Modify how often you wanna be notified"
         ) {
-            navController.navigate(Notifications)
+            navController.navigate(com.joshgm3z.ping.navigation.Notifications)
         },
     )
 
@@ -87,7 +87,7 @@ fun MainSettingsScreen(
             "Sign out",
             icon = Icons.Default.Output
         ) {
-            navController.navigate(SignOut)
+            navController.navigate(com.joshgm3z.ping.navigation.SignOut)
         },
     )
 
@@ -97,7 +97,7 @@ fun MainSettingsScreen(
             .padding(horizontal = 20.dp)
     ) {
         ProfileView {
-            navController.navigate(Profile)
+            navController.navigate(com.joshgm3z.ping.navigation.Profile)
         }
         Spacer(Modifier.height(20.dp))
         SettingListCard(settingRouteList1)

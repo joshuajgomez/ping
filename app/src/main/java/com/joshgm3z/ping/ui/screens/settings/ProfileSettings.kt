@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.Setting
+import com.joshgm3z.common.SettingContainer
 import com.joshgm3z.common.SettingListCard
 import com.joshgm3z.common.getIfNotPreview
 import com.joshgm3z.data.model.User
@@ -29,7 +30,7 @@ import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.EditType
 import com.joshgm3z.ping.ui.viewmodels.UserViewModel
-import com.joshgm3z.ping.utils.getPrettyTime
+import com.joshgm3z.utils.getPrettyTime
 
 @DarkPreview
 @Composable

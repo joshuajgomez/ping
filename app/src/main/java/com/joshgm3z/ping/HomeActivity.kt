@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.joshgm3z.ping.graph.ChatScreen
-import com.joshgm3z.ping.graph.Frx
-import com.joshgm3z.ping.graph.Home
-import com.joshgm3z.ping.graph.PingNavHost
 import com.joshgm3z.ping.service.PingService
 import com.joshgm3z.common.theme.PingTheme
+import com.joshgm3z.ping.navigation.ChatScreen
+import com.joshgm3z.ping.navigation.Frx
+import com.joshgm3z.ping.navigation.Home
+import com.joshgm3z.ping.navigation.PingNavHost
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.utils.const.OPEN_CHAT_USER
 import dagger.hilt.android.AndroidEntryPoint

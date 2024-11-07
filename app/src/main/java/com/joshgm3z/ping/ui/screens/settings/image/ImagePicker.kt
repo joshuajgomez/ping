@@ -42,7 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.IconPicker
 import com.joshgm3z.common.Setting
-import com.joshgm3z.ping.ui.screens.settings.SettingContainer
+import com.joshgm3z.common.SettingContainer
 import com.joshgm3z.common.SettingListCard
 import com.joshgm3z.common.getCameraLauncher
 import com.joshgm3z.common.getGalleryLauncher

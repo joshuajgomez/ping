@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.common.MessageBrief
-import com.joshgm3z.ping.ui.screens.chat.StatusIcon
+import com.joshgm3z.ping.chat.StatusIcon
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.ui.viewmodels.HomeUiState
 import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
@@ -48,7 +48,7 @@ import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.common.theme.Gray60
-import com.joshgm3z.ping.utils.getPrettyTime
+import com.joshgm3z.utils.getPrettyTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -224,7 +224,7 @@ fun HomeChatItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AnimatedVisibility(visible = homeChat.lastChat.isOutwards) {
-                StatusIcon(
+                com.joshgm3z.ping.chat.StatusIcon(
                     status = homeChat.lastChat.status,
                     modifier = Modifier
                         .padding(end = 5.dp)

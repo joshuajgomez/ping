@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.joshgm3z.data.model.User
-import com.joshgm3z.ping.graph.EditScreen
+import com.joshgm3z.ping.navigation.EditScreen
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.api.UserRepository
 import com.joshgm3z.utils.const.FirestoreKey
@@ -47,7 +47,7 @@ constructor(
     private val type: EditType
 
     init {
-        savedStateHandle.toRoute<EditScreen>().let { it ->
+        savedStateHandle.toRoute<com.joshgm3z.ping.navigation.EditScreen>().let { it ->
             type = it.type
             when (it.type) {
                 EditType.Name -> _uiState.update {

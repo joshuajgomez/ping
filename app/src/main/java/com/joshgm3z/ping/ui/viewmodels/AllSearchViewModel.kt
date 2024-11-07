@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.ping.utils.DataUtil
-import com.joshgm3z.ping.utils.prettyTime
+import com.joshgm3z.utils.prettyTime
 import com.joshgm3z.repository.api.ChatRepository
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.repository.api.UserRepository
