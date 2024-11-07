@@ -25,9 +25,11 @@ import coil3.compose.AsyncImage
 import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.FilePreview
 import com.joshgm3z.common.SendingBar
+import com.joshgm3z.common.defaultChatImage
+import com.joshgm3z.common.defaultUserImage
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.common.theme.PingTheme
-import com.joshgm3z.ping.ui.viewmodels.ChatInlineUiState
+import com.joshgm3z.ping.chat.viewmodels.ChatInlineUiState
 
 @DarkPreview
 @Composable
@@ -120,7 +122,7 @@ fun InlinePreviewContent(
 
         is ChatInlineUiState.Image -> AsyncImage(
             model = uiState.chat.fileOnlineUrl,
-            error = painterResource(R.drawable.wallpaper2),
+            error = defaultUserImage(),
             contentDescription = null,
             modifier = Modifier
                 .height(150.dp)
@@ -133,7 +135,7 @@ fun InlinePreviewContent(
         is ChatInlineUiState.ImageUpload -> Box(contentAlignment = Alignment.BottomEnd) {
             AsyncImage(
                 model = uiState.chat.fileLocalUriToUpload,
-                error = painterResource(R.drawable.wallpaper2),
+                error = defaultChatImage(),
                 contentDescription = null,
                 modifier = Modifier
                     .height(150.dp)
@@ -147,7 +149,7 @@ fun InlinePreviewContent(
             AsyncImage(
                 model = null,
                 contentDescription = null,
-                error = painterResource(R.drawable.wallpaper2),
+                error = defaultChatImage(),
                 modifier = Modifier
                     .height(100.dp)
                     .fillMaxWidth(),

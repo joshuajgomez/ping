@@ -43,6 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.joshgm3z.common.FilePreview
 import com.joshgm3z.common.MessageBrief
+import com.joshgm3z.common.defaultChatImage
 import com.joshgm3z.common.getCameraLauncher
 import com.joshgm3z.common.getGalleryLauncher
 import com.joshgm3z.common.getIfNotPreview
@@ -50,8 +51,8 @@ import com.joshgm3z.common.launchFilePicker
 import com.joshgm3z.common.launchImagePicker
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.common.theme.PingTheme
-import com.joshgm3z.ping.ui.viewmodels.ChatInputUiState
-import com.joshgm3z.ping.ui.viewmodels.ChatInputViewModel
+import com.joshgm3z.ping.chat.viewmodels.ChatInputUiState
+import com.joshgm3z.ping.chat.viewmodels.ChatInputViewModel
 import com.joshgm3z.utils.FileUtil
 
 data class PingSheetState(
@@ -258,7 +259,7 @@ fun ImagePreviewInline(imageUri: Uri) {
     AsyncImage(
         model = imageUri,
         contentDescription = null,
-        error = painterResource(R.drawable.wallpaper2),
+        error = defaultChatImage(),
         modifier = Modifier
             .fillMaxWidth()
             .height(150.dp)

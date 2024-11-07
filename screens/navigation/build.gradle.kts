@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -8,7 +9,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 34
+        minSdk = 33
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -47,4 +48,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.androidx.material3)
+
 }

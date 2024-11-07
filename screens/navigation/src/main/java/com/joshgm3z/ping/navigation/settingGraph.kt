@@ -5,23 +5,34 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.joshgm3z.ping.ui.screens.settings.EditScreen
-import com.joshgm3z.ping.ui.screens.settings.ProfileSettings
+import com.joshgm3z.settings.EditScreen
+import com.joshgm3z.settings.ProfileSettings
 import com.joshgm3z.common.SettingContainer
-import com.joshgm3z.ping.ui.screens.settings.SignOutSetting
-import com.joshgm3z.ping.ui.screens.settings.UserInfo
-import com.joshgm3z.ping.ui.screens.settings.image.ImagePickerContainer
-import com.joshgm3z.ping.ui.screens.settings.navigateToEditScreen
+import com.joshgm3z.common.navigation.ChatSettings
+import com.joshgm3z.common.navigation.Credits
+import com.joshgm3z.common.navigation.EditScreenRoute
+import com.joshgm3z.common.navigation.Frx
+import com.joshgm3z.common.navigation.ImagePicker
+import com.joshgm3z.common.navigation.Notifications
+import com.joshgm3z.common.navigation.PingDialogRoute
+import com.joshgm3z.common.navigation.Profile
+import com.joshgm3z.common.navigation.SettingRoute
+import com.joshgm3z.common.navigation.SignOut
+import com.joshgm3z.common.navigation.UserInfoRoute
+import com.joshgm3z.settings.SignOutSetting
+import com.joshgm3z.settings.UserInfo
+import com.joshgm3z.settings.image.ImagePickerContainer
+import com.joshgm3z.settings.navigateToEditScreen
 
 fun NavGraphBuilder.settingGraph(
     navController: NavHostController,
     onBackClick: () -> Unit = { navController.goBack() },
 ) {
-    navigation<SettingRoute>(startDestination = com.joshgm3z.ping.navigation.Profile) {
+    navigation<SettingRoute>(startDestination = Profile) {
         composable<Profile>(enterTransition = slideIn) {
             ProfileSettings(
                 onGoBackClick = onBackClick,
-                openImagePicker = { navController.navigate(com.joshgm3z.ping.navigation.ImagePicker) },
+                openImagePicker = { navController.navigate(ImagePicker) },
                 openEditScreen = navController::navigateToEditScreen,
             )
         }
@@ -30,7 +41,7 @@ fun NavGraphBuilder.settingGraph(
                 closePicker = onBackClick,
             )
         }
-        composable<UserInfo>(enterTransition = slideIn) {
+        composable<UserInfoRoute>(enterTransition = slideIn) {
             UserInfo(
                 onGoBackClick = onBackClick,
                 showClearSuccess = {
@@ -66,14 +77,14 @@ fun NavGraphBuilder.settingGraph(
                 Text("Who do you think made all this ?")
             }
         }
-        composable<EditScreen>(enterTransition = slideIn) {
+        composable<EditScreenRoute>(enterTransition = slideIn) {
             EditScreen(goBack = onBackClick)
         }
         composable<SignOut>(enterTransition = slideIn) {
             SignOutSetting(
                 onBackClick = onBackClick,
                 onLoggedOut = {
-                    navController.navigate(com.joshgm3z.ping.navigation.Frx) {
+                    navController.navigate(Frx) {
                         popUpTo(navController.graph.id) {
                             inclusive = true
                         }

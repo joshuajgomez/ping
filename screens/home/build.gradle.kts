@@ -4,10 +4,11 @@ plugins {
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.org.jetbrains.kotlin.serialization)
 }
 
 android {
-    namespace = "com.joshgm3z.ping.search"
+    namespace = "com.joshgm3z.ping.home"
     compileSdk = 34
 
     defaultConfig {
@@ -27,11 +28,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
 }
 
@@ -44,6 +45,8 @@ dependencies {
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(project(":screens:settings"))
+    implementation(project(":screens:search"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -57,4 +60,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
+
+    implementation (libs.kotlinx.serialization.json)
 }

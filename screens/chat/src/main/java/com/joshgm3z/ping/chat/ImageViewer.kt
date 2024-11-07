@@ -32,14 +32,13 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.PingTopBar
+import com.joshgm3z.common.defaultUserImage
 import com.joshgm3z.common.getIfNotPreview
+import com.joshgm3z.common.navigation.ChatImageViewer
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.common.theme.PingTheme
-
-@Serializable
-data class ChatImageViewer(
-    val chatId: String,
-)
+import com.joshgm3z.ping.chat.viewmodels.ImageViewerViewModel
+import com.joshgm3z.utils.getPrettyTime
 
 fun NavController.navigateToImageViewer(
     chatId: String
@@ -122,7 +121,7 @@ fun ImageBox(
         AsyncImage(
             chat.fileOnlineUrl,
             contentDescription = null,
-            error = painterResource(R.drawable.default_user),
+            error = defaultUserImage(),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
         )

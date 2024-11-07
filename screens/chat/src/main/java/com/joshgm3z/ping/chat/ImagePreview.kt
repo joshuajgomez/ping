@@ -15,6 +15,7 @@ import coil3.compose.AsyncImage
 import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.SettingContainer
 import com.joshgm3z.common.TwoPingButtons
+import com.joshgm3z.common.defaultChatImage
 import com.joshgm3z.common.theme.PingTheme
 
 @DarkPreview
@@ -52,7 +53,7 @@ fun ImagePreviewContent(
     Column {
         AsyncImage(
             model = imageUri,
-            error = painterResource(R.drawable.default_image),
+            error = defaultChatImage(),
             contentDescription = null,
             modifier = Modifier
                 .weight(1f)

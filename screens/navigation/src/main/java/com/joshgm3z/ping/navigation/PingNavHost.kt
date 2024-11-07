@@ -9,72 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.joshgm3z.common.LoadingContainer
-import com.joshgm3z.ping.ui.screens.home.HomeScreenContainer
-import com.joshgm3z.ping.ui.screens.search.AllSearchContainer
-import com.joshgm3z.ping.ui.viewmodels.EditType
-
-@Serializable
-data object Parent
-
-@Serializable
-data object Frx
-
-@Serializable
-data object SignIn
-
-@Serializable
-data class Welcome(val name: String)
-
-@Serializable
-data class Loading(val message: String)
-
-@Serializable
-data object Home
-
-fun NavController.navigateToHome() = navigate(com.joshgm3z.ping.navigation.Home){
-    popUpTo(graph.id) {
-        inclusive = true
-    }
-}
-
-@Serializable
-data object AllSearch
-
-@Serializable
-data class ChatScreen(val userId: String, val chatId: String = "")
-
-@Serializable
-data class PingDialogRoute(val title: String, val message: String)
-
-@Serializable
-data object SettingRoute
-
-@Serializable
-data object Profile
-
-@Serializable
-data object ImagePicker
-
-@Serializable
-data object ChatSettings
-
-@Serializable
-data object Notifications
-
-@Serializable
-data class UserInfo(val userId: String)
-
-@Serializable
-data object Credits
-
-@Serializable
-data class EditScreen(val type: EditType)
-
-@Serializable
-data object SignOut
-
-@Serializable
-data object GoodBye
+import com.joshgm3z.common.navigation.Parent
 
 fun NavController.goBack() = popBackStack()
 

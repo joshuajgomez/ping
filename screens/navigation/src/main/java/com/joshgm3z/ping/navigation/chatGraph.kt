@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.joshgm3z.common.PdfViewer
 import com.joshgm3z.common.navigation.PdfViewerRoute
-import com.joshgm3z.ping.ui.screens.settings.navigateToUserInfo
+import com.joshgm3z.settings.navigateToUserInfo
 
 fun NavGraphBuilder.chatGraph(navController: NavHostController) {
     composable<ChatScreen>(enterTransition = slideIn, exitTransition = slideOut) { it ->

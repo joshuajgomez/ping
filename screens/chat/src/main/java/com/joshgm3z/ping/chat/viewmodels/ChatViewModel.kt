@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.joshgm3z.common.navigation.ChatScreen
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.User
 import com.joshgm3z.data.util.FileType

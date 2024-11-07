@@ -5,9 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.joshgm3z.frx.FrxContainer
-import com.joshgm3z.frx.WelcomeScreen
-import com.joshgm3z.ping.ui.screens.settings.GoodByeScreen
+import com.joshgm3z.settings.GoodByeScreen
 
 fun NavGraphBuilder.frxGraph(navController: NavHostController) {
     navigation<Frx>(startDestination = com.joshgm3z.ping.navigation.SignIn) {
