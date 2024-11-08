@@ -1,5 +1,6 @@
 package com.joshgm3z.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -89,7 +91,7 @@ private fun SettingTitle(
 ) {
     TopAppBar(
         scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(),
-        expandedHeight = 150.dp,
+        expandedHeight = 120.dp,
         title = {
             Column(
                 modifier = Modifier
@@ -98,22 +100,29 @@ private fun SettingTitle(
             ) {
                 IconButton(
                     onCloseClick,
-                    enabled = isCloseEnabled
+                    enabled = isCloseEnabled,
+                    modifier = Modifier
+                        .background(
+                            colorScheme.onPrimary,
+                            shape = CircleShape
+                        )
+                        .size(40.dp),
                 ) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = null,
-                        modifier = Modifier.size(30.dp),
+                        modifier = Modifier
+                            .size(25.dp),
                         tint = when {
-                            isCloseEnabled -> colorScheme.onSurface
-                            else -> colorScheme.onSurface.copy(alpha = 0.5f)
+                            isCloseEnabled -> colorScheme.primary
+                            else -> colorScheme.primary.copy(alpha = 0.5f)
                         }
                     )
                 }
                 Spacer(Modifier.weight(1f))
                 Text(
                     title,
-                    fontSize = 35.sp,
+                    fontSize = 32.sp,
                     color = colorScheme.onSurface,
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )
