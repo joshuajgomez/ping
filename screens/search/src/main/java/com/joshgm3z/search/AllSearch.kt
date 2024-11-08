@@ -314,7 +314,7 @@ fun SearchHeader(
         items(list) {
             val title = when {
                 it.second == 0 -> it.first.name
-                else -> "${it.first}(${it.second})"
+                else -> "${it.first} (${it.second})"
             }
             SearchChip(
                 title = title,
@@ -333,15 +333,16 @@ fun SearchChip(
     onClick: () -> Unit = {}
 ) {
     val textColor = when {
-        isSelected -> colorScheme.onPrimary
-        else -> colorScheme.primary
+        isSelected -> colorScheme.primary
+        else -> colorScheme.onSurface.copy(alpha = 0.5f)
     }
     val bgColor = when {
-        isSelected -> colorScheme.primary
-        else -> colorScheme.onPrimary
+        isSelected -> colorScheme.onPrimary
+        else -> colorScheme.surfaceContainer
     }
     Text(
         text = title,
+        fontSize = 14.sp,
         modifier = Modifier
             .clip(shape = RoundedCornerShape(20.dp))
             .clickable { onClick() }
