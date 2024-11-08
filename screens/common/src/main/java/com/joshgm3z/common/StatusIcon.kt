@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.chat
+package com.joshgm3z.common
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons

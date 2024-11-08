@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.utils
+package com.joshgm3z.data.util
 
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.HomeChat

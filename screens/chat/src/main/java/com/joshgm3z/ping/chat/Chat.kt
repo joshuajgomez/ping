@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.StatusIcon
 import com.joshgm3z.common.getIfNotPreview
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.data.model.Chat

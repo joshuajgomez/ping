@@ -9,7 +9,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.joshgm3z.common.LoadingContainer
+import com.joshgm3z.common.navigation.AllSearch
+import com.joshgm3z.common.navigation.ChatScreen
+import com.joshgm3z.common.navigation.Home
+import com.joshgm3z.common.navigation.Loading
 import com.joshgm3z.common.navigation.Parent
+import com.joshgm3z.ping.home.HomeScreenContainer
+import com.joshgm3z.ping.ui.screens.search.AllSearchContainer
 
 fun NavController.goBack() = popBackStack()
 
@@ -53,7 +59,7 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
     composable<Home> {
         HomeScreenContainer(
             navController = navController,
-            onSearchClick = { navController.navigate(com.joshgm3z.ping.navigation.AllSearch) }
+            onSearchClick = { navController.navigate(AllSearch) }
         )
     }
 }

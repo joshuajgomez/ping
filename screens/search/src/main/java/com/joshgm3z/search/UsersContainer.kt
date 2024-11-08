@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.ui.screens.search
+package com.joshgm3z.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -29,16 +29,16 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.common.CustomTextField
 import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.HomeAppBarContainer
 import com.joshgm3z.common.SmallCard
 import com.joshgm3z.common.getIfNotPreview
+import com.joshgm3z.common.home.PingBottomAppBar
 import com.joshgm3z.data.model.User
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.data.util.randomUser
 import com.joshgm3z.data.util.randomUsers
-import com.joshgm3z.ping.ui.screens.home.HomeAppBarContainer
-import com.joshgm3z.ping.ui.screens.home.PingBottomAppBar
-import com.joshgm3z.ping.ui.viewmodels.SearchUiState
-import com.joshgm3z.ping.ui.viewmodels.SearchViewModel
+import com.joshgm3z.search.viewmodels.SearchUiState
+import com.joshgm3z.search.viewmodels.SearchViewModel
 import com.joshgm3z.utils.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

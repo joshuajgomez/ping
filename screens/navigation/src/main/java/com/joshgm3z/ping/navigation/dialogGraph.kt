@@ -4,6 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.dialog
 import androidx.navigation.toRoute
+import com.joshgm3z.common.navigation.PingDialogRoute
 import com.joshgm3z.ping.ui.screens.settings.PingDialog
 
 fun NavGraphBuilder.dialogGraph(navController: NavHostController) {

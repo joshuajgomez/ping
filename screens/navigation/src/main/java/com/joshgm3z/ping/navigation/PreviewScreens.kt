@@ -4,21 +4,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.HomeAppBar
 import com.joshgm3z.common.LoadingContainer
-//import com.joshgm3z.data.util.getChatList
-//import com.joshgm3z.data.util.getHomeChatList
+import com.joshgm3z.common.home.PingBottomAppBar
 import com.joshgm3z.frx.FrxContainer
-import com.joshgm3z.ping.home.HomeAppBar
 import com.joshgm3z.ping.home.HomeChatList
-import com.joshgm3z.ping.home.PingBottomAppBar
-import com.joshgm3z.ping.ui.screens.settings.MainSettingsScreen
+import com.joshgm3z.settings.MainSettingsScreen
 import com.joshgm3z.settings.ProfileSettings
 import com.joshgm3z.settings.SignOutSetting
 import com.joshgm3z.settings.UserInfoContent
 import com.joshgm3z.common.theme.PingTheme
-//import com.joshgm3z.ping.home.viewmodels.HomeUiState
+import com.joshgm3z.data.util.getChatList
+import com.joshgm3z.ping.chat.viewmodels.ChatListState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @DarkPreview
@@ -52,15 +50,15 @@ fun PreviewHomeScreenList() {
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
 fun PreviewHomeScreenListEmpty() {
     PingTheme {
         Scaffold(
-            topBar = { com.joshgm3z.ping.home.HomeAppBar() },
-            bottomBar = { com.joshgm3z.ping.home.PingBottomAppBar() },
+            topBar = { HomeAppBar() },
+            bottomBar = { PingBottomAppBar() },
         ) {
-            com.joshgm3z.ping.home.HomeChatList(
+            HomeChatList(
                 modifier = Modifier.padding(it),
                 uiState = MutableStateFlow(com.joshgm3z.ping.home.viewmodels.HomeUiState.Empty())
             )
@@ -68,25 +66,25 @@ fun PreviewHomeScreenListEmpty() {
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
 fun PreviewHomeScreenSettings() {
     PingTheme {
         Scaffold(
-            topBar = { com.joshgm3z.ping.home.HomeAppBar() },
-            bottomBar = { com.joshgm3z.ping.home.PingBottomAppBar() },
+            topBar = { HomeAppBar() },
+            bottomBar = { PingBottomAppBar() },
         ) {
             MainSettingsScreen(modifier = Modifier.padding(it))
         }
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
 private fun PreviewChatScreen() {
     PingTheme {
         com.joshgm3z.ping.chat.ChatScreen(
-            chatListState = com.joshgm3z.ping.chat.viewmodels.ChatListState.Ready(getChatList()),
+            chatListState = ChatListState.Ready(getChatList()),
         )
     }
 }
@@ -95,7 +93,7 @@ private fun PreviewChatScreen() {
 @Composable
 private fun PreviewChatScreenEmpty() {
     PingTheme {
-        com.joshgm3z.ping.chat.ChatScreen(chatListState = com.joshgm3z.ping.chat.viewmodels.ChatListState.Empty)
+        com.joshgm3z.ping.chat.ChatScreen(chatListState = ChatListState.Empty)
     }
 }
 
@@ -103,7 +101,7 @@ private fun PreviewChatScreenEmpty() {
 @Composable
 private fun PreviewChatScreenLoading() {
     PingTheme {
-        com.joshgm3z.ping.chat.ChatScreen(chatListState = com.joshgm3z.ping.chat.viewmodels.ChatListState.Loading)
+        com.joshgm3z.ping.chat.ChatScreen(chatListState = ChatListState.Loading)
     }
 }
 
@@ -147,7 +145,7 @@ private fun PreviewSignOutSetting() {
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
 private fun PreviewLoadingContainer() {
     PingTheme {

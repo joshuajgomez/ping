@@ -5,7 +5,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.joshgm3z.common.PdfViewer
+import com.joshgm3z.common.navigation.ChatImageViewer
+import com.joshgm3z.common.navigation.ChatScreen
 import com.joshgm3z.common.navigation.PdfViewerRoute
+import com.joshgm3z.ping.chat.ChatScreenContainer
+import com.joshgm3z.ping.chat.navigateToImageViewer
 import com.joshgm3z.settings.navigateToUserInfo
 
 fun NavGraphBuilder.chatGraph(navController: NavHostController) {
@@ -18,7 +22,7 @@ fun NavGraphBuilder.chatGraph(navController: NavHostController) {
             scrollToChatId = it.toRoute<ChatScreen>().chatId,
         )
     }
-    composable<com.joshgm3z.ping.chat.ChatImageViewer> {
+    composable<ChatImageViewer> {
         com.joshgm3z.ping.chat.ImageViewer(onBackClick = navController::goBack)
     }
     composable<PdfViewerRoute> {

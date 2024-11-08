@@ -33,23 +33,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.HomeAppBarContainer
-import com.joshgm3z.common.MessageBrief
-import com.joshgm3z.ping.chat.StatusIcon
+import com.joshgm3z.common.home.HomeChatItem
+import com.joshgm3z.common.home.PingBottomAppBar
 import com.joshgm3z.common.theme.PingTheme
-import com.joshgm3z.ping.ui.viewmodels.HomeUiState
-import com.joshgm3z.ping.ui.viewmodels.HomeViewModel
 import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.model.Chat
 import com.joshgm3z.data.model.HomeChat
 import com.joshgm3z.common.theme.Gray60
-import com.joshgm3z.utils.getPrettyTime
+import com.joshgm3z.ping.home.viewmodels.HomeUiState
+import com.joshgm3z.ping.home.viewmodels.HomeViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -74,7 +71,7 @@ fun PreviewHomeChatList() {
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
 fun PreviewHomeSentChat(isOutwards: Boolean = true) {
     PingTheme {
@@ -86,7 +83,7 @@ fun PreviewHomeSentChat(isOutwards: Boolean = true) {
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
 fun PreviewHomeReceivedChat() {
     PingTheme {
@@ -97,7 +94,7 @@ fun PreviewHomeReceivedChat() {
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
 fun PreviewHomeReceivedChat2() {
     PingTheme {
@@ -110,7 +107,7 @@ fun PreviewHomeReceivedChat2() {
     }
 }
 
-@Preview
+@DarkPreview
 @Composable
 fun PreviewHomeReceivedChat3() {
     PingTheme {
@@ -184,93 +181,6 @@ fun SearchBoxView(onClick: () -> Unit, modifier: Modifier, hintText: String) {
             .padding(horizontal = 15.dp, vertical = 8.dp),
         color = colorScheme.onSurface.copy(alpha = 0.4f)
     )
-}
-
-@Composable
-fun HomeChatItem(
-    homeChat: HomeChat = HomeChat.random(),
-    onChatClick: (homeChat: HomeChat) -> Unit = {},
-) {
-    ConstraintLayout(modifier = Modifier.clickable { onChatClick(homeChat) }) {
-        val (message, user, count, image, line, time) = createRefs()
-        com.joshgm3z.common.UserImage(
-            modifier = Modifier
-                .clip(shape = CircleShape)
-                .size(45.dp)
-                .constrainAs(image) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start, margin = 15.dp)
-                },
-            imageUrl = homeChat.otherGuy.imagePath
-        )
-        Text(
-            text = homeChat.otherGuy.name,
-            color = colorScheme.onSurface,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier
-                .constrainAs(user) {
-                    top.linkTo(parent.top, margin = 8.dp)
-                    start.linkTo(image.end, margin = 15.dp)
-                }
-                .widthIn(max = 260.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        Row(
-            modifier = Modifier.constrainAs(message) {
-                top.linkTo(user.bottom)
-                start.linkTo(user.start)
-            },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AnimatedVisibility(visible = homeChat.lastChat.isOutwards) {
-                com.joshgm3z.ping.chat.StatusIcon(
-                    status = homeChat.lastChat.status,
-                    modifier = Modifier
-                        .padding(end = 5.dp)
-                        .size(17.dp)
-                )
-            }
-            MessageBrief(homeChat.lastChat)
-        }
-        Text(
-            text = getPrettyTime(homeChat.lastChat.sentTime),
-            color = if (homeChat.count > 0) {
-                colorScheme.primary
-            } else {
-                colorScheme.outline
-            },
-            fontSize = 13.sp,
-            modifier = Modifier
-                .constrainAs(time) {
-                    top.linkTo(user.top)
-                    end.linkTo(parent.end, margin = 15.dp)
-                },
-        )
-        AnimatedVisibility(
-            visible = homeChat.count > 0,
-            modifier = Modifier.constrainAs(count) {
-                top.linkTo(time.bottom, margin = 3.dp)
-                end.linkTo(time.end)
-            }
-        ) {
-            Text(
-                text = "${homeChat.count}",
-                fontSize = 15.sp,
-                color = colorScheme.primary,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(colorScheme.primaryContainer)
-                    .padding(horizontal = 8.dp, vertical = 0.dp)
-            )
-        }
-        HorizontalDivider(
-            color = colorScheme.outlineVariant.copy(alpha = 0.4f),
-            modifier = Modifier.constrainAs(line) {
-                top.linkTo(image.bottom, margin = 10.dp)
-            })
-    }
 }
 
 //@Preview

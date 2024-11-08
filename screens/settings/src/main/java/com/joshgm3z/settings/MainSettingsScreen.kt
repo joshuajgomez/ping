@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.ui.screens.settings
+package com.joshgm3z.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +30,7 @@ import com.joshgm3z.common.HomeAppBarContainer
 import com.joshgm3z.common.Setting
 import com.joshgm3z.common.SettingListCard
 import com.joshgm3z.common.getIfNotPreview
+import com.joshgm3z.common.home.PingBottomAppBar
 import com.joshgm3z.common.navigation.ChatSettings
 import com.joshgm3z.common.navigation.Notifications
 import com.joshgm3z.common.navigation.Profile
