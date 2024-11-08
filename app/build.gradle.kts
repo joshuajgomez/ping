@@ -52,13 +52,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":data"))
-    implementation(project(":utils"))
     implementation(project(":repository"))
-
-    implementation(project(":screens:frx"))
-    implementation(project(":screens:common"))
     implementation(project(":screens:navigation"))
+    implementation(project(":utils"))
 
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

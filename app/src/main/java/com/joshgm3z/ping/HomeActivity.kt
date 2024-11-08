@@ -1,17 +1,10 @@
 package com.joshgm3z.ping
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import com.joshgm3z.common.navigation.ChatScreen
-import com.joshgm3z.common.navigation.Frx
-import com.joshgm3z.common.navigation.Home
 import com.joshgm3z.ping.service.PingService
-import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.navigation.PingNavHost
 import com.joshgm3z.repository.api.CurrentUserInfo
 import com.joshgm3z.utils.const.OPEN_CHAT_USER
@@ -30,26 +23,21 @@ class HomeActivity : ComponentActivity() {
             PingService.start(this)
         }
         setContent {
-            PingTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val startRoute: Any = when {
-                        intent.hasExtra(OPEN_CHAT_USER) -> with(intent) {
-                            val userId = getStringExtra(OPEN_CHAT_USER)!!
-                            removeExtra(OPEN_CHAT_USER)
-                            ChatScreen(userId)
-                        }
-
-                        currentUserInfo.isSignedIn -> Home
-
-                        else -> Frx
-                    }
-                    PingNavHost(startRoute)
-                }
-            }
+            PingNavHost(
+                getOpenChatUserId(intent),
+                currentUserInfo.isSignedIn
+            )
         }
+    }
+
+    private fun getOpenChatUserId(intent: Intent) = when {
+        intent.hasExtra(OPEN_CHAT_USER) -> with(intent) {
+            val userId = getStringExtra(OPEN_CHAT_USER)
+            removeExtra(OPEN_CHAT_USER)
+            userId
+        }
+
+        else -> null
     }
 
 }

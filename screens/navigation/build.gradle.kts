@@ -34,17 +34,17 @@ android {
 }
 
 dependencies {
+    implementation(project(":data"))
     implementation(project(":screens:common"))
     implementation(project(":screens:chat"))
     implementation(project(":screens:frx"))
     implementation(project(":screens:search"))
     implementation(project(":screens:settings"))
+    implementation(project(":screens:home"))
 
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(project(":screens:home"))
-    implementation(project(":data"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

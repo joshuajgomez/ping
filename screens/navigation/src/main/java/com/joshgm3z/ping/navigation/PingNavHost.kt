@@ -11,29 +11,42 @@ import androidx.navigation.toRoute
 import com.joshgm3z.common.LoadingContainer
 import com.joshgm3z.common.navigation.AllSearch
 import com.joshgm3z.common.navigation.ChatScreen
+import com.joshgm3z.common.navigation.Frx
 import com.joshgm3z.common.navigation.Home
 import com.joshgm3z.common.navigation.Loading
 import com.joshgm3z.common.navigation.Parent
+import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.home.HomeScreenContainer
 import com.joshgm3z.ping.ui.screens.search.AllSearchContainer
 
 fun NavController.goBack() = popBackStack()
 
 @Composable
-fun PingNavHost(startRoute: Any) {
+fun PingNavHost(
+    openChatUserId: String?,
+    isUserSignedIn: Boolean,
+) {
+    val startRoute: Any = when {
+        openChatUserId != null -> ChatScreen(openChatUserId)
+        isUserSignedIn -> Home
+        else -> Frx
+    }
+
     val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = startRoute,
-        route = Parent::class
-    ) {
-        frxGraph(navController)
-        loadingGraph(navController)
-        homeGraph(navController)
-        searchGraph(navController)
-        chatGraph(navController)
-        settingGraph(navController)
-        dialogGraph(navController)
+    PingTheme {
+        NavHost(
+            navController = navController,
+            startDestination = startRoute,
+            route = Parent::class
+        ) {
+            frxGraph(navController)
+            loadingGraph(navController)
+            homeGraph(navController)
+            searchGraph(navController)
+            chatGraph(navController)
+            settingGraph(navController)
+            dialogGraph(navController)
+        }
     }
 }
 
