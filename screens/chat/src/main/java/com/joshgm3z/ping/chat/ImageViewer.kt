@@ -23,14 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil3.compose.AsyncImage
 import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.OnlineImage
 import com.joshgm3z.common.PingTopBar
 import com.joshgm3z.common.defaultUserImage
 import com.joshgm3z.common.getIfNotPreview
@@ -118,12 +116,10 @@ fun ImageBox(
     Box(
         modifier = modifier.fillMaxSize(),
     ) {
-        AsyncImage(
-            chat.fileOnlineUrl,
-            contentDescription = null,
+        OnlineImage(
+            model = chat.fileOnlineUrl,
             error = defaultUserImage(),
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
         )
         Column(
             Modifier.fillMaxSize(),

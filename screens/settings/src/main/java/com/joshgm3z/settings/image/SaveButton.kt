@@ -1,4 +1,4 @@
-package com.joshgm3z.ping.ui.screens.settings.image
+package com.joshgm3z.settings.image
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

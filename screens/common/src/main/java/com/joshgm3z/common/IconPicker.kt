@@ -41,7 +41,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil3.compose.AsyncImage
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.common.viewmodels.IconPickerUiState
 import com.joshgm3z.common.viewmodels.IconPickerViewModel
@@ -205,10 +204,9 @@ private fun IconItem(
         contentAlignment = Alignment.Center,
         modifier = Modifier.size(110.dp)
     ) {
-        AsyncImage(
+        OnlineImage(
             model = imageUrl,
             error = painterResource(R.drawable.default_user),
-            contentDescription = null,
             modifier = Modifier
                 .padding(vertical = 5.dp, horizontal = 5.dp)
                 .clip(CircleShape)

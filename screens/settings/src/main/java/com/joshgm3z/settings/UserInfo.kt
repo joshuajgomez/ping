@@ -35,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil3.compose.AsyncImage
 import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.OnlineImage
 import com.joshgm3z.common.Setting
 import com.joshgm3z.common.SettingContainer
 import com.joshgm3z.common.SettingListCard
@@ -226,11 +226,9 @@ fun MediaItem(
     openImageViewer: () -> Unit,
 ) {
     Box(Modifier.clickable { openImageViewer() }) {
-        AsyncImage(
+        OnlineImage(
             chat.fileOnlineUrl,
             error = defaultChatImage(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(80.dp)
                 .clip(RoundedCornerShape(5.dp))

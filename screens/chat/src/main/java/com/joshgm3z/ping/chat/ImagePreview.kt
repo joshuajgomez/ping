@@ -8,11 +8,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.OnlineImage
 import com.joshgm3z.common.SettingContainer
 import com.joshgm3z.common.TwoPingButtons
 import com.joshgm3z.common.defaultChatImage
@@ -51,14 +49,12 @@ fun ImagePreviewContent(
     onCancelClick: () -> Unit = {},
 ) {
     Column {
-        AsyncImage(
+        OnlineImage(
             model = imageUri,
             error = defaultChatImage(),
-            contentDescription = null,
             modifier = Modifier
                 .weight(1f)
                 .clip(RoundedCornerShape(10.dp)),
-            contentScale = ContentScale.Crop,
         )
         Spacer(Modifier.height(50.dp))
         TwoPingButtons(

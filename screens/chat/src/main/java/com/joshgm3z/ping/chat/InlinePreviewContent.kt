@@ -17,13 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.FilePreview
+import com.joshgm3z.common.OnlineImage
 import com.joshgm3z.common.SendingBar
 import com.joshgm3z.common.defaultChatImage
 import com.joshgm3z.common.defaultUserImage
@@ -120,40 +119,34 @@ fun InlinePreviewContent(
             )
         }
 
-        is ChatInlineUiState.Image -> AsyncImage(
+        is ChatInlineUiState.Image -> OnlineImage(
             model = uiState.chat.fileOnlineUrl,
             error = defaultUserImage(),
-            contentDescription = null,
             modifier = Modifier
                 .height(150.dp)
                 .fillMaxWidth(),
-            contentScale = ContentScale.Crop,
         )
 
         is ChatInlineUiState.File -> FilePreview(uiState.chat)
         is ChatInlineUiState.FileUpload -> FilePreview(uiState.chat)
         is ChatInlineUiState.ImageUpload -> Box(contentAlignment = Alignment.BottomEnd) {
-            AsyncImage(
+            OnlineImage(
                 model = uiState.chat.fileLocalUriToUpload,
                 error = defaultChatImage(),
-                contentDescription = null,
                 modifier = Modifier
                     .height(150.dp)
                     .fillMaxWidth(),
-                contentScale = ContentScale.Crop,
             )
             SendingBar(uiState.chat.fileUploadProgress)
         }
 
         is ChatInlineUiState.WebUrl -> {
-            AsyncImage(
+            OnlineImage(
                 model = null,
-                contentDescription = null,
                 error = defaultChatImage(),
                 modifier = Modifier
                     .height(100.dp)
                     .fillMaxWidth(),
-                contentScale = ContentScale.Crop,
             )
             Column(Modifier.padding(8.dp)) {
                 Icon(

@@ -18,10 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.OnlineImage
 import com.joshgm3z.common.theme.PingTheme
 
 @DarkPreview
@@ -46,11 +45,9 @@ fun ChatImage(
             .height(200.dp)
             .clip(RoundedCornerShape(10.dp))
     ) {
-        AsyncImage(
+        OnlineImage(
             model = imageUrl,
-            contentDescription = null,
             modifier = modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
             onLoading = { maskImage = true },
             onSuccess = { maskImage = false },
             onError = { maskImage = false }
