@@ -123,7 +123,7 @@ fun ProfileView(
             UserImage(
                 imageUrl = user.imagePath,
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(50.dp)
                     .clip(CircleShape),
             )
         }
