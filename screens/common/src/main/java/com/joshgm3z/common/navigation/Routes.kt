@@ -26,7 +26,7 @@ data class Loading(val message: String)
 @Serializable
 data object Home
 
-fun NavController.navigateToHome() = navigate(Home){
+fun NavController.navigateToHome() = navigate(Home) {
     popUpTo(graph.id) {
         inclusive = true
     }
@@ -43,6 +43,9 @@ data class PingDialogRoute(val title: String, val message: String)
 
 @Serializable
 data object SettingRoute
+
+@Serializable
+data object SettingsHome
 
 @Serializable
 data object Profile

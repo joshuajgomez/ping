@@ -7,6 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter.State
 
 @Composable
 fun OnlineImage(
@@ -14,14 +16,15 @@ fun OnlineImage(
     error: Painter? = null,
     placeholder: Painter? = null,
     modifier: Modifier = Modifier.size(250.dp),
-    onLoading:()->Unit = {},
-    onSuccess:()->Unit = {},
-    onError:()->Unit = {}
+    onLoading: ((State.Loading) -> Unit)? = null,
+    onSuccess: ((State.Success) -> Unit)? = null,
+    onError: ((State.Error) -> Unit)? = null,
 ) {
-    OnlineImage(
+    AsyncImage(
         model = model,
         placeholder = placeholder,
         error = error,
+        contentDescription = null,
         modifier = modifier.clip(CircleShape),
         onLoading = onLoading,
         onSuccess = onSuccess,

@@ -1,26 +1,21 @@
 package com.joshgm3z.ping.home
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forum
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
@@ -37,9 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.common.DarkPreview
-import com.joshgm3z.common.HomeAppBarContainer
+import com.joshgm3z.common.HomeAppBar
 import com.joshgm3z.common.home.HomeChatItem
-import com.joshgm3z.common.home.PingBottomAppBar
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.data.util.getHomeChatList
 import com.joshgm3z.data.model.Chat
@@ -57,10 +51,7 @@ fun PreviewHomeChatList() {
         PingTheme {
             Scaffold(
                 topBar = {
-                    HomeAppBarContainer("Chats")
-                },
-                bottomBar = {
-                    PingBottomAppBar()
+                    HomeAppBar()
                 },
             ) { paddingValues ->
                 Box(modifier = Modifier.padding(paddingValues)) {
@@ -125,13 +116,11 @@ fun HomeChatListContainer(
     viewModel: HomeViewModel = hiltViewModel(),
     onChatClick: (homeChat: HomeChat) -> Unit = {},
     onGoToUsersClicked: () -> Unit = {},
-    onSearchClick: () -> Unit = {},
 ) {
     HomeChatList(
         uiState = viewModel.uiState,
         onChatClick = onChatClick,
         onGoToUsersClicked = onGoToUsersClicked,
-        onSearchClick = onSearchClick
     )
 }
 
@@ -141,14 +130,8 @@ fun HomeChatList(
     uiState: StateFlow<HomeUiState> = MutableStateFlow(HomeUiState.Empty()),
     onChatClick: (homeChat: HomeChat) -> Unit = {},
     onGoToUsersClicked: () -> Unit = {},
-    onSearchClick: () -> Unit = {},
 ) {
     Column(modifier) {
-        SearchBoxView(
-            onClick = onSearchClick,
-            modifier = Modifier.padding(horizontal = 10.dp),
-            hintText = "Search chats, users or anything"
-        )
         Spacer(Modifier.size(10.dp))
         with(uiState.collectAsState().value) {
             when (this) {

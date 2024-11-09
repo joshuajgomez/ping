@@ -29,10 +29,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.common.CustomTextField
 import com.joshgm3z.common.DarkPreview
-import com.joshgm3z.common.HomeAppBarContainer
+import com.joshgm3z.common.HomeAppBar
 import com.joshgm3z.common.SmallCard
 import com.joshgm3z.common.getIfNotPreview
-import com.joshgm3z.common.home.PingBottomAppBar
 import com.joshgm3z.data.model.User
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.data.util.randomUser
@@ -51,10 +50,7 @@ fun PreviewSearchContainer(
 ) = PingTheme {
     Scaffold(
         topBar = {
-            HomeAppBarContainer("Users")
-        },
-        bottomBar = {
-            PingBottomAppBar()
+            HomeAppBar()
         },
     ) { paddingValues ->
         SearchContent(

@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.HomeAppBar
 import com.joshgm3z.common.LoadingContainer
-import com.joshgm3z.common.home.PingBottomAppBar
 import com.joshgm3z.frx.FrxContainer
 import com.joshgm3z.ping.home.HomeChatList
 import com.joshgm3z.settings.MainSettingsScreen
@@ -41,7 +40,6 @@ fun PreviewHomeScreenList() {
     PingTheme {
         Scaffold(
             topBar = { HomeAppBar() },
-            bottomBar = { PingBottomAppBar() },
         ) {
             HomeChatList(
                 modifier = Modifier.padding(it),
@@ -56,7 +54,6 @@ fun PreviewHomeScreenListEmpty() {
     PingTheme {
         Scaffold(
             topBar = { HomeAppBar() },
-            bottomBar = { PingBottomAppBar() },
         ) {
             HomeChatList(
                 modifier = Modifier.padding(it),
@@ -72,7 +69,6 @@ fun PreviewHomeScreenSettings() {
     PingTheme {
         Scaffold(
             topBar = { HomeAppBar() },
-            bottomBar = { PingBottomAppBar() },
         ) {
             MainSettingsScreen(modifier = Modifier.padding(it))
         }

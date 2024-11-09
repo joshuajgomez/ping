@@ -23,14 +23,11 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.joshgm3z.common.DarkPreview
-import com.joshgm3z.common.HomeAppBarContainer
+import com.joshgm3z.common.HomeAppBar
 import com.joshgm3z.common.Setting
 import com.joshgm3z.common.SettingListCard
 import com.joshgm3z.common.getIfNotPreview
-import com.joshgm3z.common.home.PingBottomAppBar
 import com.joshgm3z.common.navigation.ChatSettings
 import com.joshgm3z.common.navigation.Notifications
 import com.joshgm3z.common.navigation.Profile
@@ -45,10 +42,7 @@ fun PreviewMainSettingsScreen() {
     PingTheme {
         Scaffold(
             topBar = {
-                HomeAppBarContainer("Settings")
-            },
-            bottomBar = {
-                PingBottomAppBar()
+                HomeAppBar()
             },
         ) { paddingValues ->
             MainSettingsScreen(modifier = Modifier.padding(paddingValues))
@@ -59,26 +53,26 @@ fun PreviewMainSettingsScreen() {
 @Composable
 fun MainSettingsScreen(
     modifier: Modifier = Modifier,
-    navController: NavController = rememberNavController(),
+    navigateTo:(Any) -> Unit = {},
 ) {
     val settingRouteList1 = listOf(
         Setting(
             "Profile",
             "Edit profile details"
         ) {
-            navController.navigate(Profile)
+            navigateTo(Profile)
         },
         Setting(
             "Chat Settings",
             "Change chat settings"
         ) {
-            navController.navigate(ChatSettings)
+            navigateTo(ChatSettings)
         },
         Setting(
             "Notifications",
             "Modify how often you wanna be notified"
         ) {
-            navController.navigate(Notifications)
+            navigateTo(Notifications)
         },
     )
 
@@ -87,7 +81,7 @@ fun MainSettingsScreen(
             "Sign out",
             icon = Icons.Default.Output
         ) {
-            navController.navigate(SignOut)
+            navigateTo(SignOut)
         },
     )
 
@@ -97,7 +91,7 @@ fun MainSettingsScreen(
             .padding(horizontal = 20.dp)
     ) {
         ProfileView {
-            navController.navigate(Profile)
+            navigateTo(Profile)
         }
         Spacer(Modifier.height(20.dp))
         SettingListCard(settingRouteList1)

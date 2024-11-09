@@ -17,8 +17,10 @@ import com.joshgm3z.common.navigation.Notifications
 import com.joshgm3z.common.navigation.PingDialogRoute
 import com.joshgm3z.common.navigation.Profile
 import com.joshgm3z.common.navigation.SettingRoute
+import com.joshgm3z.common.navigation.SettingsHome
 import com.joshgm3z.common.navigation.SignOut
 import com.joshgm3z.common.navigation.UserInfoRoute
+import com.joshgm3z.settings.MainSettingsScreen
 import com.joshgm3z.settings.SignOutSetting
 import com.joshgm3z.settings.UserInfo
 import com.joshgm3z.settings.image.ImagePickerContainer
@@ -28,7 +30,12 @@ fun NavGraphBuilder.settingGraph(
     navController: NavHostController,
     onBackClick: () -> Unit = { navController.goBack() },
 ) {
-    navigation<SettingRoute>(startDestination = Profile) {
+    navigation<SettingRoute>(startDestination = SettingsHome) {
+        composable<SettingsHome>(enterTransition = slideIn) {
+            MainSettingsScreen {
+                navController.navigate(it)
+            }
+        }
         composable<Profile>(enterTransition = slideIn) {
             ProfileSettings(
                 onGoBackClick = onBackClick,
