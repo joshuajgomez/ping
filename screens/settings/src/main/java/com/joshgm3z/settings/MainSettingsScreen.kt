@@ -50,8 +50,8 @@ fun PreviewMainSettingsScreen() {
 
 @Composable
 fun MainSettingsScreen(
-    navigateTo: (Any) -> Unit = {},
     onBackClick: () -> Unit = {},
+    navigateTo: (Any) -> Unit = {},
 ) {
     val settingRouteList1 = getSettingList(navigateTo)
     val settingRouteList2 = listOf(
