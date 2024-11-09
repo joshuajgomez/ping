@@ -67,11 +67,7 @@ fun PreviewHomeScreenListEmpty() {
 @Composable
 fun PreviewHomeScreenSettings() {
     PingTheme {
-        Scaffold(
-            topBar = { HomeAppBar() },
-        ) {
-            MainSettingsScreen(modifier = Modifier.padding(it))
-        }
+        MainSettingsScreen()
     }
 }
 

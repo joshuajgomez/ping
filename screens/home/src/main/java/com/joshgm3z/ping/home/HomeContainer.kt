@@ -15,7 +15,6 @@ import com.joshgm3z.common.DarkPreview
 import com.joshgm3z.common.HomeAppBar
 import com.joshgm3z.common.navigation.ChatScreen
 import com.joshgm3z.search.UserList
-import com.joshgm3z.settings.MainSettingsScreen
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.ping.home.viewmodels.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,18 +40,6 @@ private fun PreviewHomeScreenListEmpty() {
                 modifier = Modifier.padding(it),
                 uiState = MutableStateFlow(HomeUiState.Empty())
             )
-        }
-    }
-}
-
-@DarkPreview
-@Composable
-private fun PreviewHomeScreenSettings() {
-    PingTheme {
-        Scaffold(
-            topBar = { HomeAppBar() },
-        ) {
-            MainSettingsScreen(modifier = Modifier.padding(it))
         }
     }
 }
