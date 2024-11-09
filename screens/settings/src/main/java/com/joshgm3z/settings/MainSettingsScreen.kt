@@ -51,6 +51,7 @@ fun PreviewMainSettingsScreen() {
 @Composable
 fun MainSettingsScreen(
     navigateTo: (Any) -> Unit = {},
+    onBackClick: () -> Unit = {},
 ) {
     val settingRouteList1 = getSettingList(navigateTo)
     val settingRouteList2 = listOf(
@@ -58,7 +59,7 @@ fun MainSettingsScreen(
             navigateTo(SignOut)
         },
     )
-    SettingContainer("Settings") {
+    SettingContainer("Settings", onCloseClick = onBackClick) {
         ProfileView { navigateTo(Profile) }
         Spacer(Modifier.height(20.dp))
         SettingListCard(settingRouteList1)
@@ -113,7 +114,7 @@ fun ProfileView(
                     color = colorScheme.primary,
                 )
                 Text(
-                    user.about,
+                    user.about.ifEmpty { "Set a bio in settings" },
                     fontStyle = FontStyle.Italic,
                     fontSize = 14.sp,
                     color = colorScheme.onSurface.copy(alpha = 0.7f),

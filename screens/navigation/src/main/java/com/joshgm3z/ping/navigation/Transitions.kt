@@ -7,16 +7,23 @@ import androidx.compose.animation.core.tween
 import androidx.navigation.NavBackStackEntry
 
 val slideIn: (AnimatedContentTransitionScope<NavBackStackEntry>.() ->
+@JvmSuppressWildcards EnterTransition?)? = null
+
+val slideOut: (AnimatedContentTransitionScope<NavBackStackEntry>.() ->
+@JvmSuppressWildcards ExitTransition?)? = null
+
+/*val slideIn: (AnimatedContentTransitionScope<NavBackStackEntry>.() ->
 @JvmSuppressWildcards EnterTransition?) = {
     slideIntoContainer(
         AnimatedContentTransitionScope.SlideDirection.Start,
         tween(700)
     )
-}
+}*/
 
-val slideOut: (AnimatedContentTransitionScope<NavBackStackEntry>.() ->
+/*val slideOut: (AnimatedContentTransitionScope<NavBackStackEntry>.() ->
 @JvmSuppressWildcards ExitTransition?) = {
     slideOutOfContainer(
         AnimatedContentTransitionScope.SlideDirection.End, tween(700)
     )
-}
+}*/
+

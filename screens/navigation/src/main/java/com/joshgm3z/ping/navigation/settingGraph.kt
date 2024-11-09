@@ -33,7 +33,8 @@ fun NavGraphBuilder.settingGraph(
     navigation<SettingRoute>(startDestination = SettingsHome) {
         composable<SettingsHome>(enterTransition = slideIn) {
             MainSettingsScreen {
-                navController.navigate(it)
+                navController.navigate(it),
+                onBackClick = onBackClick,
             }
         }
         composable<Profile>(enterTransition = slideIn) {

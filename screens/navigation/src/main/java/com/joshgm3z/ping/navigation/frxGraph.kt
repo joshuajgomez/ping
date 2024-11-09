@@ -10,18 +10,20 @@ import com.joshgm3z.common.navigation.GoodBye
 import com.joshgm3z.common.navigation.SignIn
 import com.joshgm3z.common.navigation.Welcome
 import com.joshgm3z.common.navigation.navigateToHome
+import com.joshgm3z.frx.FrxContainer
+import com.joshgm3z.frx.WelcomeScreen
 import com.joshgm3z.settings.GoodByeScreen
 
 fun NavGraphBuilder.frxGraph(navController: NavHostController) {
     navigation<Frx>(startDestination = SignIn) {
         composable<SignIn> {
-            com.joshgm3z.frx.FrxContainer(onSignInComplete = {
+            FrxContainer(onSignInComplete = {
                 navController.navigate(Welcome(it))
             })
         }
         composable<Welcome> {
             val name = it.toRoute<Welcome>().name
-            com.joshgm3z.frx.WelcomeScreen(
+            WelcomeScreen(
                 name,
                 onButtonClick = navController::navigateToHome
             )
