@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import com.joshgm3z.common.CoolButton
@@ -63,6 +64,6 @@ fun SuccessButton() {
         text = "Saved",
         enabled = false,
         icon = Icons.Default.CheckCircle,
-        bgColor = Green50
+        bgColor = colorScheme.primary
     )
 }

@@ -16,12 +16,9 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Green40,
-    onPrimary = Green70,
-    secondary = Green50,
-    tertiary = Green60,
-    primaryContainer = Green60,
-    onPrimaryContainer = Green40,
+    primary = Purple80,
+    secondary = PurpleGrey80,
+    tertiary = Pink80,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -44,7 +41,7 @@ private val LightColorScheme = lightColorScheme(
 fun PingTheme(
     darkTheme: Boolean = true,
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false,
+    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
