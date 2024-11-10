@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.theme.DarkPreview
 import com.joshgm3z.common.PingButton
 import com.joshgm3z.common.navigation.Frx
 import com.joshgm3z.common.theme.PingTheme

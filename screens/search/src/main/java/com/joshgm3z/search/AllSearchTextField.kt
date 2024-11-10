@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
-import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.theme.DarkPreview
 import com.joshgm3z.common.theme.Gray60
 import com.joshgm3z.common.theme.PingTheme
 

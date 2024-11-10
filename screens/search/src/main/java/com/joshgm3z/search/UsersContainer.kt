@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.joshgm3z.common.CustomTextField
-import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.theme.DarkPreview
 import com.joshgm3z.common.HomeAppBar
 import com.joshgm3z.common.SmallCard
 import com.joshgm3z.common.getIfNotPreview

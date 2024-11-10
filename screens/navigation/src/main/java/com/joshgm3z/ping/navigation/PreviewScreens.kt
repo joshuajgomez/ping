@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.theme.DarkPreview
 import com.joshgm3z.common.HomeAppBar
 import com.joshgm3z.common.LoadingContainer
 import com.joshgm3z.frx.FrxContainer

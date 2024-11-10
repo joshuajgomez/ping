@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.theme.DarkPreview
 import com.joshgm3z.common.LoadingContainer
 import com.joshgm3z.common.PingButton
 import com.joshgm3z.common.PingWallpaper

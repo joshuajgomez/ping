@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MarkChatRead
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.joshgm3z.common.theme.DarkPreview
 import com.joshgm3z.common.theme.PingTheme
 
 @DarkPreview

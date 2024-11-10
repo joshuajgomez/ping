@@ -8,8 +8,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import com.joshgm3z.common.CoolButton
-import com.joshgm3z.common.DarkPreview
-import com.joshgm3z.common.theme.Green50
+import com.joshgm3z.common.theme.DarkPreview
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.utils.Logger
 

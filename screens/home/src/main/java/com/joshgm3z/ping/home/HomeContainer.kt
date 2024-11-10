@@ -11,15 +11,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.joshgm3z.common.DarkPreview
+import com.joshgm3z.common.theme.DarkPreview
 import com.joshgm3z.common.HomeAppBar
 import com.joshgm3z.common.navigation.ChatScreen
 import com.joshgm3z.search.UserList
 import com.joshgm3z.common.theme.PingTheme
+import com.joshgm3z.common.theme.ThemePreviews
 import com.joshgm3z.ping.home.viewmodels.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
-@DarkPreview
+@ThemePreviews
 @Composable
 private fun PreviewHomeScreenList() {
     PingTheme {

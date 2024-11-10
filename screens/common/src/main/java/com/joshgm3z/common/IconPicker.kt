@@ -41,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joshgm3z.common.theme.DarkPreview
 import com.joshgm3z.common.theme.PingTheme
 import com.joshgm3z.common.viewmodels.IconPickerUiState
 import com.joshgm3z.common.viewmodels.IconPickerViewModel
